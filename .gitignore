@@ -32,3 +32,6 @@ yarn-debug.log*
 # local storage fallback
 data/*.json
 .pi-lens/
+
+# build cache
+*.tsbuildinfo
