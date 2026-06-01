@@ -3,7 +3,7 @@ import type { InstallationClient } from "./app.js";
 import { analyzeSlop } from "../agent/graph.js";
 import { loadPolicy } from "../policy/load.js";
 import { toAgentPolicy } from "../policy/schema.js";
-import { hasManagedLlm } from "../billing/entitlement.js";
+import { hasPrivateRepos } from "../billing/entitlement.js";
 import { buildIssueInput, buildPullRequestInput } from "./build-input.js";
 import {
 	addLabels,
@@ -51,6 +51,7 @@ async function review(
 	owner: string,
 	repo: string,
 	input: Parameters<typeof renderComment>[1],
+	isPrivate: boolean,
 ): Promise<void> {
 	const policy = await loadPolicy(octokit, owner, repo);
 	if (!policy.enabled) return;
@@ -58,6 +59,15 @@ async function review(
 	if (input.kind === "issue" && !policy.scan.issues) return;
 	if (isAllowlisted(policy, input)) {
 		console.log(`[slopguard] allowlisted: ${input.repo}#${input.number}`);
+		return;
+	}
+
+	// Private repos are a paid feature (Pro/Team). Public repos are always free.
+	// LLM detection itself is open to everyone (subject to shared rate limits).
+	if (isPrivate && !hasPrivateRepos(owner)) {
+		console.log(
+			`[slopguard] private repo on free plan, skipping: ${input.repo}#${input.number}`,
+		);
 		return;
 	}
 
@@ -72,11 +82,8 @@ async function review(
 	const cacheKey = inputCacheKey(input);
 	let result = getCachedAnalysis(cacheKey);
 	if (!result) {
-		// Managed LLM detection is a paid feature — Free runs heuristics-only.
-		// (Self-hosters can flip this by adding their own keys + PRO_OWNERS.)
-		const agentPolicy = toAgentPolicy(policy);
-		if (!hasManagedLlm(owner)) agentPolicy.llmEnabled = false;
-		result = await analyzeSlop(input, agentPolicy);
+		// LLM is open to everyone; on rate-limit it falls back to heuristics.
+		result = await analyzeSlop(input, toAgentPolicy(policy));
 		setCachedAnalysis(cacheKey, result);
 	}
 	const qLabel = policy.labels.quarantine;
@@ -236,6 +243,7 @@ export function registerWebhookHandlers(app: App): void {
 				owner,
 				repo,
 				input,
+				Boolean(payload.repository.private),
 			);
 		},
 	);
@@ -251,6 +259,7 @@ export function registerWebhookHandlers(app: App): void {
 				owner,
 				repo,
 				input,
+				Boolean(payload.repository.private),
 			);
 		},
 	);

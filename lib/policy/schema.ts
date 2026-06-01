@@ -56,7 +56,7 @@ export const PolicySchema = z
 				enabled: z.boolean().default(true),
 				provider_order: z
 					.array(z.string())
-					.default(["anthropic", "grok", "openai"]),
+					.default(["gemini", "anthropic", "grok", "openai"]),
 				max_diff_chars: z.number().min(500).default(16000),
 			})
 			.default({}),

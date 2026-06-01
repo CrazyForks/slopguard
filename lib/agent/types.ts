@@ -75,7 +75,7 @@ export const DEFAULT_AGENT_POLICY: AgentPolicy = {
 	highConfidenceThreshold: 85,
 	heuristicWeight: 0.4,
 	llmEnabled: true,
-	providerOrder: (process.env.LLM_PROVIDER_ORDER ?? "anthropic,grok,openai")
+	providerOrder: (process.env.LLM_PROVIDER_ORDER ?? "gemini,anthropic,grok,openai")
 		.split(",")
 		.map((s) => s.trim())
 		.filter(Boolean),

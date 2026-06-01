@@ -9,6 +9,8 @@ export interface ResolvedModel {
 /** Is a given provider configured (has an API key)? */
 export function providerAvailable(provider: string): boolean {
 	switch (provider) {
+		case "gemini":
+			return Boolean(process.env.GEMINI_API_KEY);
 		case "anthropic":
 			return Boolean(process.env.ANTHROPIC_API_KEY);
 		case "grok":
@@ -20,8 +22,31 @@ export function providerAvailable(provider: string): boolean {
 	}
 }
 
+export async function buildProvider(
+	provider: string,
+): Promise<ResolvedModel | null> {
+	return build(provider);
+}
+
 async function build(provider: string): Promise<ResolvedModel | null> {
 	if (!providerAvailable(provider)) return null;
+
+	if (provider === "gemini") {
+		const { ChatGoogleGenerativeAI } = await import("@langchain/google-genai");
+		const modelName = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
+		return {
+			provider,
+			modelName,
+			model: new ChatGoogleGenerativeAI({
+				model: modelName,
+				temperature: 0,
+				maxOutputTokens: 1024,
+				// Don't burn the webhook window retrying a 429 — fall back fast.
+				maxRetries: 0,
+				apiKey: process.env.GEMINI_API_KEY,
+			}),
+		};
+	}
 
 	if (provider === "anthropic") {
 		const { ChatAnthropic } = await import("@langchain/anthropic");
@@ -33,6 +58,7 @@ async function build(provider: string): Promise<ResolvedModel | null> {
 				model: modelName,
 				temperature: 0,
 				maxTokens: 1024,
+				maxRetries: 0,
 				apiKey: process.env.ANTHROPIC_API_KEY,
 			}),
 		};
@@ -48,6 +74,7 @@ async function build(provider: string): Promise<ResolvedModel | null> {
 				model: modelName,
 				temperature: 0,
 				maxTokens: 1024,
+				maxRetries: 0,
 				apiKey: process.env.XAI_API_KEY,
 				configuration: {
 					baseURL: process.env.XAI_BASE_URL ?? "https://api.x.ai/v1",
@@ -66,6 +93,7 @@ async function build(provider: string): Promise<ResolvedModel | null> {
 				model: modelName,
 				temperature: 0,
 				maxTokens: 1024,
+				maxRetries: 0,
 				apiKey: process.env.OPENAI_API_KEY,
 			}),
 		};

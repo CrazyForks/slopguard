@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import type { AgentPolicy, LlmVerdict, SlopInput } from "../types.js";
-import { resolveModel } from "../llm.js";
+import { buildProvider } from "../llm.js";
 import { withTimeout } from "../../util.js";
 
 const LLM_TIMEOUT_MS = Number(process.env.LLM_TIMEOUT_MS ?? 25000);
@@ -81,43 +81,96 @@ const NEUTRAL: LlmVerdict = {
  * provider null) when LLM is disabled / unconfigured / errors — so the blended
  * score gracefully degrades to heuristics-only.
  */
+/** Is this error a rate-limit / quota error worth falling back on? */
+function isRateLimit(err: unknown): boolean {
+	const s = (err instanceof Error ? err.message : String(err)).toLowerCase();
+	return (
+		s.includes("429") ||
+		s.includes("rate limit") ||
+		s.includes("quota") ||
+		s.includes("resource_exhausted") ||
+		s.includes("exhausted")
+	);
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+async function tryProvider(
+	resolved: NonNullable<Awaited<ReturnType<typeof buildProvider>>>,
+	input: SlopInput,
+	policy: AgentPolicy,
+): Promise<LlmVerdict> {
+	const nonce = randomUUID();
+	const res = await withTimeout(
+		resolved.model.invoke([
+			{ role: "system", content: SYSTEM },
+			{
+				role: "user",
+				content: buildUserPrompt(input, policy.maxDiffChars, nonce),
+			},
+		]),
+		LLM_TIMEOUT_MS,
+		`LLM(${resolved.provider})`,
+	);
+	const content =
+		typeof res.content === "string"
+			? res.content
+			: JSON.stringify(res.content);
+	const parsed = VerdictSchema.parse(extractJson(content));
+	return { ...parsed, provider: resolved.provider, model: resolved.modelName };
+}
+
+/**
+ * LLM judge. Walks providerOrder; on rate-limit (429/quota) it retries the
+ * same provider once after a short backoff, then falls back to the next
+ * provider. If every provider is unavailable/exhausted it returns NEUTRAL so
+ * the blended score degrades to heuristics-only — SlopGuard never stalls.
+ */
 export async function runLlmAnalysis(
 	input: SlopInput,
 	policy: AgentPolicy,
 ): Promise<LlmVerdict> {
 	if (!policy.llmEnabled) return NEUTRAL;
 
-	const resolved = await resolveModel(policy.providerOrder);
-	if (!resolved) return NEUTRAL; // no keys → heuristics-only
+	let anyConfigured = false;
+	let lastWasRateLimit = false;
 
-	try {
-		const nonce = randomUUID();
-		const res = await withTimeout(
-			resolved.model.invoke([
-				{ role: "system", content: SYSTEM },
-				{
-					role: "user",
-					content: buildUserPrompt(input, policy.maxDiffChars, nonce),
-				},
-			]),
-			LLM_TIMEOUT_MS,
-			`LLM(${resolved.provider})`,
-		);
-		const content =
-			typeof res.content === "string"
-				? res.content
-				: JSON.stringify(res.content);
-		const parsed = VerdictSchema.parse(extractJson(content));
-		return {
-			...parsed,
-			provider: resolved.provider,
-			model: resolved.modelName,
-		};
-	} catch (err) {
-		console.error("[slopguard] LLM analysis failed, degrading:", err);
-		return {
-			...NEUTRAL,
-			reasons: ["LLM analysis unavailable (heuristics-only)"],
-		};
+	for (const provider of policy.providerOrder) {
+		const resolved = await buildProvider(provider);
+		if (!resolved) continue; // no key for this provider
+		anyConfigured = true;
+
+		for (let attempt = 0; attempt < 2; attempt++) {
+			try {
+				return await tryProvider(resolved, input, policy);
+			} catch (err) {
+				if (isRateLimit(err)) {
+					lastWasRateLimit = true;
+					if (attempt === 0) {
+						console.warn(
+							`[slopguard] ${provider} rate-limited, retrying once…`,
+						);
+						await sleep(1500);
+						continue; // retry same provider once
+					}
+					console.warn(
+						`[slopguard] ${provider} still rate-limited, falling back…`,
+					);
+					break; // move to next provider
+				}
+				console.error(`[slopguard] ${provider} error, falling back:`, err);
+				break; // non-rate-limit error → next provider
+			}
+		}
 	}
+
+	if (!anyConfigured) return NEUTRAL; // no keys at all → heuristics-only
+	return {
+		...NEUTRAL,
+		reasons: [
+			lastWasRateLimit
+				? "LLM rate-limited — fell back to heuristics-only"
+				: "LLM unavailable — fell back to heuristics-only",
+		],
+	};
 }
