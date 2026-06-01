@@ -16,8 +16,8 @@ export interface Plan {
 	privateRepos: boolean;
 	/** org-wide features (SSO, audit log, alerts) */
 	orgFeatures: boolean;
-	/** Stripe Payment Link or price id — set via env; null disables checkout */
-	stripeEnvKey?: string;
+	/** Polar Checkout Link env var name — set via env; null disables checkout */
+	polarEnvKey?: string;
 }
 
 export const PLANS: Record<PlanId, Plan> = {
@@ -53,7 +53,7 @@ export const PLANS: Record<PlanId, Plan> = {
 		managedLlm: true,
 		privateRepos: true,
 		orgFeatures: false,
-		stripeEnvKey: "STRIPE_PRICE_PRO",
+		polarEnvKey: "POLAR_LINK_PRO",
 	},
 	team: {
 		id: "team",
@@ -70,7 +70,7 @@ export const PLANS: Record<PlanId, Plan> = {
 		managedLlm: true,
 		privateRepos: true,
 		orgFeatures: true,
-		stripeEnvKey: "STRIPE_PRICE_TEAM",
+		polarEnvKey: "POLAR_LINK_TEAM",
 	},
 };
 

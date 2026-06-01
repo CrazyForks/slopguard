@@ -113,9 +113,7 @@ async function tryProvider(
 		`LLM(${resolved.provider})`,
 	);
 	const content =
-		typeof res.content === "string"
-			? res.content
-			: JSON.stringify(res.content);
+		typeof res.content === "string" ? res.content : JSON.stringify(res.content);
 	const parsed = VerdictSchema.parse(extractJson(content));
 	return { ...parsed, provider: resolved.provider, model: resolved.modelName };
 }
