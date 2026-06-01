@@ -11,7 +11,7 @@
 import { LRUCache } from "lru-cache";
 import type { PlanId } from "./plans.js";
 
-const CUSTOM_FIELD_KEY = process.env.POLAR_GITHUB_FIELD_KEY ?? "github_login";
+const CUSTOM_FIELD_KEY = process.env.POLAR_GITHUB_FIELD_KEY ?? "github-login";
 
 function apiBase(): string {
 	return (process.env.POLAR_SERVER ?? "production") === "sandbox"
