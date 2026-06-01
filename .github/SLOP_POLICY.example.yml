@@ -1,0 +1,80 @@
+# ───────────────────────────────────────────────────────────────────────────
+# SlopGuard policy-as-code
+# Copy this file to `.github/SLOP_POLICY.yml` in YOUR repo to customize behavior.
+# Everything here is OPTIONAL — SlopGuard ships with sane defaults.
+# Docs: https://github.com/your-org/slopguard#configuration
+# ───────────────────────────────────────────────────────────────────────────
+
+version: 1
+
+# Master switch. Set to false to silence SlopGuard without uninstalling.
+enabled: true
+
+# What to scan.
+scan:
+  pull_requests: true
+  issues: true
+
+# Score is 0 (clean) → 100 (almost certainly AI slop).
+thresholds:
+  # At or above this score → quarantine label + review comment.
+  quarantine: 60
+  # At or above this score → comment is phrased more strongly (still NEVER auto-closes).
+  high_confidence: 85
+
+# Human-in-the-loop is ALWAYS required. SlopGuard never auto-closes or auto-merges.
+# These only control labels/comments, not destructive actions.
+labels:
+  quarantine: slop-quarantine
+  # Applied after a maintainer runs `/slop approve`.
+  approved: slop-cleared
+  # Applied when score is high_confidence.
+  high_confidence: slop-high-confidence
+
+# Per-author allowlist — skip scanning trusted humans/bots entirely.
+allowlist:
+  authors:
+    - dependabot[bot]
+    - renovate[bot]
+  # Skip if PR touches ONLY these paths (globs).
+  paths:
+    - "docs/**"
+    - "**/*.md"
+
+# Heuristic weighting (0-1). Tune to reduce false positives.
+heuristics:
+  weight: 0.4 # blended with LLM score (llm weight = 1 - this)
+  signals:
+    boilerplate_disclaimers: true # "As an AI language model…", "I hope this helps!"
+    emoji_section_headers: true # "## 🚀 Features ✨"
+    hallucinated_apis: true # references to non-existent files/symbols
+    empty_pr_description: true
+    giant_unfocused_diff: true
+
+# LLM judge config (provider order falls back automatically).
+llm:
+  enabled: true
+  # Override the global provider order for this repo if you want.
+  provider_order: [anthropic, grok, openai]
+  max_diff_chars: 16000
+
+# Comment template. Supports {{score}}, {{verdict}}, {{reasons}}, {{provenance}},
+# {{approve_cmd}}, {{reject_cmd}}, {{fp_cmd}}, {{threshold}}.
+comment_template: |
+  ### 🛡️ SlopGuard review — score **{{score}}/100** ({{verdict}})
+
+  {{reasons}}
+
+  **Provenance**
+  {{provenance}}
+
+  ---
+  Maintainer actions (comment one of these):
+  - `/slop approve` → remove quarantine, mark cleared
+  - `/slop reject`  → close as AI slop (your explicit action)
+  - `/slop false-positive` → open a tuning issue & clear
+
+# Where to route false-positive feedback (opens an issue in this repo).
+false_positive:
+  open_issue: true
+  issue_label: slopguard-feedback

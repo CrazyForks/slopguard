@@ -1,0 +1,24 @@
+{
+  "name": "SlopGuard",
+  "description": "GitHub App 하나로 AI slop PR/Issue를 자동 탐지·provenance 태그·quarantine 라벨링 + maintainer 최종 승인",
+  "url": "https://github.com/your-org/slopguard",
+  "hook_attributes": {
+    "url": "https://YOUR_DOMAIN/api/webhook",
+    "active": true
+  },
+  "redirect_url": "https://YOUR_DOMAIN/api/manifest/callback",
+  "setup_url": "https://YOUR_DOMAIN/setup",
+  "setup_on_update": true,
+  "public": true,
+  "default_permissions": {
+    "metadata": "read",
+    "contents": "read",
+    "issues": "write",
+    "pull_requests": "write"
+  },
+  "default_events": [
+    "pull_request",
+    "issues",
+    "issue_comment"
+  ]
+}
