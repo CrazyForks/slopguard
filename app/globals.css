@@ -14,8 +14,9 @@
 	--danger: #f85149;
 	--danger-dim: rgba(248, 81, 73, 0.13);
 	--blue: #58a6ff;
-	--mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-		"Liberation Mono", monospace;
+	--mono:
+		ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+		monospace;
 }
 
 * {
@@ -537,3 +538,24 @@ footer.site {
 	color: var(--muted);
 	font-size: 13px;
 }
+
+/* language switch (EN/KO) */
+.lang-switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-family: var(--mono);
+	font-size: 12px;
+	border: 1px solid var(--border);
+	border-radius: 7px;
+	overflow: hidden;
+}
+.lang-switch a {
+	padding: 4px 9px;
+	color: var(--muted);
+	text-decoration: none;
+	line-height: 1;
+}
+.lang-switch a:hover { color: var(--fg); text-decoration: none; }
+.lang-switch a.on { background: var(--surface-2); color: var(--green); }
+@media (max-width: 880px) { .lang-switch { display: none; } }
