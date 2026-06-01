@@ -55,9 +55,10 @@ export function decodeSession(value: string | undefined): SessionUser | null {
 	if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
 	try {
 		const json = JSON.parse(
-			Buffer.from(payload.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString(
-				"utf8",
-			),
+			Buffer.from(
+				payload.replace(/-/g, "+").replace(/_/g, "/"),
+				"base64",
+			).toString("utf8"),
 		) as SessionUser;
 		if (Date.now() - json.ts > MAX_AGE * 1000) return null;
 		return json;

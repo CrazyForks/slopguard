@@ -59,7 +59,11 @@ const T = {
 function PlanBadge({ plan }: { plan: "free" | "pro" | "team" }) {
 	const cls = plan === "free" ? "cleared" : "quarantine";
 	const color =
-		plan === "free" ? "var(--green)" : plan === "team" ? "#a371f7" : "var(--green)";
+		plan === "free"
+			? "var(--green)"
+			: plan === "team"
+				? "#a371f7"
+				: "var(--green)";
 	return (
 		<span
 			className="label"
@@ -110,7 +114,11 @@ export default async function Account({
 							<span className="dot" /> account
 						</span>
 						<h1
-							style={{ fontSize: 32, letterSpacing: "-0.02em", margin: "14px 0 8px" }}
+							style={{
+								fontSize: 32,
+								letterSpacing: "-0.02em",
+								margin: "14px 0 8px",
+							}}
 						>
 							{t.signedOutTitle}
 						</h1>
@@ -118,7 +126,9 @@ export default async function Account({
 							{t.signedOutSub}
 						</p>
 						{error && (
-							<p style={{ color: "var(--danger)", fontSize: 14 }}>{t.errorNote}</p>
+							<p style={{ color: "var(--danger)", fontSize: 14 }}>
+								{t.errorNote}
+							</p>
 						)}
 						<a className="btn btn-primary btn-lg" href="/api/auth/login">
 							{t.signin}
@@ -127,7 +137,11 @@ export default async function Account({
 				) : (
 					<>
 						<h1
-							style={{ fontSize: 28, letterSpacing: "-0.02em", margin: "0 0 20px" }}
+							style={{
+								fontSize: 28,
+								letterSpacing: "-0.02em",
+								margin: "0 0 20px",
+							}}
 						>
 							{t.myAccount}
 						</h1>
@@ -139,7 +153,10 @@ export default async function Account({
 									alt=""
 									width={56}
 									height={56}
-									style={{ borderRadius: "50%", border: "1px solid var(--border)" }}
+									style={{
+										borderRadius: "50%",
+										border: "1px solid var(--border)",
+									}}
 								/>
 								<div>
 									<div style={{ fontWeight: 700, fontSize: 17 }}>
@@ -165,7 +182,10 @@ export default async function Account({
 									<dt className="muted" style={{ fontSize: 12 }}>
 										{t.account}
 									</dt>
-									<dd className="mono" style={{ margin: "2px 0 0", fontSize: 14 }}>
+									<dd
+										className="mono"
+										style={{ margin: "2px 0 0", fontSize: 14 }}
+									>
 										{session.login}
 									</dd>
 								</div>
@@ -173,7 +193,10 @@ export default async function Account({
 									<dt className="muted" style={{ fontSize: 12 }}>
 										{t.email}
 									</dt>
-									<dd className="mono" style={{ margin: "2px 0 0", fontSize: 14 }}>
+									<dd
+										className="mono"
+										style={{ margin: "2px 0 0", fontSize: 14 }}
+									>
 										{session.email || t.notProvided}
 									</dd>
 								</div>

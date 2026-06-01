@@ -8,7 +8,9 @@ export const dynamic = "force-dynamic";
 export function GET() {
 	if (!oauthConfigured()) {
 		return NextResponse.json(
-			{ error: "GitHub OAuth not configured (set GITHUB_APP_CLIENT_ID/SECRET)" },
+			{
+				error: "GitHub OAuth not configured (set GITHUB_APP_CLIENT_ID/SECRET)",
+			},
 			{ status: 501 },
 		);
 	}

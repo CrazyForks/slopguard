@@ -3,6 +3,11 @@ import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
 import { messages, type Lang } from "@/lib/i18n";
 import AuthNav from "./AuthNav";
 
+// "Install" everywhere means: add the hosted SlopGuard app to your repo.
+// Self-hosting (create your own app via /setup) is a separate advanced path.
+const INSTALL_URL =
+	"https://github.com/apps/slopguard-blue-b-2026/installations/new";
+
 function ScoreRing({ score }: { score: number }) {
 	const r = 56;
 	const c = 2 * Math.PI * r;
@@ -67,9 +72,9 @@ export default function Landing({ lang }: { lang: Lang }) {
 						</Link>
 					</span>
 					<AuthNav lang={lang} />
-					<Link className="btn btn-primary" href="/setup">
+					<a className="btn btn-primary" href={INSTALL_URL}>
 						{m.nav.install}
-					</Link>
+					</a>
 				</span>
 			</nav>
 
@@ -85,9 +90,9 @@ export default function Landing({ lang }: { lang: Lang }) {
 					</h1>
 					<p className="sub">{m.hero.sub}</p>
 					<div className="btn-row">
-						<Link className="btn btn-primary btn-lg" href="/setup">
+						<a className="btn btn-primary btn-lg" href={INSTALL_URL}>
 							{m.hero.ctaInstall}
-						</Link>
+						</a>
 						<a className="btn btn-ghost btn-lg" href="#pricing">
 							{m.hero.ctaPricing}
 						</a>
@@ -168,9 +173,9 @@ export default function Landing({ lang }: { lang: Lang }) {
 									))}
 								</ul>
 								{id === "free" ? (
-									<Link className="btn btn-ghost" href="/setup">
+									<a className="btn btn-ghost" href={INSTALL_URL}>
 										{m.pricing.getStarted}
-									</Link>
+									</a>
 								) : (
 									<a
 										className="btn btn-primary"
@@ -225,6 +230,11 @@ export default function Landing({ lang }: { lang: Lang }) {
 				</p>
 				<p className="mono" style={{ fontSize: 12, marginTop: 6 }}>
 					{m.footer.tagline}
+				</p>
+				<p style={{ fontSize: 12, marginTop: 10 }}>
+					<Link href="/setup" className="muted">
+						{lang === "ko" ? "직접 호스팅 (셀프호스팅)" : "Self-host SlopGuard"}
+					</Link>
 				</p>
 			</footer>
 		</>

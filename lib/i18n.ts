@@ -189,7 +189,7 @@ export const messages: Record<Lang, Messages> = {
 			h1a: "AI 슬롭으로부터\n당신의 ",
 			h1b: "레포",
 			h1c: "를 지키세요",
-			sub: "SlopGuard는 들어오는 모든 PR과 이슈가 저품질 기계생성 슬롭인지 점수로 평가하고, 출처를 태깅한 뒤 격리합니다. 닫을지 말지 최종 결정은 사람이 합니다.",
+			sub: "SlopGuard는 들어오는 모든 PR과 이슈를 저품질 기계생성 슬롭인지 점수로 평가하고, 출처를 태깅한 뒤 격리합니다. 닫을지 말지는 사람이 최종 결정합니다.",
 			ctaInstall: "GitHub App 설치하기",
 			ctaPricing: "가격 보기",
 			fine: "# 오픈소스, MIT, 자동으로 닫지 않음, 공개 레포 무료",
@@ -197,7 +197,7 @@ export const messages: Record<Lang, Messages> = {
 		},
 		stats: [
 			{ n: "100%", l: "정밀도 (골든셋)" },
-			{ n: "92%", l: "재현율 (휴리스틱 only)" },
+			{ n: "92%", l: "재현율 (휴리스틱만)" },
 			{ n: "0", l: "자동으로 닫은 PR 수" },
 			{ n: "MIT", l: "무료 셀프호스팅" },
 		],
@@ -208,10 +208,10 @@ export const messages: Record<Lang, Messages> = {
 			reasons: [
 				"챗봇 보일러플레이트 문구 (3건)",
 				"누출된 문구 “Certainly! Here is the updated code”",
-				"제네릭 자동생성 제목, 빈 설명",
+				"뻔한 자동생성 제목과 빈 설명",
 				"출처: 프롬프트 지문 b01706d4, 기계생성",
 			],
-			cmdPre: "메인테이너가 입력",
+			cmdPre: "메인테이너가 댓글로",
 			cmdOr: "또는",
 		},
 		pricing: {
@@ -228,7 +228,7 @@ export const messages: Record<Lang, Messages> = {
 					features: [
 						"휴리스틱 + LLM 슬롭 탐지 (공유 무료 LLM)",
 						"출처 태깅 + 격리 라벨",
-						"휴먼인더루프 /slop 명령",
+						"사람이 결정하는 /slop 명령",
 						".github/SLOP_POLICY.yml 정책 코드화",
 						"공개 레포",
 						"전체 셀프호스팅 (MIT)",
@@ -247,7 +247,7 @@ export const messages: Record<Lang, Messages> = {
 				},
 				team: {
 					name: "Team",
-					tagline: "통제와 가시성이 필요한 조직용.",
+					tagline: "통제와 가시성이 필요한 조직을 위해.",
 					features: [
 						"Pro의 모든 기능",
 						"조직 전체 대시보드",
@@ -260,7 +260,7 @@ export const messages: Record<Lang, Messages> = {
 		},
 		how: {
 			title: "동작 방식",
-			sub: "웹훅이 발생하면 탐지 에이전트가 돌고, 몇 초 안에 점수와 라벨, 리뷰 코멘트를 받습니다.",
+			sub: "웹훅이 발생하면 탐지 에이전트가 실행되고, 몇 초 안에 점수와 라벨, 리뷰 코멘트가 달립니다.",
 			steps: [
 				"PR이나 이슈가 열리면 GitHub이 /api/webhook을 호출합니다.",
 				"에이전트가 정적 휴리스틱(보일러플레이트, 이모지 헤더, 빈 본문, 프롬프트 인젝션)과 선택적 LLM 판정을 실행합니다.",
@@ -271,7 +271,7 @@ export const messages: Record<Lang, Messages> = {
 		},
 		features: {
 			title: "메인테이너를 위해",
-			sub: "기여자를 존중하고 절대 극단으로 가지 않는 분류 도구.",
+			sub: "기여자를 존중하고, 절대 무리하게 닫지 않는 분류 도구.",
 			items: [
 				{
 					ico: "$ gh app install",
@@ -280,7 +280,7 @@ export const messages: Record<Lang, Messages> = {
 				},
 				{
 					ico: "/slop approve",
-					t: "휴먼인더루프",
+					t: "사람이 최종 결정",
 					d: "격리 라벨과 리뷰 코멘트만 답니다. 메인테이너의 명시적 명령 없이는 아무것도 닫지 않습니다.",
 				},
 				{

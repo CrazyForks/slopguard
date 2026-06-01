@@ -1,12 +1,27 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
+
+const HOSTED_INSTALL =
+	"https://github.com/apps/slopguard-blue-b-2026/installations/new";
+
+const inputStyle: React.CSSProperties = {
+	display: "block",
+	marginTop: 8,
+	padding: "10px 12px",
+	width: "100%",
+	background: "#0d1117",
+	color: "var(--fg)",
+	border: "1px solid var(--border)",
+	borderRadius: 8,
+	fontFamily: "var(--mono)",
+	fontSize: 14,
+};
 
 export default function Setup() {
 	const [origin, setOrigin] = useState("");
 	const [org, setOrg] = useState("");
-	// GitHub App names are GLOBALLY unique. "SlopGuard"/"slopguard" is reserved,
-	// so default to an editable, likely-unique name.
 	const [appName, setAppName] = useState("SlopGuard Guard");
 
 	useEffect(() => setOrigin(window.location.origin), []);
@@ -14,7 +29,7 @@ export default function Setup() {
 	const manifest = {
 		name: appName,
 		description:
-			"AI slop PR/Issue 자동 탐지·provenance 태그·quarantine 라벨링 + maintainer 최종 승인",
+			"Detects AI slop PRs/issues, tags provenance, quarantines with a label, maintainer has the final say.",
 		url: "https://github.com/Blue-B/slopguard",
 		hook_attributes: { url: `${origin}/api/webhook`, active: true },
 		redirect_url: `${origin}/api/manifest/callback`,
@@ -34,81 +49,113 @@ export default function Setup() {
 		: "https://github.com/settings/apps/new";
 
 	return (
-		<main className="container">
-			<h1>Create the SlopGuard GitHub App</h1>
-			<p style={{ color: "var(--muted)" }}>
-				One click creates the App with the exact permissions & webhook URL for{" "}
-				<code>{origin || "this deployment"}</code>. GitHub then returns your
-				credentials to paste into env.
-			</p>
+		<>
+			<nav className="nav">
+				<Link className="brand" href="/">
+					{/* eslint-disable-next-line @next/next/no-img-element */}
+					<img src="/shield.svg" alt="SlopGuard" />
+					SlopGuard
+				</Link>
+				<span className="nav-links">
+					<Link href="/">Home</Link>
+					<a className="btn btn-primary" href={HOSTED_INSTALL}>
+						Install
+					</a>
+				</span>
+			</nav>
 
-			<div className="card">
-				<label style={{ fontSize: 13, color: "var(--muted)" }}>
-					GitHub App name (must be globally unique — change if taken)
-				</label>
-				<input
-					value={appName}
-					onChange={(e) => setAppName(e.target.value)}
-					placeholder="SlopGuard Guard"
-					style={{
-						display: "block",
-						marginTop: 8,
-						marginBottom: 16,
-						padding: "10px 12px",
-						width: "100%",
-						background: "#0d1117",
-						color: "var(--fg)",
-						border: "1px solid var(--border)",
-						borderRadius: 8,
-					}}
-				/>
-				<label style={{ fontSize: 13, color: "var(--muted)" }}>
-					Install under an organization? (optional — leave blank for your
-					personal account)
-				</label>
-				<input
-					value={org}
-					onChange={(e) => setOrg(e.target.value)}
-					placeholder="my-org"
-					style={{
-						display: "block",
-						marginTop: 8,
-						padding: "10px 12px",
-						width: "100%",
-						background: "#0d1117",
-						color: "var(--fg)",
-						border: "1px solid var(--border)",
-						borderRadius: 8,
-					}}
-				/>
-			</div>
+			<main className="wide" style={{ maxWidth: 680, paddingTop: 56 }}>
+				<span className="eyebrow">
+					<span className="dot" /> self-host / advanced
+				</span>
+				<h1 style={{ fontSize: 30, letterSpacing: "-0.02em", margin: "14px 0 8px" }}>
+					Run your own SlopGuard
+				</h1>
+				<p className="muted" style={{ marginTop: 0 }}>
+					This page creates a brand-new GitHub App from a manifest so you can
+					self-host SlopGuard on your own server. Most people do not need this.
+				</p>
 
-			<form action={action} method="post">
-				<input type="hidden" name="manifest" value={JSON.stringify(manifest)} />
-				<button
-					type="submit"
-					disabled={!origin}
+				<div
+					className="card"
 					style={{
-						padding: "12px 22px",
-						background: "var(--green-btn)",
-						color: "#fff",
-						fontWeight: 700,
-						border: "1px solid rgba(240,246,252,0.1)",
-						borderRadius: 10,
-						cursor: "pointer",
-						fontSize: 16,
+						borderColor: "rgba(63,185,80,0.4)",
+						background: "rgba(63,185,80,0.06)",
+						marginBottom: 24,
 					}}
 				>
-					Create SlopGuard App on GitHub
-				</button>
-			</form>
+					<b style={{ fontSize: 15 }}>Just want to use SlopGuard?</b>
+					<p className="muted" style={{ fontSize: 14, margin: "6px 0 12px" }}>
+						Install the hosted app on your repo. No server, no setup. This is
+						what you want unless you specifically need to self-host.
+					</p>
+					<a className="btn btn-primary" href={HOSTED_INSTALL}>
+						Install SlopGuard on your repo
+					</a>
+				</div>
 
-			<details className="card" style={{ marginTop: 24 }}>
-				<summary>Manifest preview</summary>
-				<pre style={{ overflowX: "auto" }}>
-					{JSON.stringify(manifest, null, 2)}
-				</pre>
-			</details>
-		</main>
+				<h2 style={{ fontSize: 18, margin: "8px 0 4px" }}>Self-host setup</h2>
+				<p className="muted" style={{ fontSize: 14, marginTop: 0 }}>
+					One click creates the App with the exact permissions and webhook URL
+					for <code>{origin || "this deployment"}</code>. GitHub then returns
+					credentials to paste into your env.
+				</p>
+
+				<div className="card">
+					<label style={{ fontSize: 13, color: "var(--muted)" }}>
+						GitHub App name (must be globally unique)
+					</label>
+					<input
+						value={appName}
+						onChange={(e) => setAppName(e.target.value)}
+						placeholder="SlopGuard Guard"
+						style={inputStyle}
+					/>
+					<label
+						style={{ fontSize: 13, color: "var(--muted)", display: "block", marginTop: 16 }}
+					>
+						Install under an organization? (optional)
+					</label>
+					<input
+						value={org}
+						onChange={(e) => setOrg(e.target.value)}
+						placeholder="my-org"
+						style={inputStyle}
+					/>
+				</div>
+
+				<form action={action} method="post" style={{ marginTop: 18 }}>
+					<input type="hidden" name="manifest" value={JSON.stringify(manifest)} />
+					<button
+						type="submit"
+						className="btn btn-ghost btn-lg"
+						disabled={!origin}
+					>
+						Create your own App on GitHub
+					</button>
+				</form>
+
+				<details className="card" style={{ marginTop: 24 }}>
+					<summary style={{ cursor: "pointer", fontSize: 14 }}>
+						Manifest preview
+					</summary>
+					<pre
+						className="mono"
+						style={{ overflowX: "auto", fontSize: 12, color: "var(--muted)" }}
+					>
+						{JSON.stringify(manifest, null, 2)}
+					</pre>
+				</details>
+			</main>
+
+			<footer className="site">
+				<p>
+					SlopGuard | MIT |{" "}
+					<a href="https://github.com/Blue-B/slopguard">
+						github.com/Blue-B/slopguard
+					</a>
+				</p>
+			</footer>
+		</>
 	);
 }

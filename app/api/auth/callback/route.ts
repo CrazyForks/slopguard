@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { exchangeCode, fetchUser } from "@/lib/auth/github";
-import { SESSION_COOKIE, cookieOptions, encodeSession } from "@/lib/auth/session";
+import {
+	SESSION_COOKIE,
+	cookieOptions,
+	encodeSession,
+} from "@/lib/auth/session";
 import { getAppBaseUrl } from "@/lib/env";
 
 export const runtime = "nodejs";
