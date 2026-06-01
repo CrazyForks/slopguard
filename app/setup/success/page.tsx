@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-	title: "SlopGuard — Subscription active",
+	title: "SlopGuard Subscription active",
 	description: "Thanks for subscribing. Install SlopGuard on your repo or org.",
 };
 
@@ -32,7 +32,7 @@ export default function CheckoutSuccess() {
 						margin: "14px 0 10px",
 					}}
 				>
-					Subscription active — thank you!
+					Subscription active, thank you!
 				</h1>
 				<p className="muted" style={{ fontSize: 17, marginTop: 0 }}>
 					Your plan unlocks automatically for the GitHub account you entered at
@@ -53,7 +53,7 @@ export default function CheckoutSuccess() {
 						<span className="num" />
 						<p>
 							Pick the repositories to guard. SlopGuard starts scoring new PRs
-							and issues immediately — quarantine label + review comment, never
+							and issues immediately with a quarantine label and review comment, never
 							an auto-close.
 						</p>
 					</div>
@@ -73,7 +73,7 @@ export default function CheckoutSuccess() {
 					<ul style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.8 }}>
 						<li>
 							Drop a <code>.github/SLOP_POLICY.yml</code> to tune thresholds,
-							labels, and allowlists — every field is optional.
+							labels, and allowlists. Every field is optional.
 						</li>
 						<li>
 							Billing runs through Polar (Merchant of Record). Manage or cancel
@@ -89,7 +89,7 @@ export default function CheckoutSuccess() {
 
 			<footer className="site">
 				<p>
-					SlopGuard · MIT ·{" "}
+					SlopGuard | MIT |{" "}
 					<a href="https://github.com/Blue-B/slopguard">
 						github.com/Blue-B/slopguard
 					</a>

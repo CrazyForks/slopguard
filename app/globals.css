@@ -553,3 +553,15 @@ footer.site {
 	color: var(--muted);
 	font-size: 13px;
 }
+
+/* hero product screenshot: show the punchy top, keep hero compact */
+.hero-shot img {
+	width: 100%;
+	display: block;
+	max-height: 470px;
+	object-fit: cover;
+	object-position: top center;
+}
+@media (max-width: 880px) {
+	.hero-shot img { max-height: 360px; }
+}

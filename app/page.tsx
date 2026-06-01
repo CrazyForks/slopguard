@@ -25,12 +25,12 @@ const FEATURES = [
 	{
 		ico: "if no LLM key:",
 		t: "Works without an LLM",
-		d: "Heuristics-only mode runs with zero API keys — 100% precision on the golden set.",
+		d: "Heuristics-only mode runs with zero API keys, and still hits 100% precision on the golden set.",
 	},
 	{
 		ico: "db: null",
 		t: "No database",
-		d: "State lives in GitHub labels and issues. Self-host the entire thing — it’s MIT licensed.",
+		d: "State lives in GitHub labels and issues. Self-host the entire thing, it’s MIT licensed.",
 	},
 ];
 
@@ -64,7 +64,7 @@ export default function Home() {
 					</h1>
 					<p className="sub">
 						SlopGuard scores every incoming PR and issue for low-effort,
-						machine-generated slop, tags its provenance, and quarantines it —
+						machine-generated slop, tags its provenance, and quarantines it,
 						then leaves the final call to a human.
 					</p>
 					<div className="btn-row">
@@ -79,56 +79,22 @@ export default function Home() {
 						</a>
 					</div>
 					<p className="fineprint">
-						# open source · MIT · never auto-closes · free for public repos
+						# open source, MIT, never auto-closes, free for public repos
 					</p>
 				</div>
 
-				<div className="window" aria-hidden="true">
+				<div className="window hero-shot">
 					<div className="window-bar">
 						<span className="dot r" />
 						<span className="dot y" />
 						<span className="dot g" />
-						<span className="title">slopguard — pull request #482</span>
+						<span className="title">github.com/Blue-B/slopguard #6</span>
 					</div>
-					<div className="term">
-						<div>
-							<span className="prompt">slopguard</span>{" "}
-							<span className="dim">analyze pr#482 “add helper utils”</span>
-						</div>
-						<div className="dim">
-							→ heuristics: boilerplate, empty body, emoji headers
-						</div>
-						<div className="dim">
-							→ provenance: leaked phrase{" "}
-							<span className="bad">“Certainly! Here is…”</span>
-						</div>
-						<div>
-							→ score: <span className="bad">96</span>
-							<span className="dim">/100</span> ·{" "}
-							<span className="bad">slop</span>
-						</div>
-					</div>
-					<div className="pr-comment">
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img className="avatar" src="/bot-logo-512.png" alt="" />
-						<div className="body">
-							<div className="head">
-								<b>slopguard</b> <span className="verified">bot</span>{" "}
-								quarantined this pull request
-							</div>
-							<div className="score-bar">
-								<span style={{ width: "96%" }} />
-							</div>
-							<div style={{ fontSize: 13, color: "var(--muted)" }}>
-								Slop score <b style={{ color: "var(--danger)" }}>96/100</b> ·
-								provenance: machine-generated
-							</div>
-							<div style={{ marginTop: 10, display: "flex", gap: 8 }}>
-								<span className="label quarantine">slop-quarantine</span>
-								<span className="label cleared">awaiting /slop</span>
-							</div>
-						</div>
-					</div>
+					{/* eslint-disable-next-line @next/next/no-img-element */}
+					<img
+						src="/demo-real.png"
+						alt="SlopGuard quarantining a machine-generated pull request on GitHub: slop-quarantine label plus a bot review comment scoring it 72/100 with provenance"
+					/>
 				</div>
 			</header>
 
@@ -169,7 +135,7 @@ export default function Home() {
 				<h2 className="section-title">How it works</h2>
 				<p className="section-sub">
 					A webhook fires, the detection agent runs, and you get a score, a
-					label, and a review comment — within seconds.
+					label, and a review comment, within seconds.
 				</p>
 				<div className="steps">
 					<div className="step">
@@ -211,21 +177,26 @@ export default function Home() {
 			</section>
 
 			<section id="demo" className="wide">
-				<h2 className="section-title">See it triage a real PR</h2>
+				<h2 className="section-title">A real run, on this repo</h2>
 				<p className="section-sub">
-					A machine-generated PR scored 100/100 → quarantined with reasons +
-					provenance → cleared by the maintainer with one{" "}
-					<code>/slop approve</code>. Nothing is auto-closed.
+					An actual machine-generated PR opened on SlopGuard&apos;s own
+					repository. It was scored, labeled <code>slop-quarantine</code>, and
+					given a review comment with provenance. The maintainer stays in
+					control with <code>/slop approve</code>, <code>reject</code>, or{" "}
+					<code>false-positive</code>.
 				</p>
 				<div className="demo-frame window">
 					<div className="window-bar">
 						<span className="dot r" />
 						<span className="dot y" />
 						<span className="dot g" />
-						<span className="title">github.com/your-org/your-repo</span>
+						<span className="title">github.com/Blue-B/slopguard #6</span>
 					</div>
 					{/* eslint-disable-next-line @next/next/no-img-element */}
-					<img src="/demo.gif" alt="SlopGuard quarantining a slop PR" />
+					<img
+						src="/demo-real.png"
+						alt="GitHub pull request quarantined by SlopGuard with a 72/100 review comment"
+					/>
 				</div>
 			</section>
 
@@ -275,14 +246,14 @@ export default function Home() {
 					})}
 				</div>
 				<p className="section-sub" style={{ marginTop: 18, fontSize: 13 }}>
-					Prefer to run it yourself? Everything is open source —{" "}
+					Prefer to run it yourself? Everything is open source.{" "}
 					<a href="https://github.com/Blue-B/slopguard">self-host for free</a>.
 				</p>
 			</section>
 
 			<footer className="site">
 				<p>
-					SlopGuard · MIT ·{" "}
+					SlopGuard | MIT |{" "}
 					<a href="https://github.com/Blue-B/slopguard">
 						github.com/Blue-B/slopguard
 					</a>

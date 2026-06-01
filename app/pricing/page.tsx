@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
 
 export const metadata = {
-	title: "SlopGuard — Pricing",
+	title: "SlopGuard Pricing",
 	description:
 		"Free to self-host. Paid tiers cover managed LLM and org features.",
 };
@@ -32,7 +32,7 @@ export default function Pricing() {
 					Free to self-host. Pay only for managed.
 				</h1>
 				<p className="section-sub">
-					SlopGuard is open source (MIT) — run it yourself for free, forever.
+					SlopGuard is open source (MIT), run it yourself for free, forever.
 					Paid tiers exist so you don&apos;t have to manage the LLM bill or
 					org-wide controls.
 				</p>
@@ -87,7 +87,7 @@ export default function Pricing() {
 						maintaining it yourself. Pro removes all of that: we host it, we pay
 						the model bill, and you get higher-recall detection plus private
 						repos. Team adds org-wide visibility and controls. Same model as
-						Sentry, PostHog, and Plausible — the code is free; the hosting and
+						Sentry, PostHog, and Plausible. The code is free; the hosting and
 						convenience are the product.
 					</p>
 				</div>
