@@ -560,3 +560,32 @@ footer.site {
 .lang-switch a:hover { color: var(--fg); text-decoration: none; }
 .lang-switch a.on { background: var(--surface-2); color: var(--green); }
 @media (max-width: 880px) { .lang-switch { display: none; } }
+
+/* nav auth (sign in / account badge) */
+.nav-signin {
+	color: #adbac7;
+	font-size: 14px;
+	font-weight: 500;
+}
+.nav-signin:hover { color: var(--fg); text-decoration: none; }
+.nav-account {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 3px 10px 3px 3px;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	background: var(--surface);
+}
+.nav-account:hover { border-color: #6e7681; text-decoration: none; }
+.nav-account img { border-radius: 50%; display: block; }
+.nav-account .nav-plan {
+	font-family: var(--mono);
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--green);
+	text-transform: uppercase;
+}
+@media (max-width: 880px) {
+	.nav-account .nav-plan { display: none; }
+}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
 import { messages, type Lang } from "@/lib/i18n";
+import AuthNav from "./AuthNav";
 
 function ScoreRing({ score }: { score: number }) {
 	const r = 56;
@@ -65,6 +66,7 @@ export default function Landing({ lang }: { lang: Lang }) {
 							KO
 						</Link>
 					</span>
+					<AuthNav lang={lang} />
 					<Link className="btn btn-primary" href="/setup">
 						{m.nav.install}
 					</Link>
