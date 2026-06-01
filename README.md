@@ -2,9 +2,19 @@
 
 English | [한국어](./docs/README.ko.md)
 
+[![CI](https://github.com/Blue-B/slopguard/actions/workflows/ci.yml/badge.svg)](https://github.com/Blue-B/slopguard/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-3fb950.svg)](./LICENSE)
+[![human-in-the-loop](https://img.shields.io/badge/human--in--the--loop-required-58a6ff.svg)](#)
+[![never auto-close](https://img.shields.io/badge/auto--close-never-cf222e.svg)](#)
+[![precision](https://img.shields.io/badge/precision-100%25-3fb950.svg)](#detection-quality)
+[![recall](https://img.shields.io/badge/recall-77%25-d29922.svg)](#detection-quality)
+
 A GitHub App that triages AI "slop" — low-effort, machine-generated pull requests and issues that waste maintainer time. SlopGuard scores each contribution, tags its provenance, and applies a `slop-quarantine` label, then hands the final decision to a maintainer.
 
 > SlopGuard never auto-closes anything. A human is always the last step. Quarantine and review comments are the only automatic actions — destructive ones require an explicit `/slop` command from a maintainer.
+
+![SlopGuard quarantining a low-effort PR](./assets/demo-quarantine.png)
+<sub>A machine-generated PR scored 100/100, labeled `slop-quarantine` + `slop-high-confidence`, with a review comment showing the reasons and provenance. Nothing is closed — the maintainer decides.</sub>
 
 ## Why
 
@@ -22,25 +32,9 @@ SlopGuard takes a different position:
 
 ## How it works
 
-```
-PR / Issue opened
-       │
-       ▼
-GitHub webhook  →  /api/webhook
-       │
-       ▼
-Detection agent (LangGraph)
-  ├─ static heuristics   (boilerplate, emoji headers, empty body, giant diff, prompt-injection)
-  ├─ LLM judge           (Claude / Grok / OpenAI — optional, falls back to heuristics)
-  ├─ provenance          (model hints, prompt fingerprint, timestamps)
-  └─ policy enforcement  (.github/SLOP_POLICY.yml)
-       │
-       ▼
-score 0–100  →  slop-quarantine label + review comment
-       │
-       ▼
-Maintainer:  /slop approve   |   /slop reject   |   /slop false-positive
-```
+![Architecture](./assets/architecture.svg)
+
+A PR or issue triggers a webhook. The detection agent runs static heuristics and (optionally) an LLM judge, extracts provenance, and applies your policy. The result is a 0–100 score, a quarantine label, and a review comment. Destructive actions only happen on an explicit maintainer command.
 
 ## Detection quality
 
@@ -51,6 +45,8 @@ npm run eval
 ```
 
 Heuristics-only at the default threshold: **precision 100% · recall 77% · F1 87%**. Adding an LLM key lifts recall on subtle cases. The harness prints a confusion matrix and a threshold sweep so you can calibrate for your repo.
+
+![Threshold sweep — precision, recall, F1](./assets/detection-quality.svg)
 
 ## Maintainer commands
 

@@ -2,9 +2,19 @@
 
 [English](../README.md) | 한국어
 
+[![CI](https://github.com/Blue-B/slopguard/actions/workflows/ci.yml/badge.svg)](https://github.com/Blue-B/slopguard/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-3fb950.svg)](../LICENSE)
+[![human-in-the-loop](https://img.shields.io/badge/human--in--the--loop-required-58a6ff.svg)](#)
+[![never auto-close](https://img.shields.io/badge/auto--close-never-cf222e.svg)](#)
+[![precision](https://img.shields.io/badge/precision-100%25-3fb950.svg)](#탐지-품질)
+[![recall](https://img.shields.io/badge/recall-77%25-d29922.svg)](#탐지-품질)
+
 AI "slop" — 별 노력 없이 기계가 찍어낸 PR과 이슈를 골라내는 GitHub App입니다. 들어온 기여를 점수로 평가하고, 출처(provenance)를 태깅하고, `slop-quarantine` 라벨을 붙인 뒤 최종 판단은 메인테이너에게 넘깁니다.
 
 > SlopGuard는 무엇도 자동으로 닫지 않습니다. 마지막 결정은 항상 사람이 합니다. 격리 라벨과 리뷰 댓글만 자동이고, 닫기 같은 행동은 메인테이너의 `/slop` 명령이 있어야만 일어납니다.
+
+![저품질 PR을 격리하는 SlopGuard](../assets/demo-quarantine.png)
+<sub>기계가 생성한 PR이 100/100으로 평가되어 `slop-quarantine` + `slop-high-confidence` 라벨이 붙고, 근거와 출처가 담긴 리뷰 댓글이 달렸습니다. 아무것도 닫지 않고 — 메인테이너가 결정합니다.</sub>
 
 ## 왜 필요한가
 
@@ -22,25 +32,9 @@ SlopGuard는 다르게 접근합니다.
 
 ## 동작 방식
 
-```
-PR / Issue 생성
-       │
-       ▼
-GitHub webhook  →  /api/webhook
-       │
-       ▼
-탐지 에이전트 (LangGraph)
-  ├─ 정적 휴리스틱   (보일러플레이트, 이모지 헤더, 빈 본문, 거대 diff, 프롬프트 인젝션)
-  ├─ LLM 판정        (Claude / Grok / OpenAI — 선택, 없으면 휴리스틱으로 폴백)
-  ├─ 출처 추출       (모델 힌트, 프롬프트 지문, 타임스탬프)
-  └─ 정책 적용       (.github/SLOP_POLICY.yml)
-       │
-       ▼
-점수 0–100  →  slop-quarantine 라벨 + 리뷰 댓글
-       │
-       ▼
-메인테이너:  /slop approve   |   /slop reject   |   /slop false-positive
-```
+![아키텍처](../assets/architecture.svg)
+
+PR이나 이슈가 webhook을 트리거합니다. 탐지 에이전트가 정적 휴리스틱과 (선택적으로) LLM 판정을 돌리고, 출처를 추출하고, 정책을 적용합니다. 결과는 0–100 점수, 격리 라벨, 리뷰 댓글입니다. 닫기 같은 행동은 메인테이너의 명시적 명령으로만 일어납니다.
 
 ## 탐지 품질
 
@@ -51,6 +45,8 @@ npm run eval
 ```
 
 기본 임계값 기준 휴리스틱-only: **정밀도 100% · 재현율 77% · F1 87%**. LLM 키를 넣으면 미묘한 케이스의 재현율이 올라갑니다. 하니스는 혼동 행렬과 임계값 스윕을 출력해 레포에 맞게 보정할 수 있습니다.
+
+![임계값 스윕 — 정밀도, 재현율, F1](../assets/detection-quality.svg)
 
 ## 메인테이너 명령
 
