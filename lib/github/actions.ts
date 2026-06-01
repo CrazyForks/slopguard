@@ -110,7 +110,9 @@ function provenanceBlock(result: SlopResult): string {
 	if (result.llm.provider) {
 		lines.unshift(`- judge: ${result.llm.provider} (${result.llm.model})`);
 	} else {
-		lines.unshift(`- judge: heuristics-only (no LLM key configured)`);
+		// reasons[0] carries the degrade reason (rate-limit vs none configured)
+		const why = result.llm.reasons[0] ?? "heuristics-only";
+		lines.unshift(`- judge: ${why}`);
 	}
 	return lines.join("\n");
 }

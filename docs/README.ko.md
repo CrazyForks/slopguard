@@ -80,7 +80,7 @@ allowlist:
 
 llm:
   enabled: true
-  provider_order: [anthropic, grok, openai]
+  provider_order: [gemini, anthropic, grok, openai]
 ```
 
 ## 시작하기
