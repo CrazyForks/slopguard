@@ -1023,3 +1023,16 @@ footer.site {
 @media (max-width: 760px) {
 	.account-top { grid-template-columns: 1fr; }
 }
+
+/* ── Account: dashboard 2-column (main + sidebar) ────────────────── */
+.account-grid {
+	display: grid;
+	grid-template-columns: 1.7fr 1fr;
+	gap: 20px;
+	align-items: start;
+}
+@media (max-width: 900px) {
+	.account-grid { grid-template-columns: 1fr; }
+}
+.account-side { display: grid; gap: 16px; align-content: start; }
+.account-side .card, .account-main .card { margin: 0; }
