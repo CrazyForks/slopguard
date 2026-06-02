@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { REPO_URL } from "@/lib/config";
-import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
 import { messages, type Lang } from "@/lib/i18n";
 import AuthNav from "./AuthNav";
+import PricingPlans from "./PricingPlans";
 
 // Section copy that lives outside the core i18n catalogue (added later).
 const EX = {
@@ -275,48 +275,7 @@ export default function Landing({ lang }: { lang: Lang }) {
 			<section id="pricing" className="wide section">
 				<h2 className="section-title">{m.pricing.title}</h2>
 				<p className="section-sub">{m.pricing.sub}</p>
-				<div className="plans-3">
-					{PLAN_ORDER.map((id) => {
-						const copy = m.pricing.plans[id];
-						return (
-							<div
-								className={`card plan${id === "pro" ? " featured" : ""}`}
-								key={id}
-							>
-								{id === "pro" && (
-									<span className="ribbon">
-										{lang === "ko" ? "가장 인기" : "most popular"}
-									</span>
-								)}
-								<h3>{copy.name}</h3>
-								<div className="price">
-									<span className="amt">${PLANS[id].priceMonthly}</span>
-									<span className="per">{m.pricing.per}</span>
-								</div>
-								<p className="muted" style={{ fontSize: 13, marginTop: 0 }}>
-									{copy.tagline}
-								</p>
-								<ul>
-									{copy.features.map((f) => (
-										<li key={f}>{f}</li>
-									))}
-								</ul>
-								{id === "free" ? (
-									<Link className="btn btn-ghost" href={installHref}>
-										{m.pricing.getStarted}
-									</Link>
-								) : (
-									<a
-										className="btn btn-primary"
-										href={`/api/billing/checkout?plan=${id}${lang === "ko" ? "&lang=ko" : ""}`}
-									>
-										{m.pricing.choose(copy.name)}
-									</a>
-								)}
-							</div>
-						);
-					})}
-				</div>
+				<PricingPlans lang={lang} />
 				<p className="section-sub" style={{ marginTop: 18, fontSize: 13 }}>
 					{m.pricing.note}
 				</p>

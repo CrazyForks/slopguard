@@ -67,6 +67,15 @@ export const PolicySchema = z
 				issue_label: z.string().default("slopguard-feedback"),
 			})
 			.default({}),
+		// Outbound alerts on quarantine (Team plan). Destinations live in the
+		// repo policy so there is no dashboard state to store.
+		notify: z
+			.object({
+				slack_webhook: z.string().url().optional(),
+				discord_webhook: z.string().url().optional(),
+				webhook_url: z.string().url().optional(),
+			})
+			.default({}),
 	})
 	.default({});
 

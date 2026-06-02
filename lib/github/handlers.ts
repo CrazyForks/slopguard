@@ -3,7 +3,10 @@ import type { InstallationClient } from "./app.js";
 import { analyzeSlop } from "../agent/graph.js";
 import { loadPolicy } from "../policy/load.js";
 import { toAgentPolicy } from "../policy/schema.js";
-import { hasPrivateRepos } from "../billing/entitlement.js";
+import { planForOwner } from "../billing/entitlement.js";
+import { PLANS } from "../billing/plans.js";
+import { recordAndDetect, CAMPAIGN_SCORE_BUMP } from "../agent/campaign.js";
+import { sendQuarantineAlerts } from "../notify.js";
 import { buildIssueInput, buildPullRequestInput } from "./build-input.js";
 import {
 	addLabels,
@@ -62,9 +65,11 @@ async function review(
 		return;
 	}
 
-	// Private repos are a paid feature (Pro/Team). Public repos are always free.
-	// LLM detection itself is open to everyone (subject to shared rate limits).
-	if (isPrivate && !(await hasPrivateRepos(owner))) {
+	// Resolve the owner's plan once (cached Polar lookup) -> entitlements.
+	const plan = PLANS[await planForOwner(owner)];
+
+	// Private repos are a paid feature (Pro/Team/Enterprise). Public = free.
+	if (isPrivate && !plan.privateRepos) {
 		console.log(
 			`[slopguard] private repo on free plan, skipping: ${input.repo}#${input.number}`,
 		);
@@ -77,15 +82,57 @@ async function review(
 		return;
 	}
 
+	// Free tier shares a throttled LLM budget; paid tiers (managedLlm) get a
+	// dedicated quota. When a free owner is over budget we drop to
+	// heuristics-only so the shared LLM bill stays bounded. This is the real,
+	// enforced Free<->Pro difference, not a marketing line.
+	let agentPolicy = toAgentPolicy(policy);
+	if (!plan.managedLlm) {
+		const freePerMin = Number(process.env.FREE_LLM_PER_MIN ?? 3);
+		if (!rateLimit(`llm-free:${owner}`, freePerMin, 60_000)) {
+			agentPolicy = { ...agentPolicy, llmEnabled: false };
+		}
+	}
+
 	// Reuse a cached verdict for identical content (repeated synchronize events
-	// or GitHub re-deliveries) to avoid re-invoking the paid LLM.
+	// or GitHub re-deliveries) to avoid re-invoking the LLM.
 	const cacheKey = inputCacheKey(input);
 	let result = getCachedAnalysis(cacheKey);
 	if (!result) {
-		// LLM is open to everyone; on rate-limit it falls back to heuristics.
-		result = await analyzeSlop(input, toAgentPolicy(policy));
+		result = await analyzeSlop(input, agentPolicy);
 		setCachedAnalysis(cacheKey, result);
 	}
+
+	// Cross-repo bot-campaign detection (Pro/Team): the same prompt fingerprint
+	// landing across several of the owner's repos boosts the score.
+	if (plan.campaignDetection) {
+		const camp = recordAndDetect(
+			owner,
+			result.provenance.promptFingerprint,
+			input.repo,
+			input.author,
+		);
+		if (camp) {
+			const boosted = Math.min(100, result.score + CAMPAIGN_SCORE_BUMP);
+			result = {
+				...result,
+				score: boosted,
+				shouldQuarantine: boosted >= policy.thresholds.quarantine,
+				highConfidence: boosted >= policy.thresholds.high_confidence,
+				verdict:
+					boosted >= policy.thresholds.high_confidence
+						? "likely-slop"
+						: boosted >= policy.thresholds.quarantine
+							? "suspicious"
+							: "clean",
+				reasons: [
+					...result.reasons,
+					`• Cross-repo campaign: same prompt fingerprint in ${camp.repoCount} repo(s), ${camp.totalCount}x total`,
+				],
+			};
+		}
+	}
+
 	const qLabel = policy.labels.quarantine;
 
 	if (!result.shouldQuarantine) {
@@ -128,6 +175,11 @@ async function review(
 	console.log(
 		`[slopguard] quarantined ${input.repo}#${input.number} (${result.score})`,
 	);
+
+	// Outbound alerts (Team). Best-effort, time-boxed; never blocks the webhook.
+	if (plan.alerts) {
+		await sendQuarantineAlerts(policy.notify, input, result).catch(() => 0);
+	}
 }
 
 /** /slop command handling (human-in-the-loop). */

@@ -2,10 +2,11 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
 import { planForOwner } from "@/lib/billing/entitlement";
-import { PLANS, PLAN_ORDER, type PlanId } from "@/lib/billing/plans";
-import { messages, type Lang } from "@/lib/i18n";
+import { PLANS, type PlanId } from "@/lib/billing/plans";
+import type { Lang } from "@/lib/i18n";
 
 import { INSTALL_URL, PORTAL_URL } from "@/lib/config";
+import PricingPlans from "./PricingPlans";
 
 const T = {
 	en: {
@@ -100,7 +101,6 @@ export default async function Account({
 	error?: string;
 }) {
 	const t = T[lang];
-	const pm = messages[lang].pricing;
 	const home = lang === "ko" ? "/ko" : "/";
 	const store = await cookies();
 	const session = decodeSession(store.get(SESSION_COOKIE)?.value);
@@ -204,7 +204,7 @@ export default async function Account({
 								<span style={{ fontSize: 22, fontWeight: 800 }}>
 									{PLANS[plan].name}
 								</span>
-								{plan !== "free" && (
+								{plan !== "free" && PLANS[plan].priceMonthly != null && (
 									<span className="muted mono" style={{ fontSize: 14 }}>
 										${PLANS[plan].priceMonthly}
 										{t.per}
@@ -228,54 +228,7 @@ export default async function Account({
 						<h2 style={{ fontSize: 16, margin: "26px 0 10px" }}>
 							{t.plansTitle}
 						</h2>
-						<div className="plans-3">
-							{PLAN_ORDER.map((id) => {
-								const isCurrent = id === plan;
-								const copy = pm.plans[id];
-								return (
-									<div
-										className={`card plan${isCurrent ? " featured" : ""}`}
-										key={id}
-									>
-										{isCurrent && <span className="ribbon">{t.current}</span>}
-										<h3>{copy.name}</h3>
-										<div className="price">
-											<span className="amt">${PLANS[id].priceMonthly}</span>
-											<span className="per">{pm.per}</span>
-										</div>
-										<ul>
-											{copy.features.slice(0, 4).map((f) => (
-												<li key={f}>{f}</li>
-											))}
-										</ul>
-										{isCurrent ? (
-											<span
-												className="btn btn-ghost"
-												style={{
-													justifyContent: "center",
-													opacity: 0.6,
-													cursor: "default",
-												}}
-											>
-												{t.current}
-											</span>
-										) : id === "free" ? (
-											<a className="btn btn-ghost" href={PORTAL_URL}>
-												{t.manageBilling}
-											</a>
-										) : (
-											<a
-												className="btn btn-primary"
-												href={`/api/billing/checkout?plan=${id}${lang === "ko" ? "&lang=ko" : ""}`}
-												style={{ justifyContent: "center" }}
-											>
-												{t.upgrade} {copy.name}
-											</a>
-										)}
-									</div>
-								);
-							})}
-						</div>
+						<PricingPlans lang={lang} currentPlan={plan} />
 						<p className="muted" style={{ fontSize: 12, marginTop: 10 }}>
 							{t.downgradeNote}
 						</p>

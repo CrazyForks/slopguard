@@ -9,7 +9,7 @@
 // subscriptions). POLAR_SERVER selects production (default) or "sandbox".
 
 import { LRUCache } from "lru-cache";
-import type { PlanId } from "./plans.js";
+import { PLAN_RANK, type PlanId } from "./plans.js";
 
 const CUSTOM_FIELD_KEY = process.env.POLAR_GITHUB_FIELD_KEY ?? "github-login";
 
@@ -37,12 +37,11 @@ interface PolarListResponse<T> {
 /** Map a Polar product (by name) to one of our plan tiers. */
 function planFromProduct(name: string | undefined | null): PlanId {
 	const n = (name ?? "").toLowerCase();
+	if (n.includes("enterprise")) return "enterprise";
 	if (n.includes("team")) return "team";
-	// Any other active paid subscription grants at least Pro.
+	// Any other active paid subscription (incl. annual variants) grants Pro.
 	return "pro";
 }
-
-const PLAN_RANK: Record<PlanId, number> = { free: 0, pro: 1, team: 2 };
 
 // One cache entry holds the full owner→plan map. Short TTL bounds staleness
 // even if a webhook is missed; the webhook invalidates it for instant updates.

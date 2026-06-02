@@ -1,10 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
+import PricingPlans from "../components/PricingPlans";
+import { REPO_URL } from "@/lib/config";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "SlopGuard Pricing",
 	description:
-		"Free to self-host. Paid tiers cover managed LLM and org features.",
+		"Free to self-host. Paid tiers cover managed LLM, private repos, cross-repo campaign detection, org dashboards, and alerting.",
+	alternates: { canonical: "/pricing" },
 };
 
 export default function Pricing() {
@@ -17,7 +20,8 @@ export default function Pricing() {
 					SlopGuard
 				</Link>
 				<span className="nav-links">
-					<a href="https://github.com/Blue-B/slopguard">GitHub</a>
+					<Link href="/#how">How it works</Link>
+					<a href={REPO_URL}>GitHub</a>
 					<Link className="btn btn-primary" href="/install">
 						Install
 					</Link>
@@ -25,7 +29,9 @@ export default function Pricing() {
 			</nav>
 
 			<header style={{ textAlign: "center", padding: "64px 24px 8px" }}>
-				<span className="eyebrow">● pricing</span>
+				<span className="eyebrow">
+					<span className="dot" /> pricing
+				</span>
 				<h1
 					style={{ fontSize: 38, letterSpacing: "-0.02em", margin: "12px 0" }}
 				>
@@ -33,50 +39,14 @@ export default function Pricing() {
 				</h1>
 				<p className="section-sub">
 					SlopGuard is open source (MIT), run it yourself for free, forever.
-					Paid tiers exist so you don&apos;t have to manage the LLM bill or
-					org-wide controls.
+					Paid tiers cover the managed LLM bill, private repos, cross-repo
+					intelligence, org-wide visibility, and alerting. Checkout via Polar as
+					Merchant of Record.
 				</p>
 			</header>
 
-			<section className="wide">
-				<div className="grid">
-					{PLAN_ORDER.map((id) => {
-						const p = PLANS[id];
-						return (
-							<div
-								className={`card plan${id === "pro" ? " featured" : ""}`}
-								key={id}
-							>
-								{id === "pro" && <span className="ribbon">most popular</span>}
-								<h3 style={{ margin: 0 }}>{p.name}</h3>
-								<div className="price">
-									<span className="amt">${p.priceMonthly}</span>
-									<span className="per">/ month</span>
-								</div>
-								<p className="muted" style={{ fontSize: 13, marginTop: 0 }}>
-									{p.tagline}
-								</p>
-								<ul>
-									{p.features.map((feat) => (
-										<li key={feat}>{feat}</li>
-									))}
-								</ul>
-								{id === "free" ? (
-									<Link className="btn btn-ghost" href="/install">
-										Get started
-									</Link>
-								) : (
-									<a
-										className="btn btn-primary"
-										href={`/api/billing/checkout?plan=${id}`}
-									>
-										Choose {p.name}
-									</a>
-								)}
-							</div>
-						);
-					})}
-				</div>
+			<section className="wide" style={{ marginTop: 8 }}>
+				<PricingPlans lang="en" />
 			</section>
 
 			<section className="wide" style={{ marginTop: 32 }}>
@@ -84,16 +54,17 @@ export default function Pricing() {
 					<h3 style={{ marginTop: 0 }}>Why pay if it&apos;s open source?</h3>
 					<p className="muted" style={{ fontSize: 14 }}>
 						Self-hosting means running the server, paying the LLM API bill, and
-						maintaining it yourself. Pro removes all of that: we host it, we pay
-						the model bill, and you get higher-recall detection plus private
-						repos. Team adds org-wide visibility and controls. Same model as
-						Sentry, PostHog, and Plausible. The code is free; the hosting and
-						convenience are the product.
+						maintaining it yourself. Paid tiers remove all of that and add things
+						a single self-hosted instance can&apos;t do on its own: a dedicated
+						LLM quota, cross-repo bot-campaign detection, an org-wide dashboard
+						with an activity log, and Slack/Discord/webhook alerts. Same model as
+						Sentry, PostHog, and Plausible. The code is free; the hosting,
+						intelligence, and convenience are the product.
 					</p>
 				</div>
 				<p className="section-sub" style={{ fontSize: 13 }}>
 					Questions? Open an issue on{" "}
-					<a href="https://github.com/Blue-B/slopguard/issues">GitHub</a>.
+					<a href={`${REPO_URL}/issues`}>GitHub</a>.
 				</p>
 			</section>
 
