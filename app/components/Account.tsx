@@ -13,7 +13,7 @@ import {
 	type OwnerSlopStats,
 } from "@/lib/github/storage";
 import AppNav from "./AppNav";
-import RepoLookup from "../dashboard/RepoLookup";
+import PublicRepoLookup from "./PublicRepoLookup";
 
 const T = {
 	en: {
@@ -225,38 +225,38 @@ export default async function Account({
 						</h1>
 
 						{/* profile header */}
-						<div className="card" style={{ marginBottom: 20 }}>
-							<div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-								{/* eslint-disable-next-line @next/next/no-img-element */}
-								<img
-									src={session.avatar}
-									alt=""
-									width={52}
-									height={52}
-									referrerPolicy="no-referrer"
-									style={{ borderRadius: "50%", border: "1px solid var(--border)" }}
-								/>
-								<div style={{ minWidth: 0 }}>
-									<div style={{ fontWeight: 700, fontSize: 17 }}>
-										{session.name || session.login}
-									</div>
-									<div className="muted mono" style={{ fontSize: 13 }}>
-										{session.email || `@${session.login}`}
-									</div>
+						<div className="card account-profile">
+							{/* eslint-disable-next-line @next/next/no-img-element */}
+							<img
+								src={session.avatar}
+								alt=""
+								width={48}
+								height={48}
+								referrerPolicy="no-referrer"
+								style={{ borderRadius: "50%", border: "1px solid var(--border)" }}
+							/>
+							<div style={{ minWidth: 0 }}>
+								<div style={{ fontWeight: 700, fontSize: 16 }}>
+									{session.name || session.login}
 								</div>
-								<span style={{ marginLeft: "auto" }}>
-									<PlanBadge plan={plan} />
-								</span>
+								<div className="muted mono" style={{ fontSize: 12.5 }}>
+									{session.email || `@${session.login}`}
+								</div>
 							</div>
+							<span style={{ marginLeft: "auto" }}>
+								<PlanBadge plan={plan} />
+							</span>
 						</div>
 
 						<div className="account-grid">
 							<div className="account-main">
-								<h2 style={{ fontSize: 16, margin: "0 0 10px" }}>{t.reposTitle}</h2>
 								<div className="card">
-									<p className="muted" style={{ fontSize: 14, margin: "0 0 14px" }}>
-										{t.reposNote}
-									</p>
+									<div className="card-head">
+										<h3>{t.reposTitle}</h3>
+										{repos.length > 0 && (
+											<span className="card-meta">{repos.length}</span>
+										)}
+									</div>
 									{repos.length > 0 ? (
 										<ul className="repo-list">
 											{repos.map((r) => (
@@ -276,45 +276,35 @@ export default async function Account({
 											{t.noRepos}
 										</p>
 									)}
-									<a className="btn btn-ghost" href={INSTALL_URL}>
+									<a className="btn btn-ghost btn-sm" href={INSTALL_URL}>
 										{t.manageRepos}
 									</a>
 								</div>
 
 								{canOrg && orgStats && (
-									<>
-										<h2 style={{ fontSize: 16, margin: "24px 0 10px" }}>
-											{t.activityTitle}{" "}
-											<span className="muted" style={{ fontSize: 12, fontWeight: 400 }}>
-												({t.activitySub})
-											</span>
-										</h2>
+									<div className="card">
+										<div className="card-head">
+											<h3>{t.activityTitle}</h3>
+											<span className="card-meta">{t.activitySub}</span>
+										</div>
 										<div style={{ display: "flex", gap: 12, margin: "0 0 14px", flexWrap: "wrap" }}>
 											<Stat label={t.statQ} value={orgStats.quarantined} />
 											<Stat label={t.statC} value={orgStats.cleared} />
 											<Stat label={t.statO} value={orgStats.open} />
 											<Stat label={t.statR} value={orgStats.repoCount} />
 										</div>
-										<div className="card" style={{ padding: 0, overflow: "hidden" }}>
+										<div className="dash-table-wrap">
 											{orgStats.recent.length === 0 ? (
-												<p className="muted" style={{ padding: 16, margin: 0 }}>{t.noActivity}</p>
+												<p className="muted" style={{ margin: 0 }}>{t.noActivity}</p>
 											) : (
 												<table className="dash-table">
 													<thead>
-														<tr>
-															<th>{t.colItem}</th>
-															<th>{t.colAuthor}</th>
-															<th>{t.colStatus}</th>
-															<th>{t.colWhen}</th>
-														</tr>
+														<tr><th>{t.colItem}</th><th>{t.colAuthor}</th><th>{t.colStatus}</th><th>{t.colWhen}</th></tr>
 													</thead>
 													<tbody>
 														{orgStats.recent.map((it) => (
 															<tr key={it.url}>
-																<td style={{ maxWidth: 300 }}>
-																	<a href={it.url}>{it.kind === "pull_request" ? "PR" : "#"}{it.number}</a>{" "}
-																	<span className="muted">{it.title}</span>
-																</td>
+																<td style={{ maxWidth: 300 }}><a href={it.url}>{it.kind === "pull_request" ? "PR" : "#"}{it.number}</a> <span className="muted">{it.title}</span></td>
 																<td>@{it.author}</td>
 																<td><span className="mono" style={{ fontSize: 12 }}>{it.labels.includes("slop-cleared") ? t.statusC : t.statusQ}</span></td>
 																<td className="muted" style={{ fontSize: 12 }}>{new Date(it.updatedAt).toISOString().slice(0, 10)}</td>
@@ -324,43 +314,44 @@ export default async function Account({
 												</table>
 											)}
 										</div>
-									</>
+									</div>
 								)}
 							</div>
 
 							<aside className="account-side">
 								<div className="card">
-									<div className="muted mono" style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
-										{t.yourPlan}
+									<div className="card-head">
+										<h3>{t.yourPlan}</h3>
+										<PlanBadge plan={plan} label={t.current} />
 									</div>
-									<div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-										<span style={{ fontSize: 22, fontWeight: 800 }}>{PLANS[plan].name}</span>
+									<div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+										<span style={{ fontSize: 24, fontWeight: 800 }}>{PLANS[plan].name}</span>
 										{plan !== "free" && PLANS[plan].priceMonthly != null && (
 											<span className="muted mono" style={{ fontSize: 14 }}>${PLANS[plan].priceMonthly}{t.per}</span>
 										)}
-										<PlanBadge plan={plan} label={t.current} />
 									</div>
 									<p className="muted" style={{ fontSize: 13, margin: "10px 0 14px" }}>
 										{plan === "free" ? t.planFreeNote : t.planPaidNote}
 									</p>
 									<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
 										{plan !== "free" && (
-											<a className="btn btn-ghost" href={PORTAL_URL}>{t.manageBilling}</a>
+											<a className="btn btn-ghost btn-sm" href={PORTAL_URL}>{t.manageBilling}</a>
 										)}
-										<Link className="btn btn-ghost" href={pricingHref}>{t.comparePlans}</Link>
+										<Link className="btn btn-ghost btn-sm" href={pricingHref}>{t.comparePlans}</Link>
 									</div>
-								</div>
-
-								<div className="card">
-									<div className="muted mono" style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>
-										{t.lookupTitle}
-									</div>
-									<p className="muted" style={{ fontSize: 13, margin: "0 0 10px" }}>
-										{t.lookupSub}
-									</p>
-									<RepoLookup lang={lang} />
 								</div>
 							</aside>
+						</div>
+
+						{/* look up any public repo (full width, inline result) */}
+						<div className="card" style={{ marginTop: 20 }}>
+							<div className="card-head">
+								<h3>{t.lookupTitle}</h3>
+							</div>
+							<p className="muted" style={{ fontSize: 13.5, margin: "0 0 12px" }}>
+								{t.lookupSub}
+							</p>
+							<PublicRepoLookup lang={lang} />
 						</div>
 
 						<div style={{ marginTop: 28 }}>
