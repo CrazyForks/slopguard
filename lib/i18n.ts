@@ -186,7 +186,7 @@ export const messages: Record<Lang, Messages> = {
 		nav: { how: "동작 방식", pricing: "가격", install: "설치" },
 		hero: {
 			eyebrow: "메인테이너 번아웃, 이제 그만",
-			h1a: "AI 슬롭으로부터\n당신의 ",
+			h1a: "AI 슬롭으로부터\n",
 			h1b: "레포",
 			h1c: "를 지키세요",
 			sub: "SlopGuard는 들어오는 모든 PR과 이슈를 저품질 기계생성 슬롭인지 점수로 평가하고, 출처를 태깅한 뒤 격리합니다. 닫을지 말지는 사람이 최종 결정합니다.",
@@ -264,7 +264,7 @@ export const messages: Record<Lang, Messages> = {
 			steps: [
 				"PR이나 이슈가 열리면 GitHub이 /api/webhook을 호출합니다.",
 				"에이전트가 정적 휴리스틱(보일러플레이트, 이모지 헤더, 빈 본문, 프롬프트 인젝션)과 선택적 LLM 판정을 실행합니다.",
-				"0–100점으로 채점하고 출처를 추출한 뒤 당신의 .github/SLOP_POLICY.yml을 적용합니다.",
+				"0에서 100점으로 채점하고 출처를 추출한 뒤 레포의 .github/SLOP_POLICY.yml을 적용합니다.",
 				"임계값 이상이면 slop-quarantine 라벨과 이유를 설명하는 리뷰 코멘트를 답니다.",
 				"메인테이너가 /slop approve, /slop reject, /slop false-positive로 답합니다. SlopGuard가 대신 결정하지 않습니다.",
 			],

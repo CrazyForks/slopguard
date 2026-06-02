@@ -36,7 +36,7 @@ const T = {
 		good: "참고",
 		g1a: "임계값, 라벨, 허용 목록을 조정하려면",
 		g1b: "을 추가하세요. 모든 항목은 선택입니다.",
-		g2: "결제는 Polar(Merchant of Record)가 처리합니다. 영수증 이메일의 고객 포털 링크에서 언제든 관리·해지할 수 있습니다.",
+		g2: "결제는 Polar(Merchant of Record)가 처리합니다. 영수증 이메일의 고객 포털 링크에서 언제든 관리하거나 해지할 수 있습니다.",
 		g3a: "막히면 GitHub에 이슈를 남겨주세요:",
 	},
 } as const;
@@ -63,7 +63,13 @@ export default async function CheckoutSuccess() {
 				<span className="eyebrow">
 					<span className="dot" /> {t.confirmed}
 				</span>
-				<h1 style={{ fontSize: 34, letterSpacing: "-0.02em", margin: "14px 0 10px" }}>
+				<h1
+					style={{
+						fontSize: 34,
+						letterSpacing: "-0.02em",
+						margin: "14px 0 10px",
+					}}
+				>
 					{t.title}
 				</h1>
 				<p className="muted" style={{ fontSize: 17, marginTop: 0 }}>

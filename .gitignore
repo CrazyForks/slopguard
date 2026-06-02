@@ -35,3 +35,6 @@ data/*.json
 
 # build cache
 *.tsbuildinfo
+
+# browser verification artifacts
+.playwright-cli/

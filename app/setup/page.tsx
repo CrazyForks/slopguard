@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { INSTALL_URL as HOSTED_INSTALL } from "@/lib/config";
 
 const inputStyle: React.CSSProperties = {
 	display: "block",
@@ -57,9 +56,9 @@ export default function Setup() {
 				</Link>
 				<span className="nav-links">
 					<Link href="/">Home</Link>
-					<a className="btn btn-primary" href={HOSTED_INSTALL}>
+					<Link className="btn btn-primary" href="/install">
 						Install
-					</a>
+					</Link>
 				</span>
 			</nav>
 
@@ -94,9 +93,9 @@ export default function Setup() {
 						Install the hosted app on your repo. No server, no setup. This is
 						what you want unless you specifically need to self-host.
 					</p>
-					<a className="btn btn-primary" href={HOSTED_INSTALL}>
+					<Link className="btn btn-primary" href="/install">
 						Install SlopGuard on your repo
-					</a>
+					</Link>
 				</div>
 
 				<h2 style={{ fontSize: 18, margin: "8px 0 4px" }}>Self-host setup</h2>

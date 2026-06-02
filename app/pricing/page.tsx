@@ -13,12 +13,12 @@ export default function Pricing() {
 			<nav className="nav">
 				<Link className="brand" href="/">
 					{/* eslint-disable-next-line @next/next/no-img-element */}
-					<img src="/bot-logo-512.png" alt="SlopGuard" />
+					<img src="/shield.svg" alt="SlopGuard" />
 					SlopGuard
 				</Link>
 				<span className="nav-links">
 					<a href="https://github.com/Blue-B/slopguard">GitHub</a>
-					<Link className="btn btn-primary" href="/setup">
+					<Link className="btn btn-primary" href="/install">
 						Install
 					</Link>
 				</span>
@@ -62,7 +62,7 @@ export default function Pricing() {
 									))}
 								</ul>
 								{id === "free" ? (
-									<Link className="btn btn-ghost" href="/setup">
+									<Link className="btn btn-ghost" href="/install">
 										Get started
 									</Link>
 								) : (

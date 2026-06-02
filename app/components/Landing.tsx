@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { INSTALL_URL, REPO_URL } from "@/lib/config";
+import { REPO_URL } from "@/lib/config";
 import { PLANS, PLAN_ORDER } from "@/lib/billing/plans";
 import { messages, type Lang } from "@/lib/i18n";
 import AuthNav from "./AuthNav";
@@ -61,7 +61,7 @@ const EX = {
 			"규칙 신호(보일러플레이트, 이모지 마케팅 헤더, 빈 본문, 거대한 diff, 프롬프트 인젝션)가 먼저 돌고, LLM 판정은 선택이며 레이트리밋 시 안전하게 폴백합니다.",
 			"출처 추출은 생성기 힌트, 프롬프트 지문, 누출된 어시스턴트 문구를 찾습니다. 점수는 블렌딩 후 0-100으로 보정됩니다.",
 			"임계값 아래면 아무 일도 없습니다. 이상이면 slop-quarantine 라벨과 근거가 담긴 리뷰 코멘트가 달립니다.",
-			"슬래시 명령으로 답합니다. reject는 당신의 명시적 행동으로 닫고, approve는 격리 해제, false-positive는 튜닝 이슈를 엽니다.",
+			"슬래시 명령으로 답합니다. reject는 본인이 직접 닫는 동작이고, approve는 격리를 해제하며, false-positive는 튜닝 이슈를 엽니다.",
 		],
 		quality: {
 			title: "감으로가 아니라, 측정합니다",
@@ -144,6 +144,7 @@ export default function Landing({ lang }: { lang: Lang }) {
 	const x = EX[lang];
 	const home = lang === "ko" ? "/ko" : "/";
 	const accountHref = lang === "ko" ? "/ko/account" : "/account";
+	const installHref = lang === "ko" ? "/ko/install" : "/install";
 
 	return (
 		<>
@@ -166,13 +167,6 @@ export default function Landing({ lang }: { lang: Lang }) {
 						</Link>
 					</span>
 					<AuthNav lang={lang} />
-					<a
-						className="btn btn-primary"
-						href={INSTALL_URL}
-						title={x.navInstallTitle}
-					>
-						{m.nav.install}
-					</a>
 				</span>
 			</nav>
 
@@ -188,9 +182,9 @@ export default function Landing({ lang }: { lang: Lang }) {
 					</h1>
 					<p className="sub">{m.hero.sub}</p>
 					<div className="btn-row">
-						<a className="btn btn-primary btn-lg" href={INSTALL_URL}>
+						<Link className="btn btn-primary btn-lg" href={installHref}>
 							{m.hero.ctaInstall}
-						</a>
+						</Link>
 						<a className="btn btn-ghost btn-lg" href="#how">
 							{lang === "ko" ? "동작 방식 보기" : "See how it works"}
 						</a>
@@ -308,9 +302,9 @@ export default function Landing({ lang }: { lang: Lang }) {
 									))}
 								</ul>
 								{id === "free" ? (
-									<a className="btn btn-ghost" href={INSTALL_URL}>
+									<Link className="btn btn-ghost" href={installHref}>
 										{m.pricing.getStarted}
-									</a>
+									</Link>
 								) : (
 									<a
 										className="btn btn-primary"
