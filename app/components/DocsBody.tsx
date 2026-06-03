@@ -160,71 +160,71 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 				/>
 
 				<div className="docs-layout">
-				<aside className="docs-side">
-					<DocsToc
-						items={[
-							{ id: "quickstart", label: t.quickTitle },
-							{ id: "commands", label: t.cmdTitle },
-							{ id: "scoring", label: t.scoreTitle },
-							{ id: "config", label: t.cfgTitle },
-						]}
-					/>
-				</aside>
-				<div className="docs-content">
-				<section id="quickstart" className="docs-section">
-					<h2>{t.quickTitle}</h2>
-					<p>{t.quick}</p>
-					<Link className="btn btn-primary" href={installHref}>
-						{t.cta}
-					</Link>
-				</section>
+					<aside className="docs-side">
+						<DocsToc
+							items={[
+								{ id: "quickstart", label: t.quickTitle },
+								{ id: "commands", label: t.cmdTitle },
+								{ id: "scoring", label: t.scoreTitle },
+								{ id: "config", label: t.cfgTitle },
+							]}
+						/>
+					</aside>
+					<div className="docs-content">
+						<section id="quickstart" className="docs-section">
+							<h2>{t.quickTitle}</h2>
+							<p>{t.quick}</p>
+							<Link className="btn btn-primary" href={installHref}>
+								{t.cta}
+							</Link>
+						</section>
 
-				<section id="commands" className="docs-section">
-					<h2>{t.cmdTitle}</h2>
-					<p>{t.cmdLead}</p>
-					<dl className="docs-cmds">
-						{t.cmds.map(([c, d]) => (
-							<div key={c}>
-								<dt>
-									<code>{c}</code>
-								</dt>
-								<dd>{d}</dd>
-							</div>
-						))}
-					</dl>
-				</section>
+						<section id="commands" className="docs-section">
+							<h2>{t.cmdTitle}</h2>
+							<p>{t.cmdLead}</p>
+							<dl className="docs-cmds">
+								{t.cmds.map(([c, d]) => (
+									<div key={c}>
+										<dt>
+											<code>{c}</code>
+										</dt>
+										<dd>{d}</dd>
+									</div>
+								))}
+							</dl>
+						</section>
 
-				<section id="scoring" className="docs-section">
-					<h2>{t.scoreTitle}</h2>
-					<p>
-						{t.score} <Link href={howHref}>{t.scoreLink}</Link>
-						{t.scoreTail}
-					</p>
-				</section>
+						<section id="scoring" className="docs-section">
+							<h2>{t.scoreTitle}</h2>
+							<p>
+								{t.score} <Link href={howHref}>{t.scoreLink}</Link>
+								{t.scoreTail}
+							</p>
+						</section>
 
-				<section id="config" className="docs-section">
-					<h2>{t.cfgTitle}</h2>
-					<p>{t.cfg}</p>
-					<pre className="docs-code">
-						<code>{EXAMPLE_YML}</code>
-					</pre>
-					<h3>{t.optsTitle}</h3>
-					<dl className="docs-opts">
-						{t.opts.map(([k, d]) => (
-							<div key={k}>
-								<dt>
-									<code>{k}</code>
-								</dt>
-								<dd>{d}</dd>
-							</div>
-						))}
-					</dl>
-					<p className="docs-links">
-						<a href={exampleUrl}>{t.fullEx}</a>
-						<a href={REPO_URL}>{t.selfhost}</a>
-					</p>
-				</section>
-				</div>
+						<section id="config" className="docs-section">
+							<h2>{t.cfgTitle}</h2>
+							<p>{t.cfg}</p>
+							<pre className="docs-code">
+								<code>{EXAMPLE_YML}</code>
+							</pre>
+							<h3>{t.optsTitle}</h3>
+							<dl className="docs-opts">
+								{t.opts.map(([k, d]) => (
+									<div key={k}>
+										<dt>
+											<code>{k}</code>
+										</dt>
+										<dd>{d}</dd>
+									</div>
+								))}
+							</dl>
+							<p className="docs-links">
+								<a href={exampleUrl}>{t.fullEx}</a>
+								<a href={REPO_URL}>{t.selfhost}</a>
+							</p>
+						</section>
+					</div>
 				</div>
 			</main>
 			<SiteFooter lang={lang} />
