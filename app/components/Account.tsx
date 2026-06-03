@@ -189,14 +189,8 @@ export default async function Account({
 			<main className="wide" style={{ maxWidth: 1040, paddingTop: 44 }}>
 				{!session || !plan ? (
 					<div style={{ maxWidth: 480 }}>
-						<span className="eyebrow">account</span>
-						<h1
-							style={{
-								fontSize: 32,
-								letterSpacing: "-0.02em",
-								margin: "14px 0 8px",
-							}}
-						>
+						<span className="eyebrow">{lang === "ko" ? "마이페이지" : "account"}</span>
+						<h1 className="page-h1" style={{ margin: "12px 0 10px" }}>
 							{t.signedOutTitle}
 						</h1>
 						<p className="muted" style={{ marginTop: 0 }}>
@@ -218,13 +212,7 @@ export default async function Account({
 					</div>
 				) : (
 					<>
-						<h1
-							style={{
-								fontSize: 28,
-								letterSpacing: "-0.02em",
-								margin: "0 0 18px",
-							}}
-						>
+						<h1 className="page-h1" style={{ margin: "0 0 20px" }}>
 							{t.myAccount}
 						</h1>
 
