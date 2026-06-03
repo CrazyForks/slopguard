@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { REPO_URL } from "@/lib/config";
 import { messages, type Lang } from "@/lib/i18n";
-import AuthNav from "./AuthNav";
-import PricingPlans from "./PricingPlans";
+import MarketingNav from "./MarketingNav";
 
 // Section copy that lives outside the core i18n catalogue (added later).
-const EX = {
+export const EX = {
 	en: {
 		ctaNote:
 			"Adds SlopGuard to a repo or org on GitHub. One click, no config, free for public repos.",
@@ -246,7 +245,7 @@ const EX = {
 	},
 } as const;
 
-type PipeNode = {
+export type PipeNode = {
 	k: string;
 	t: string;
 	d?: string;
@@ -299,34 +298,12 @@ function ScoreRing({ score }: { score: number }) {
 export default function Landing({ lang }: { lang: Lang }) {
 	const m = messages[lang];
 	const x = EX[lang];
-	const home = lang === "ko" ? "/ko" : "/";
 	const accountHref = lang === "ko" ? "/ko/account" : "/account";
 	const installHref = lang === "ko" ? "/ko/install" : "/install";
 
 	return (
 		<>
-			<nav className="nav">
-				<Link className="brand" href={home}>
-					{/* eslint-disable-next-line @next/next/no-img-element */}
-					<img src="/shield.svg" alt="SlopGuard" />
-					SlopGuard
-				</Link>
-				<span className="nav-links">
-					<a href="#what">{lang === "ko" ? "슬롭이란?" : "What is slop"}</a>
-					<a href="#how">{m.nav.how}</a>
-					<a href="#pricing">{m.nav.pricing}</a>
-					<a href={REPO_URL}>GitHub</a>
-					<span className="lang-switch">
-						<Link className={lang === "en" ? "on" : ""} href="/">
-							EN
-						</Link>
-						<Link className={lang === "ko" ? "on" : ""} href="/ko">
-							KO
-						</Link>
-					</span>
-					<AuthNav lang={lang} />
-				</span>
-			</nav>
+			<MarketingNav lang={lang} enHref="/" koHref="/ko" />
 
 			<header className="hero">
 				<div>
@@ -343,9 +320,12 @@ export default function Landing({ lang }: { lang: Lang }) {
 						<Link className="btn btn-primary btn-lg" href={installHref}>
 							{m.hero.ctaInstall}
 						</Link>
-						<a className="btn btn-ghost btn-lg" href="#how">
+						<Link
+							className="btn btn-ghost btn-lg"
+							href={lang === "ko" ? "/ko/how-it-works" : "/how-it-works"}
+						>
 							{lang === "ko" ? "동작 방식 보기" : "See how it works"}
-						</a>
+						</Link>
 					</div>
 					<p className="cta-note">{x.ctaNote}</p>
 					<p className="fineprint">{m.hero.fine}</p>
@@ -464,60 +444,6 @@ export default function Landing({ lang }: { lang: Lang }) {
 				</div>
 			</section>
 
-			<section id="pricing" className="wide section">
-				<h2 className="section-title">{m.pricing.title}</h2>
-				<p className="section-sub">{m.pricing.sub}</p>
-				<PricingPlans lang={lang} />
-				<p className="section-sub" style={{ marginTop: 18, fontSize: 13 }}>
-					{m.pricing.note}
-				</p>
-			</section>
-
-			<section id="how" className="wide section">
-				<h2 className="section-title">{m.how.title}</h2>
-				<p className="section-sub">{x.pipeline.intro}</p>
-				<div className="pipe">
-					{x.pipeline.nodes.map((node, i) => {
-						const n = node as PipeNode;
-						const last = i === x.pipeline.nodes.length - 1;
-						return (
-							<div className="pipe-step" key={n.k}>
-								<div className={`pipe-node${n.sigs ? " pipe-engine" : ""}`}>
-									<span className="pipe-k">{n.k}</span>
-									<b className="pipe-t">{n.t}</b>
-									{n.d && <p className="pipe-d">{n.d}</p>}
-									{n.sigs && (
-										<div className="pipe-sigs">
-											{n.sigs.map((s) => (
-												<div className="pipe-sig" key={s}>
-													<span className="pipe-dot" />
-													<span>{s}</span>
-												</div>
-											))}
-											<div className="pipe-score">{n.score}</div>
-										</div>
-									)}
-									{n.branch && (
-										<div className="pipe-branch">
-											<span className="b-clean">{n.branch[0]}</span>
-											<span className="b-flag">{n.branch[1]}</span>
-										</div>
-									)}
-									{n.tags && (
-										<div className="pipe-tags">
-											{n.tags.map((tg) => (
-												<code key={tg}>{tg}</code>
-											))}
-										</div>
-									)}
-								</div>
-								{!last && <span className="pipe-arrow" aria-hidden="true" />}
-							</div>
-						);
-					})}
-				</div>
-			</section>
-
 			<section className="wide section">
 				<h2 className="section-title">{m.features.title}</h2>
 				<p className="section-sub">{m.features.sub}</p>
@@ -529,6 +455,28 @@ export default function Landing({ lang }: { lang: Lang }) {
 							<p>{f.d}</p>
 						</div>
 					))}
+				</div>
+			</section>
+
+			<section className="wide section cta-band">
+				<h2 className="section-title">
+					{lang === "ko"
+						? "메인테이너 시간을 슬롭에 빼앗기지 마세요"
+						: "Stop losing maintainer time to slop"}
+				</h2>
+				<div
+					className="btn-row"
+					style={{ justifyContent: "center", marginTop: 8 }}
+				>
+					<Link className="btn btn-primary btn-lg" href={installHref}>
+						{m.hero.ctaInstall}
+					</Link>
+					<Link
+						className="btn btn-ghost btn-lg"
+						href={lang === "ko" ? "/ko/how-it-works" : "/how-it-works"}
+					>
+						{lang === "ko" ? "동작 방식" : "How it works"}
+					</Link>
 				</div>
 			</section>
 
@@ -549,8 +497,12 @@ export default function Landing({ lang }: { lang: Lang }) {
 					</div>
 					<div className="footer-col">
 						<h4>{x.footer.product}</h4>
-						<a href="#how">{x.footer.links.how}</a>
-						<a href="#pricing">{x.footer.links.pricing}</a>
+						<Link href={lang === "ko" ? "/ko/how-it-works" : "/how-it-works"}>
+							{x.footer.links.how}
+						</Link>
+						<Link href={lang === "ko" ? "/ko/pricing" : "/pricing"}>
+							{x.footer.links.pricing}
+						</Link>
 						<a href="#demo">{x.footer.links.demo}</a>
 						<Link href={accountHref}>{x.footer.links.account}</Link>
 					</div>

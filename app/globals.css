@@ -636,7 +636,9 @@ footer.site {
 	color: var(--fg);
 	cursor: pointer;
 	font: inherit;
-	transition: border-color 0.12s ease, background 0.12s ease;
+	transition:
+		border-color 0.12s ease,
+		background 0.12s ease;
 }
 .profile-trigger:hover {
 	border-color: #6e7681;
@@ -712,6 +714,54 @@ footer.site {
 	.profile-name {
 		display: none;
 	}
+}
+
+/* marketing nav: compact install CTA + active link state */
+.nav-cta {
+	padding: 7px 15px;
+	font-size: 13px;
+}
+.nav-links > a.on {
+	color: var(--fg);
+}
+
+/* landing closing call-to-action band */
+.cta-band {
+	text-align: center;
+}
+
+/* how-it-works: numbered step-by-step list */
+.how-steps {
+	list-style: none;
+	max-width: 760px;
+	margin: 18px auto 0;
+	padding: 0;
+	display: grid;
+	gap: 12px;
+}
+.how-steps li {
+	display: flex;
+	gap: 14px;
+	align-items: flex-start;
+	background: var(--surface);
+	border: 1px solid var(--border-muted);
+	border-radius: 10px;
+	padding: 14px 16px;
+	font-size: 14px;
+	line-height: 1.6;
+}
+.how-step-n {
+	flex: 0 0 auto;
+	width: 24px;
+	height: 24px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: var(--green-dim);
+	color: var(--green);
+	font-size: 12px;
+	font-weight: 700;
 }
 
 /* mobile: prevent nav overflow + protect long words */

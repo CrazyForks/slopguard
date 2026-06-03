@@ -15,8 +15,18 @@ interface Me {
 const PORTAL_URL = "https://polar.sh/slopguard/portal";
 
 const L = {
-	en: { signin: "Sign in", account: "Account", billing: "Billing", out: "Sign out" },
-	ko: { signin: "로그인", account: "마이페이지", billing: "결제 관리", out: "로그아웃" },
+	en: {
+		signin: "Sign in",
+		account: "Account",
+		billing: "Billing",
+		out: "Sign out",
+	},
+	ko: {
+		signin: "로그인",
+		account: "마이페이지",
+		billing: "결제 관리",
+		out: "로그아웃",
+	},
 } as const;
 
 /**
@@ -42,7 +52,8 @@ export default function ProfileMenu({ lang }: { lang: Lang }) {
 
 	useEffect(() => {
 		function onDoc(e: MouseEvent) {
-			if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+			if (ref.current && !ref.current.contains(e.target as Node))
+				setOpen(false);
 		}
 		function onKey(e: KeyboardEvent) {
 			if (e.key === "Escape") setOpen(false);
