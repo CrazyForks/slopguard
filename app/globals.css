@@ -152,12 +152,69 @@ code {
 	transform: translateY(1px);
 }
 .btn-primary {
-	background: var(--green-btn);
+	position: relative;
+	overflow: hidden;
+	background: linear-gradient(180deg, #2ea043 0%, var(--green-btn) 100%);
 	color: #ffffff;
-	border-color: rgba(240, 246, 252, 0.1);
+	border-color: rgba(255, 255, 255, 0.16);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.2),
+		0 1px 2px rgba(0, 0, 0, 0.4);
+	transition:
+		background 0.15s ease,
+		box-shadow 0.2s ease,
+		transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* moving sheen = the 'draw you in' feel */
+.btn-primary::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		110deg,
+		transparent 30%,
+		rgba(255, 255, 255, 0.22) 50%,
+		transparent 70%
+	);
+	transform: translateX(-130%);
+	transition: transform 0.6s ease;
+	pointer-events: none;
 }
 .btn-primary:hover {
-	background: var(--green-btn-hover);
+	background: linear-gradient(180deg, #3fb950 0%, #2ea043 100%);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.26),
+		0 8px 22px rgba(35, 134, 54, 0.4);
+	transform: translateY(-2px);
+}
+.btn-primary:hover::before {
+	transform: translateX(130%);
+}
+.btn-primary:active {
+	transform: translateY(0);
+	box-shadow:
+		inset 0 2px 4px rgba(0, 0, 0, 0.3),
+		0 1px 2px rgba(0, 0, 0, 0.4);
+}
+/* large CTAs get an arrow that slides on hover */
+.btn-lg.btn-primary::after {
+	content: "→";
+	font-size: 1.05em;
+	transform: translateX(0);
+	transition: transform 0.18s ease;
+}
+.btn-lg.btn-primary:hover::after {
+	transform: translateX(5px);
+}
+@media (prefers-reduced-motion: reduce) {
+	.btn-primary,
+	.btn-primary::before,
+	.btn-primary::after {
+		transition: none;
+	}
+	.btn-primary:hover {
+		transform: none;
+	}
 }
 .btn-ghost {
 	background: var(--surface);
@@ -2523,21 +2580,38 @@ footer.site.footer-app {
 .account-grid {
 	display: grid;
 	grid-template-columns: 1.7fr 1fr;
-	gap: 20px;
+	gap: 56px;
 	align-items: start;
 }
 @media (max-width: 900px) {
 	.account-grid {
 		grid-template-columns: 1fr;
+		gap: 40px;
 	}
 }
 .account-side {
 	display: grid;
-	gap: 16px;
+	gap: 40px;
 	align-content: start;
 }
-.account-side .card,
-.account-main .card {
+.account-profile.card {
+	background: transparent;
+	border: 0;
+	border-bottom: 1px solid var(--border);
+	border-radius: 0;
+	padding: 0 0 24px;
+	margin-bottom: 36px;
+}
+.account-main {
+	display: grid;
+	gap: 40px;
+}
+.account-main > .card,
+.account-side > .card {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	padding: 0;
 	margin: 0;
 }
 
@@ -2553,7 +2627,9 @@ footer.site.footer-app {
 	align-items: baseline;
 	justify-content: space-between;
 	gap: 10px;
-	margin-bottom: 14px;
+	margin-bottom: 16px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--border-muted);
 }
 .card-head h3 {
 	margin: 0;
@@ -2747,8 +2823,15 @@ footer.site.footer-app {
 
 /* Full-width public-repo lookup on the account page: a comfortable search bar,
  * with the results (stat strip + items) spanning the whole card. */
+.lookup-section.card {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	padding: 36px 0 0;
+	border-top: 1px solid var(--border);
+}
 .lookup-section {
-	margin-top: 20px;
+	margin-top: 40px;
 }
 .lookup-section-sub {
 	font-size: 13.5px;

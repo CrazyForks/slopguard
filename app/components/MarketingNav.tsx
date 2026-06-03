@@ -13,11 +13,14 @@ export default function MarketingNav({
 	enHref,
 	koHref,
 	active,
+	hideInstall,
 }: {
 	lang: Lang;
 	enHref: string;
 	koHref: string;
 	active?: "how" | "pricing" | "docs";
+	/** hide the nav install CTA when the page already has a prominent one */
+	hideInstall?: boolean;
 }) {
 	const ko = lang === "ko";
 	const home = ko ? "/ko" : "/";
@@ -58,9 +61,11 @@ export default function MarketingNav({
 						KO
 					</Link>
 				</span>
-				<Link className="btn btn-primary nav-cta" href={install}>
-					{t.install}
-				</Link>
+				{!hideInstall && (
+					<Link className="btn btn-primary nav-cta" href={install}>
+						{t.install}
+					</Link>
+				)}
 				<ProfileMenu lang={lang} />
 			</span>
 		</nav>

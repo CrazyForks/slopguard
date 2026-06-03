@@ -307,7 +307,7 @@ export default function Landing({ lang }: { lang: Lang }) {
 
 	return (
 		<>
-			<MarketingNav lang={lang} enHref="/" koHref="/ko" />
+			<MarketingNav lang={lang} enHref="/" koHref="/ko" hideInstall />
 			<RevealOnScroll />
 
 			<header className="hero">
@@ -489,8 +489,7 @@ export default function Landing({ lang }: { lang: Lang }) {
 						</figcaption>
 						<div className="case-grid" aria-hidden="true">
 							{Array.from({ length: 25 }).map((_, i) => {
-								const cls =
-									i < 12 ? "caught" : i === 12 ? "miss" : "passed";
+								const cls = i < 12 ? "caught" : i === 12 ? "miss" : "passed";
 								return <span key={i} className={`case ${cls}`} />;
 							})}
 						</div>
