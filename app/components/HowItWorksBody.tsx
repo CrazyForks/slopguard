@@ -5,6 +5,7 @@ import MarketingNav from "./MarketingNav";
 import PageHero from "./PageHero";
 import RevealOnScroll from "./RevealOnScroll";
 import HowPipeline from "./HowPipeline";
+import SlopMeter from "./SlopMeter";
 import SiteFooter from "./SiteFooter";
 
 /** Dedicated /how-it-works page body, shared by the EN and KO routes. */
@@ -52,6 +53,26 @@ export default function HowItWorksBody({ lang }: { lang: Lang }) {
 
 				<div style={{ marginTop: 40 }}>
 					<HowPipeline lang={lang} />
+				</div>
+
+				<h2 className="section-title" style={{ marginTop: 56 }}>
+					{ko ? "임계값은 당신이 정합니다" : "You set the threshold"}
+				</h2>
+				<div style={{ maxWidth: 760, margin: "16px auto 0" }}>
+					<figure className="plate">
+						<figcaption className="plate-bar">
+							<span>
+								//{" "}
+								{ko
+									? "라이브 데모: 슬롭 점수 게이트"
+									: "live demo: the slop-score gate"}
+							</span>
+							<span>fig.02</span>
+						</figcaption>
+						<div className="plate-body">
+							<SlopMeter lang={lang} />
+						</div>
+					</figure>
 				</div>
 
 				<h2 className="section-title" style={{ marginTop: 56 }}>

@@ -7,6 +7,7 @@ const F = {
 		tag: "AI-slop triage for GitHub maintainers. It labels and comments, never auto-closes a real contributor.",
 		how: "How it works",
 		pricing: "Pricing",
+		docs: "Docs",
 		install: "Install",
 		policy: "SLOP_POLICY.yml",
 		issues: "Issues",
@@ -16,6 +17,7 @@ const F = {
 		tag: "GitHub 메인테이너를 위한 AI 슬롭 분류. 라벨과 코멘트만 달고, 진짜 기여자를 자동으로 닫지 않습니다.",
 		how: "동작 방식",
 		pricing: "가격",
+		docs: "문서",
 		install: "설치",
 		policy: "SLOP_POLICY.yml",
 		issues: "이슈",
@@ -42,7 +44,7 @@ function GitHubMark() {
  * landing's multi-column footer. */
 export default function SiteFooter({ lang = "en" }: { lang?: Lang }) {
 	const f = F[lang];
-	const home = lang === "ko" ? "/ko" : "/";
+	const p = lang === "ko" ? "/ko" : "";
 	const install = lang === "ko" ? "/ko/install" : "/install";
 	return (
 		<footer className="site footer-app">
@@ -54,8 +56,9 @@ export default function SiteFooter({ lang = "en" }: { lang?: Lang }) {
 				</span>
 				<p className="footer-app-tag">{f.tag}</p>
 				<nav className="footer-app-links">
-					<a href={`${home}#how`}>{f.how}</a>
-					<a href={`${home}#pricing`}>{f.pricing}</a>
+					<Link href={`${p}/how-it-works`}>{f.how}</Link>
+					<Link href={`${p}/pricing`}>{f.pricing}</Link>
+					<Link href={`${p}/docs`}>{f.docs}</Link>
 					<Link href={install}>{f.install}</Link>
 					<a href={`${REPO_URL}/blob/main/.github/SLOP_POLICY.example.yml`}>
 						{f.policy}
