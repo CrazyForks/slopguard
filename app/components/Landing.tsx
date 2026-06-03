@@ -375,13 +375,25 @@ export default function Landing({ lang }: { lang: Lang }) {
 			<section id="what" className="wide section">
 				<h2 className="section-title">{x.slop.title}</h2>
 				<p className="section-sub">{x.slop.body}</p>
-				<div className="grid">
-					{x.slop.points.map((p) => (
-						<div className="card feature" key={p.t}>
-							<div className="ico mono">{p.ico}</div>
-							<h3>{p.t}</h3>
-							<p>{p.d}</p>
-						</div>
+				<div className="slop-grid">
+					{x.slop.points.map((p, i) => (
+						<figure className="slop-card" key={p.t}>
+							<div className="slop-art">
+								{/* eslint-disable-next-line @next/next/no-img-element */}
+								<img
+									src={
+										["/art-legit.png", "/art-time.png", "/art-bulk.png"][i]
+									}
+									alt=""
+									loading="lazy"
+								/>
+								<span className="slop-tag mono">{p.ico}</span>
+							</div>
+							<figcaption>
+								<h3>{p.t}</h3>
+								<p>{p.d}</p>
+							</figcaption>
+						</figure>
 					))}
 				</div>
 			</section>
@@ -472,6 +484,10 @@ export default function Landing({ lang }: { lang: Lang }) {
 						{lang === "ko" ? "동작 방식" : "How it works"}
 					</Link>
 				</div>
+			</section>
+
+			<section className="wordmark-band" aria-hidden="true">
+				<span>SlopGuard</span>
 			</section>
 
 			<footer className="site footer-rich">
