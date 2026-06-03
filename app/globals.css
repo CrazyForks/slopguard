@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap");
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
 :root {
 	--bg: #0d1117;
 	--surface: #161b22;
@@ -17,6 +20,9 @@
 	--mono:
 		ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
 		monospace;
+	--serif:
+		"Fraunces", "Pretendard Variable", Pretendard, Georgia, "Times New Roman",
+		serif;
 }
 
 * {
@@ -30,10 +36,14 @@ body {
 	background: var(--bg);
 	color: var(--fg);
 	font-family:
-		ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-		"Helvetica Neue", Arial, sans-serif;
+		"Pretendard Variable", Pretendard, ui-sans-serif, system-ui,
+		-apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	line-height: 1.55;
 	-webkit-font-smoothing: antialiased;
+}
+h1 {
+	font-family: var(--serif);
+	font-weight: 600;
 }
 a {
 	color: var(--blue);
@@ -187,29 +197,23 @@ code {
 .eyebrow {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
 	font-family: var(--mono);
 	font-size: 12px;
-	color: var(--green);
-	background: var(--green-dim);
-	border: 1px solid rgba(63, 185, 80, 0.32);
-	border-radius: 999px;
-	padding: 4px 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--muted);
 	margin-bottom: 22px;
 }
 .eyebrow .dot {
-	width: 7px;
-	height: 7px;
-	border-radius: 50%;
-	background: var(--green);
-	box-shadow: 0 0 8px var(--green);
+	display: none;
 }
 .hero h1 {
-	font-size: 50px;
-	line-height: 1.04;
+	font-family: var(--serif);
+	font-size: 54px;
+	line-height: 1.02;
 	margin: 0 0 18px;
-	letter-spacing: -0.03em;
-	font-weight: 800;
+	letter-spacing: -0.02em;
+	font-weight: 600;
 	white-space: pre-line;
 }
 .hero h1 .hl {
@@ -234,11 +238,9 @@ code {
 }
 .hero-emblem img {
 	width: 100%;
-	max-width: 460px;
+	max-width: 500px;
 	height: auto;
-	border-radius: 18px;
-	border: 1px solid var(--border-muted);
-	mask-image: radial-gradient(120% 120% at 50% 45%, #000 60%, transparent 100%);
+	mask-image: radial-gradient(115% 115% at 50% 45%, #000 56%, transparent 100%);
 }
 
 /* ── Stats strip ─────────────────────────────────────── */
@@ -280,10 +282,11 @@ code {
 }
 .section-title {
 	text-align: center;
-	font-size: 30px;
-	letter-spacing: -0.02em;
+	font-family: var(--serif);
+	font-size: 33px;
+	letter-spacing: -0.01em;
 	margin: 0 0 8px;
-	font-weight: 800;
+	font-weight: 600;
 }
 .section-sub {
 	text-align: center;
@@ -848,8 +851,25 @@ footer.site {
 	margin-top: 18px;
 }
 .docs-links a {
-	color: var(--green);
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: var(--surface);
+	color: var(--fg);
 	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	transition:
+		border-color 0.12s ease,
+		background 0.12s ease;
+}
+.docs-links a:hover {
+	border-color: #6e7681;
+	background: var(--surface-2);
+	text-decoration: none;
 }
 @media (max-width: 560px) {
 	.docs-cmds > div,

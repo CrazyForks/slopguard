@@ -41,16 +41,28 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 				h1: "SlopGuard 문서",
 				sub: "설치, 슬래시 명령, 점수, 그리고 .github/SLOP_POLICY.yml로 동작을 바꾸는 방법입니다.",
 				quickTitle: "빠른 시작",
-				quick: "GitHub 앱을 레포나 조직에 설치하면 끝입니다. 공개 레포는 무료이고, 설정 파일 없이 기본값으로 바로 동작합니다. 새 PR이나 이슈가 들어오면 점수를 매기고, 임계값 이상이면 slop-quarantine 라벨과 근거 코멘트를 답니다. 절대 자동으로 닫지 않습니다.",
+				quick:
+					"GitHub 앱을 레포나 조직에 설치하면 끝입니다. 공개 레포는 무료이고, 설정 파일 없이 기본값으로 바로 동작합니다. 새 PR이나 이슈가 들어오면 점수를 매기고, 임계값 이상이면 slop-quarantine 라벨과 근거 코멘트를 답니다. 절대 자동으로 닫지 않습니다.",
 				cmdTitle: "슬래시 명령",
-				cmdLead: "메인테이너는 코멘트로 답합니다. 모든 동작은 사람이 결정합니다.",
+				cmdLead:
+					"메인테이너는 코멘트로 답합니다. 모든 동작은 사람이 결정합니다.",
 				cmds: [
-					["/slop approve", "격리를 해제하고 정상 기여로 표시합니다 (slop-cleared)."],
-					["/slop reject", "본인이 직접 닫는 동작입니다. AI 슬롭으로 판단해 PR을 닫습니다."],
-					["/slop false-positive", "오탐을 알리는 튜닝 이슈를 열고 격리를 해제합니다."],
+					[
+						"/slop approve",
+						"격리를 해제하고 정상 기여로 표시합니다 (slop-cleared).",
+					],
+					[
+						"/slop reject",
+						"본인이 직접 닫는 동작입니다. AI 슬롭으로 판단해 PR을 닫습니다.",
+					],
+					[
+						"/slop false-positive",
+						"오탐을 알리는 튜닝 이슈를 열고 격리를 해제합니다.",
+					],
 				],
 				scoreTitle: "점수와 임계값",
-				score: "모든 기여는 0(깨끗)에서 100(거의 확실한 슬롭) 사이 점수를 받습니다. 기본값으로 50 이상이면 격리, 85 이상이면 코멘트를 더 강하게 표현합니다. 점수가 어떻게 나오는지는",
+				score:
+					"모든 기여는 0(깨끗)에서 100(거의 확실한 슬롭) 사이 점수를 받습니다. 기본값으로 50 이상이면 격리, 85 이상이면 코멘트를 더 강하게 표현합니다. 점수가 어떻게 나오는지는",
 				scoreLink: "동작 방식",
 				scoreTail: "에서 볼 수 있습니다.",
 				cfgTitle: "SLOP_POLICY.yml 설정",
@@ -77,16 +89,25 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 				h1: "SlopGuard documentation",
 				sub: "Install, slash commands, scoring, and how to change behavior with .github/SLOP_POLICY.yml.",
 				quickTitle: "Quick start",
-				quick: "Install the GitHub App on a repo or org and you are done. Public repos are free and it works out of the box with no config. New PRs and issues get scored; at or above the threshold it adds the slop-quarantine label and a review comment with the reasons. It never auto-closes.",
+				quick:
+					"Install the GitHub App on a repo or org and you are done. Public repos are free and it works out of the box with no config. New PRs and issues get scored; at or above the threshold it adds the slop-quarantine label and a review comment with the reasons. It never auto-closes.",
 				cmdTitle: "Slash commands",
-				cmdLead: "Maintainers reply with a comment. Every action stays with a human.",
+				cmdLead:
+					"Maintainers reply with a comment. Every action stays with a human.",
 				cmds: [
-					["/slop approve", "Clears the quarantine and marks it a real contribution (slop-cleared)."],
+					[
+						"/slop approve",
+						"Clears the quarantine and marks it a real contribution (slop-cleared).",
+					],
 					["/slop reject", "Your explicit action: closes the PR as AI slop."],
-					["/slop false-positive", "Opens a tuning issue and clears the quarantine."],
+					[
+						"/slop false-positive",
+						"Opens a tuning issue and clears the quarantine.",
+					],
 				],
 				scoreTitle: "Scoring and thresholds",
-				score: "Every contribution gets a score from 0 (clean) to 100 (almost certainly slop). By default 50+ is quarantined and 85+ is phrased more strongly. For how the score is built, see",
+				score:
+					"Every contribution gets a score from 0 (clean) to 100 (almost certainly slop). By default 50+ is quarantined and 85+ is phrased more strongly. For how the score is built, see",
 				scoreLink: "How it works",
 				scoreTail: ".",
 				cfgTitle: "SLOP_POLICY.yml configuration",
@@ -96,11 +117,20 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 					["enabled", "Master switch to pause SlopGuard without uninstalling."],
 					["scan", "Whether to scan pull requests, issues, or both."],
 					["thresholds", "The quarantine and high_confidence score cutoffs."],
-					["labels", "Names for the quarantine, cleared, and high-confidence labels."],
+					[
+						"labels",
+						"Names for the quarantine, cleared, and high-confidence labels.",
+					],
 					["allowlist", "Skip trusted authors or paths (globs) entirely."],
-					["heuristics", "Rule-score weight (0-1). Tune to reduce false positives."],
+					[
+						"heuristics",
+						"Rule-score weight (0-1). Tune to reduce false positives.",
+					],
 					["llm", "Whether to use the LLM judge and the provider order."],
-					["comment_template", "The PR comment format. Supports variables like {{score}}."],
+					[
+						"comment_template",
+						"The PR comment format. Supports variables like {{score}}.",
+					],
 					["notify", "Slack/Discord/webhook alerts on quarantine (Team plan)."],
 				],
 				fullEx: "See the full example",
@@ -122,10 +152,19 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 					<span className="eyebrow">
 						<span className="dot" /> {t.eyebrow}
 					</span>
-					<h1 style={{ fontSize: 34, letterSpacing: "-0.02em", margin: "12px 0 0" }}>
+					<h1
+						style={{
+							fontSize: 34,
+							letterSpacing: "-0.02em",
+							margin: "12px 0 0",
+						}}
+					>
 						{t.h1}
 					</h1>
-					<p className="section-sub" style={{ textAlign: "left", margin: "10px 0 0" }}>
+					<p
+						className="section-sub"
+						style={{ textAlign: "left", margin: "10px 0 0" }}
+					>
 						{t.sub}
 					</p>
 				</header>

@@ -332,7 +332,7 @@ export default function Landing({ lang }: { lang: Lang }) {
 				</div>
 				<div className="hero-emblem">
 					{/* eslint-disable-next-line @next/next/no-img-element */}
-					<img src="/hero-emblem.png" alt={m.hero.emblemAlt} />
+					<img src="/hero-art.png" alt={m.hero.emblemAlt} />
 				</div>
 			</header>
 
