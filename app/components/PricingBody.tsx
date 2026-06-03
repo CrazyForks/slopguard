@@ -2,6 +2,7 @@ import { REPO_URL } from "@/lib/config";
 import type { Lang } from "@/lib/i18n";
 import MarketingNav from "./MarketingNav";
 import PageHero from "./PageHero";
+import RevealOnScroll from "./RevealOnScroll";
 import PricingPlans from "./PricingPlans";
 import SiteFooter from "./SiteFooter";
 
@@ -37,6 +38,7 @@ export default function PricingBody({ lang }: { lang: Lang }) {
 				koHref="/ko/pricing"
 				active="pricing"
 			/>
+			<RevealOnScroll />
 			<PageHero
 				path={ko ? "// slopguard.app/ko/pricing" : "// slopguard.app/pricing"}
 				eyebrow={t.eyebrow}

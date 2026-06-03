@@ -2,6 +2,9 @@ import Link from "next/link";
 import { REPO_URL } from "@/lib/config";
 import { messages, type Lang } from "@/lib/i18n";
 import MarketingNav from "./MarketingNav";
+import Reveal from "./Reveal";
+import RevealOnScroll from "./RevealOnScroll";
+import SlopMeter from "./SlopMeter";
 
 // Section copy that lives outside the core i18n catalogue (added later).
 export const EX = {
@@ -304,11 +307,17 @@ export default function Landing({ lang }: { lang: Lang }) {
 	return (
 		<>
 			<MarketingNav lang={lang} enHref="/" koHref="/ko" />
+			<RevealOnScroll />
 
 			<header className="hero">
 				<div className="hero-inner">
 					<div className="mono-rule">
-						<span>// {lang === "ko" ? "깃허브 메인테이너를 위한 슬롭 트리아지" : "AI-slop triage for GitHub maintainers"}</span>
+						<span>
+							//{" "}
+							{lang === "ko"
+								? "깃허브 메인테이너를 위한 슬롭 트리아지"
+								: "AI-slop triage for GitHub maintainers"}
+						</span>
 						<span className="mono-rule-end">[ slopguard ]</span>
 					</div>
 					<span className="eyebrow">{m.hero.eyebrow}</span>
@@ -331,17 +340,26 @@ export default function Landing({ lang }: { lang: Lang }) {
 					</div>
 					<p className="cta-note">{x.ctaNote}</p>
 				</div>
-				<figure className="plate hero-plate">
-					<figcaption className="plate-bar">
-						<span>
-							// {lang === "ko" ? "밀려오는 AI 슬롭의 파도" : "the rising tide of AI slop"}
-						</span>
-						<span>fig.01</span>
-					</figcaption>
-					{/* eslint-disable-next-line @next/next/no-img-element */}
-					<img src="/wave-circuit.png" alt={m.hero.emblemAlt} />
-				</figure>
 			</header>
+
+			<section className="wide meter-section">
+				<Reveal>
+					<figure className="plate">
+						<figcaption className="plate-bar">
+							<span>
+								//{" "}
+								{lang === "ko"
+									? "라이브 데모: 슬롭 점수 게이트"
+									: "live demo: the slop-score gate"}
+							</span>
+							<span>fig.01</span>
+						</figcaption>
+						<div className="plate-body">
+							<SlopMeter lang={lang} />
+						</div>
+					</figure>
+				</Reveal>
+			</section>
 
 			<section className="wide section">
 				<h2 className="section-title">{m.verdict.title}</h2>

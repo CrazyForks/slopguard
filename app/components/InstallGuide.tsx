@@ -126,7 +126,12 @@ export default function InstallGuide({ lang }: { lang: Lang }) {
 
 			<main className="install-main">
 				<div className="mono-rule">
-					<span>// {lang === "ko" ? "slopguard.app/ko/install" : "slopguard.app/install"}</span>
+					<span>
+						//{" "}
+						{lang === "ko"
+							? "slopguard.app/ko/install"
+							: "slopguard.app/install"}
+					</span>
 					<span className="mono-rule-end">[ slopguard ]</span>
 				</div>
 				<span className="eyebrow">{c.eyebrow}</span>

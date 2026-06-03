@@ -3,6 +3,7 @@ import { REPO_URL } from "@/lib/config";
 import type { Lang } from "@/lib/i18n";
 import MarketingNav from "./MarketingNav";
 import PageHero from "./PageHero";
+import RevealOnScroll from "./RevealOnScroll";
 import SiteFooter from "./SiteFooter";
 
 const EXAMPLE_YML = `# .github/SLOP_POLICY.yml  (all fields optional)
@@ -148,6 +149,7 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 				koHref="/ko/docs"
 				active="docs"
 			/>
+			<RevealOnScroll />
 			<main className="docs-main">
 				<PageHero
 					path={ko ? "// slopguard.app/ko/docs" : "// slopguard.app/docs"}

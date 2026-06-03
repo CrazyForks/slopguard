@@ -3,6 +3,7 @@ import type { Lang } from "@/lib/i18n";
 import { EX } from "./Landing";
 import MarketingNav from "./MarketingNav";
 import PageHero from "./PageHero";
+import RevealOnScroll from "./RevealOnScroll";
 import HowPipeline from "./HowPipeline";
 import SiteFooter from "./SiteFooter";
 
@@ -36,6 +37,7 @@ export default function HowItWorksBody({ lang }: { lang: Lang }) {
 				koHref="/ko/how-it-works"
 				active="how"
 			/>
+			<RevealOnScroll />
 			<main className="wide section" style={{ paddingTop: 8 }}>
 				<PageHero
 					path={
