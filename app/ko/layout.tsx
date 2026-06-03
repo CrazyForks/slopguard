@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 	title,
 	description,
 	alternates: { canonical: "/ko", languages: { en: "/", ko: "/ko" } },
-	openGraph: { title, description, images: ["/hero-emblem.png"] },
+	openGraph: { title, description, images: ["/wave-circuit.png"] },
 	twitter: { card: "summary_large_image", title, description },
 };
 
