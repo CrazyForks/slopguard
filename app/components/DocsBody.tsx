@@ -3,6 +3,7 @@ import { REPO_URL } from "@/lib/config";
 import type { Lang } from "@/lib/i18n";
 import MarketingNav from "./MarketingNav";
 import PageHero from "./PageHero";
+import DocsToc from "./DocsToc";
 import RevealOnScroll from "./RevealOnScroll";
 import SiteFooter from "./SiteFooter";
 
@@ -158,7 +159,19 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 					sub={t.sub}
 				/>
 
-				<section className="docs-section">
+				<div className="docs-layout">
+				<aside className="docs-side">
+					<DocsToc
+						items={[
+							{ id: "quickstart", label: t.quickTitle },
+							{ id: "commands", label: t.cmdTitle },
+							{ id: "scoring", label: t.scoreTitle },
+							{ id: "config", label: t.cfgTitle },
+						]}
+					/>
+				</aside>
+				<div className="docs-content">
+				<section id="quickstart" className="docs-section">
 					<h2>{t.quickTitle}</h2>
 					<p>{t.quick}</p>
 					<Link className="btn btn-primary" href={installHref}>
@@ -166,7 +179,7 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 					</Link>
 				</section>
 
-				<section className="docs-section">
+				<section id="commands" className="docs-section">
 					<h2>{t.cmdTitle}</h2>
 					<p>{t.cmdLead}</p>
 					<dl className="docs-cmds">
@@ -181,7 +194,7 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 					</dl>
 				</section>
 
-				<section className="docs-section">
+				<section id="scoring" className="docs-section">
 					<h2>{t.scoreTitle}</h2>
 					<p>
 						{t.score} <Link href={howHref}>{t.scoreLink}</Link>
@@ -189,7 +202,7 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 					</p>
 				</section>
 
-				<section className="docs-section">
+				<section id="config" className="docs-section">
 					<h2>{t.cfgTitle}</h2>
 					<p>{t.cfg}</p>
 					<pre className="docs-code">
@@ -211,6 +224,8 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 						<a href={REPO_URL}>{t.selfhost}</a>
 					</p>
 				</section>
+				</div>
+				</div>
 			</main>
 			<SiteFooter lang={lang} />
 		</>
