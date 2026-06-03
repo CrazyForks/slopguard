@@ -62,14 +62,13 @@ export default function HowItWorksBody({ lang }: { lang: Lang }) {
 					<figure className="plate">
 						<figcaption className="plate-bar">
 							<span>
-								//{" "}
 								{ko
 									? "라이브 데모: 슬롭 점수 게이트"
 									: "live demo: the slop-score gate"}
 							</span>
-							<span>fig.02</span>
+							<span className="plate-coord">fig.02</span>
 						</figcaption>
-						<div className="plate-body">
+						<div className="plate-pad">
 							<SlopMeter lang={lang} />
 						</div>
 					</figure>

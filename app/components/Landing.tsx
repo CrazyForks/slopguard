@@ -4,6 +4,7 @@ import MarketingNav from "./MarketingNav";
 import Reveal from "./Reveal";
 import CountUp from "./CountUp";
 import RevealOnScroll from "./RevealOnScroll";
+import SectionHead from "./SectionHead";
 import SiteFooter from "./SiteFooter";
 import SlopMeter from "./SlopMeter";
 
@@ -310,50 +311,74 @@ export default function Landing({ lang }: { lang: Lang }) {
 			<RevealOnScroll />
 
 			<header className="hero">
-				<div className="hero-inner">
-					<h1>
-						{m.hero.h1a}
-						<span className="hl">{m.hero.h1b}</span>
-						{m.hero.h1c}
-					</h1>
-					<p className="sub">{m.hero.sub}</p>
-					<div className="btn-row">
-						<Link className="btn btn-primary btn-lg" href={installHref}>
-							{m.hero.ctaInstall}
-						</Link>
-						<Link
-							className="btn btn-ghost btn-lg"
-							href={lang === "ko" ? "/ko/how-it-works" : "/how-it-works"}
-						>
-							{lang === "ko" ? "동작 방식 보기" : "See how it works"}
-						</Link>
+				<div className="grid-bg" aria-hidden="true" />
+				<div className="wide hero-grid">
+					<div className="hero-copy">
+						<h1>
+							{m.hero.h1a}
+							<span className="hl">{m.hero.h1b}</span>
+							{m.hero.h1c}
+						</h1>
+						<p className="sub">{m.hero.sub}</p>
+						<div className="btn-row">
+							<Link className="btn btn-primary btn-lg" href={installHref}>
+								{m.hero.ctaInstall}
+							</Link>
+							<Link
+								className="btn btn-ghost btn-lg"
+								href={lang === "ko" ? "/ko/how-it-works" : "/how-it-works"}
+							>
+								{lang === "ko" ? "동작 방식 보기" : "See how it works"}
+							</Link>
+						</div>
+						<p className="cta-note">{x.ctaNote}</p>
 					</div>
-					<p className="cta-note">{x.ctaNote}</p>
+					<figure className="plate plate-hero">
+						<figcaption className="plate-bar">
+							<span>
+								{lang === "ko"
+									? "밀려오는 AI 슬롭의 파도"
+									: "the rising tide of AI slop"}
+							</span>
+							<span className="plate-coord">36.23N / 139.02E</span>
+						</figcaption>
+						<div className="plate-art">
+							<span className="plate-tag">HOKUSAI × SLOPGUARD</span>
+							{/* eslint-disable-next-line @next/next/no-img-element */}
+							<img src="/wave-circuit.png" alt={m.hero.emblemAlt} />
+							<span className="plate-scan" aria-hidden="true" />
+						</div>
+					</figure>
 				</div>
 			</header>
 
-			<section className="wide meter-section">
+			<section className="wide section">
+				<SectionHead
+					no="01"
+					kicker={lang === "ko" ? "라이브 데모" : "live demo"}
+					title={
+						lang === "ko" ? "임계값은 당신이 정합니다" : "You set the threshold"
+					}
+					sub={
+						lang === "ko"
+							? "슬라이더를 끌어 슬롭 점수 기준을 바꾔보세요. PR이 실시간으로 격리와 통과로 나끗니다."
+							: "Drag the slider to move the slop-score line. PRs reclassify between quarantined and passed in real time."
+					}
+				/>
 				<Reveal>
-					<figure className="plate">
-						<figcaption className="plate-bar">
-							<span>
-								//{" "}
-								{lang === "ko"
-									? "라이브 데모: 슬롭 점수 게이트"
-									: "live demo: the slop-score gate"}
-							</span>
-							<span>fig.01</span>
-						</figcaption>
-						<div className="plate-body">
-							<SlopMeter lang={lang} />
-						</div>
-					</figure>
+					<div className="plate plate-pad">
+						<SlopMeter lang={lang} />
+					</div>
 				</Reveal>
 			</section>
 
 			<section className="wide section">
-				<h2 className="section-title">{m.verdict.title}</h2>
-				<p className="section-sub">{m.verdict.sub}</p>
+				<SectionHead
+					no="02"
+					kicker={lang === "ko" ? "메인테이너 화면" : "what a maintainer sees"}
+					title={m.verdict.title}
+					sub={m.verdict.sub}
+				/>
 				<div className="card verdict">
 					<ScoreRing score={96} />
 					<div>
@@ -396,8 +421,12 @@ export default function Landing({ lang }: { lang: Lang }) {
 			</section>
 
 			<section id="what" className="wide section">
-				<h2 className="section-title">{x.slop.title}</h2>
-				<p className="section-sub">{x.slop.body}</p>
+				<SectionHead
+					no="03"
+					kicker={lang === "ko" ? "정의" : "the definition"}
+					title={x.slop.title}
+					sub={x.slop.body}
+				/>
 				<div className="slop-grid">
 					{x.slop.points.map((p, i) => (
 						<figure className="slop-card" key={p.t}>
@@ -420,8 +449,12 @@ export default function Landing({ lang }: { lang: Lang }) {
 			</section>
 
 			<section className="wide section">
-				<h2 className="section-title">{x.quality.title}</h2>
-				<p className="section-sub">{x.quality.sub}</p>
+				<SectionHead
+					no="04"
+					kicker={lang === "ko" ? "측정" : "measured"}
+					title={x.quality.title}
+					sub={x.quality.sub}
+				/>
 				<div className="quality">
 					<div className="bars">
 						{x.quality.bars.map((b) => (
@@ -472,8 +505,12 @@ export default function Landing({ lang }: { lang: Lang }) {
 			</section>
 
 			<section className="wide section">
-				<h2 className="section-title">{m.features.title}</h2>
-				<p className="section-sub">{m.features.sub}</p>
+				<SectionHead
+					no="05"
+					kicker={lang === "ko" ? "설계 원칙" : "by design"}
+					title={m.features.title}
+					sub={m.features.sub}
+				/>
 				<div className="grid">
 					{m.features.items.map((f) => (
 						<div className="card feature" key={f.t}>
