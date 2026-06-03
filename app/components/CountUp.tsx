@@ -2,36 +2,49 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** Counts a numeric value up from 0 when it scrolls into view. Values without a
- * leading number (e.g. "MIT") render unchanged. Honors reduced motion. */
+/** Counts up to a numeric value when it enters view. Initial state is the real
+ * value, so if the observer never fires (or JS is slow) the correct number is
+ * always shown, never a stuck 0. Non-numeric values (e.g. "MIT") render as-is. */
 export default function CountUp({ value }: { value: string }) {
 	const ref = useRef<HTMLSpanElement>(null);
 	const match = value.match(/^(\d+)(.*)$/);
 	const target = match ? Number(match[1]) : null;
 	const suffix = match ? match[2] : "";
-	const [n, setN] = useState(target == null ? null : 0);
+	const [n, setN] = useState<number | null>(target);
 
 	useEffect(() => {
 		if (target == null) return;
 		const el = ref.current;
 		if (!el) return;
-		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-			setN(target);
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+		let done = false;
+		const animate = () => {
+			if (done) return;
+			done = true;
+			const dur = 900;
+			const start = performance.now();
+			setN(0);
+			const tick = (now: number) => {
+				const p = Math.min(1, (now - start) / dur);
+				setN(Math.round((1 - (1 - p) ** 3) * target));
+				if (p < 1) requestAnimationFrame(tick);
+			};
+			requestAnimationFrame(tick);
+		};
+
+		const vh = window.innerHeight || 800;
+		if (el.getBoundingClientRect().top < vh * 0.9) {
+			animate();
 			return;
 		}
+		if (!("IntersectionObserver" in window)) return;
 		const io = new IntersectionObserver(
 			([e]) => {
-				if (!e.isIntersecting) return;
-				io.disconnect();
-				const dur = 900;
-				const start = performance.now();
-				const tick = (now: number) => {
-					const p = Math.min(1, (now - start) / dur);
-					const eased = 1 - (1 - p) ** 3;
-					setN(Math.round(eased * target));
-					if (p < 1) requestAnimationFrame(tick);
-				};
-				requestAnimationFrame(tick);
+				if (e.isIntersecting) {
+					io.disconnect();
+					animate();
+				}
 			},
 			{ threshold: 0.4 },
 		);
