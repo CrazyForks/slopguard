@@ -13,6 +13,7 @@ import {
 	type OwnerSlopStats,
 } from "@/lib/github/storage";
 import AppNav from "./AppNav";
+import SiteFooter from "@/app/components/SiteFooter";
 import PublicRepoLookup from "./PublicRepoLookup";
 
 const T = {
@@ -403,25 +404,23 @@ export default async function Account({
 										</Link>
 									</div>
 								</div>
+								<div className="card">
+									<div className="card-head">
+										<h3>{t.lookupTitle}</h3>
+									</div>
+									<p
+										className="muted"
+										style={{ fontSize: 13, margin: "0 0 10px" }}
+									>
+										{t.lookupSub}
+									</p>
+									<PublicRepoLookup lang={lang} />
+								</div>
 							</aside>
 						</div>
 
-						{/* look up any public repo (full width, inline result) */}
-						<div className="card" style={{ marginTop: 20 }}>
-							<div className="card-head">
-								<h3>{t.lookupTitle}</h3>
-							</div>
-							<p
-								className="muted"
-								style={{ fontSize: 13.5, margin: "0 0 12px" }}
-							>
-								{t.lookupSub}
-							</p>
-							<PublicRepoLookup lang={lang} />
-						</div>
-
 						<div style={{ marginTop: 28 }}>
-							<a className="btn btn-ghost" href="/api/auth/logout">
+							<a className="btn btn-danger" href="/api/auth/logout">
 								{t.logout}
 							</a>
 						</div>
@@ -429,14 +428,7 @@ export default async function Account({
 				)}
 			</main>
 
-			<footer className="site">
-				<p>
-					SlopGuard | MIT |{" "}
-					<a href="https://github.com/Blue-B/slopguard">
-						github.com/Blue-B/slopguard
-					</a>
-				</p>
-			</footer>
+			<SiteFooter lang={lang} />
 		</>
 	);
 }

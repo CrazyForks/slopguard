@@ -146,6 +146,15 @@ code {
 	background: var(--surface-2);
 	border-color: #6e7681;
 }
+.btn-danger {
+	background: var(--danger-dim);
+	border-color: rgba(248, 81, 73, 0.4);
+	color: var(--danger);
+}
+.btn-danger:hover {
+	background: rgba(248, 81, 73, 0.22);
+	border-color: var(--danger);
+}
 .btn-lg {
 	padding: 12px 22px;
 	font-size: 15px;
@@ -689,6 +698,44 @@ footer.site.footer-rich {
 	border-top: 1px solid var(--border-muted);
 	display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
 	color: var(--muted); font-size: 13px;
+}
+
+/* App/utility footer — richer than the single line, lighter than the landing's.
+ * Brand + tagline + real links + a GitHub mark, then a copyright/licence row. */
+footer.site.footer-app {
+	text-align: left;
+	margin-top: 72px;
+	padding: 40px 24px 28px;
+}
+.footer-app-top {
+	max-width: 1080px; margin: 0 auto;
+	display: flex; align-items: center; flex-wrap: wrap; gap: 16px 28px;
+}
+.footer-app-tag {
+	flex: 1 1 280px; max-width: 440px; margin: 0;
+	color: var(--muted); font-size: 13px; line-height: 1.55;
+}
+.footer-app-links {
+	display: flex; align-items: center; flex-wrap: wrap; gap: 20px;
+	margin-left: auto;
+}
+.footer-app-links a {
+	color: #adbac7; font-size: 14px; text-decoration: none;
+	transition: color 0.12s ease;
+}
+.footer-app-links a:hover { color: var(--fg); }
+.footer-gh { display: inline-flex; align-items: center; color: var(--muted); }
+.footer-gh:hover { color: var(--fg); }
+.footer-app-bottom {
+	max-width: 1080px; margin: 24px auto 0; padding-top: 18px;
+	border-top: 1px solid var(--border-muted);
+	display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+	color: var(--muted); font-size: 12.5px;
+}
+@media (max-width: 680px) {
+	.footer-app-top { flex-direction: column; align-items: flex-start; }
+	.footer-app-links { margin-left: 0; }
+	.footer-app-bottom { flex-direction: column; }
 }
 
 /* ── Install guide page ──────────────────────────────── */

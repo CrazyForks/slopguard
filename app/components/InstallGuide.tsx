@@ -2,6 +2,7 @@ import Link from "next/link";
 import { INSTALL_URL, REPO_URL } from "@/lib/config";
 import type { Lang } from "@/lib/i18n";
 import AuthNav from "./AuthNav";
+import SiteFooter from "@/app/components/SiteFooter";
 
 // Self-contained copy for the pre-install explainer. Kept local (like the
 // /setup and checkout-success pages) so it stays close to the markup it serves.
@@ -204,11 +205,7 @@ export default function InstallGuide({ lang }: { lang: Lang }) {
 				</p>
 			</main>
 
-			<footer className="site">
-				<p>
-					SlopGuard | MIT | <a href={REPO_URL}>github.com/Blue-B/slopguard</a>
-				</p>
-			</footer>
+			<SiteFooter lang={lang} />
 		</>
 	);
 }

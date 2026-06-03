@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { INSTALL_URL, REPO_URL } from "@/lib/config";
+import SiteFooter from "@/app/components/SiteFooter";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -110,11 +111,7 @@ export default async function CheckoutSuccess() {
 				</div>
 			</main>
 
-			<footer className="site">
-				<p>
-					SlopGuard | MIT | <a href={REPO_URL}>github.com/Blue-B/slopguard</a>
-				</p>
-			</footer>
+			<SiteFooter lang={lang} />
 		</>
 	);
 }

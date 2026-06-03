@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import SiteFooter from "@/app/components/SiteFooter";
 import { useEffect, useState } from "react";
 
 
@@ -161,14 +162,7 @@ export default function SetupClient() {
 				</details>
 			</main>
 
-			<footer className="site">
-				<p>
-					SlopGuard | MIT |{" "}
-					<a href="https://github.com/Blue-B/slopguard">
-						github.com/Blue-B/slopguard
-					</a>
-				</p>
-			</footer>
+			<SiteFooter />
 		</>
 	);
 }
