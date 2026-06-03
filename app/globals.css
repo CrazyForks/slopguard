@@ -664,8 +664,8 @@ body { overflow-wrap: break-word; }
 	display: block; color: var(--muted); font-size: 13px; margin-top: 4px;
 }
 
-/* ── footer (multi-column) ── */
-footer.site {
+/* ── footer (multi-column, landing only) ── */
+footer.site.footer-rich {
 	text-align: left;
 	padding: 48px 24px 32px;
 }
@@ -1038,7 +1038,7 @@ footer.site {
 .account-side .card, .account-main .card { margin: 0; }
 
 /* ── Account: card headers + inline public-repo lookup ───────────── */
-.account-profile { display: flex; align-items: center; gap: 14px; }
+.account-profile { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
 .card-head {
 	display: flex;
 	align-items: baseline;
@@ -1112,6 +1112,10 @@ footer.site {
 	gap: 8px;
 }
 .lookup-items li > a { color: var(--fg); flex: 0 0 auto; }
-.lookup-items li .muted { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lookup-tag { margin-left: auto; font-size: 11px; color: var(--muted); flex: 0 0 auto; }
+.lookup-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lookup-state { font-size: 11px; color: var(--muted); flex: 0 0 auto; }
+.lookup-tag { font-size: 11px; flex: 0 0 auto; }
+.lookup-tag.tag-q { color: #d29922; }
+.lookup-tag.tag-c { color: var(--green); }
+.lookup-legend { font-size: 12px; color: var(--muted); margin: 10px 0 0; line-height: 1.6; }
 @media (max-width: 480px) { .ministats { grid-template-columns: repeat(2, 1fr); } }

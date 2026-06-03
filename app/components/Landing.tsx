@@ -475,7 +475,7 @@ export default function Landing({ lang }: { lang: Lang }) {
 				</div>
 			</section>
 
-			<footer className="site">
+			<footer className="site footer-rich">
 				<div className="footer-grid">
 					<div>
 						<span className="footer-brand">

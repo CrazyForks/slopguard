@@ -28,7 +28,7 @@ const T = {
 		notProvided: "not provided",
 		yourPlan: "Your plan",
 		current: "Current plan",
-		planFreeNote: "You are on the Free plan. Upgrade any time below.",
+		planFreeNote: "You are on the Free plan. Use Compare plans to upgrade.",
 		planPaidNote:
 			"Active and matched to the GitHub account you entered at checkout.",
 		manageBilling: "Manage billing & invoices",
@@ -75,8 +75,7 @@ const T = {
 		notProvided: "미제공",
 		yourPlan: "내 플랜",
 		current: "현재 플랜",
-		planFreeNote:
-			"현재 Free 플랜입니다. 아래에서 언제든 업그레이드할 수 있습니다.",
+		planFreeNote: "현재 Free 플랜입니다. 업그레이드는 요금제 비교에서.",
 		planPaidNote: "활성화됨. 결제 시 입력한 GitHub 계정과 연결되어 있습니다.",
 		manageBilling: "결제 / 영수증 관리",
 		plansTitle: "요금제",
@@ -220,7 +219,13 @@ export default async function Account({
 					</div>
 				) : (
 					<>
-						<h1 style={{ fontSize: 28, letterSpacing: "-0.02em", margin: "0 0 18px" }}>
+						<h1
+							style={{
+								fontSize: 28,
+								letterSpacing: "-0.02em",
+								margin: "0 0 18px",
+							}}
+						>
 							{t.myAccount}
 						</h1>
 
@@ -233,7 +238,10 @@ export default async function Account({
 								width={48}
 								height={48}
 								referrerPolicy="no-referrer"
-								style={{ borderRadius: "50%", border: "1px solid var(--border)" }}
+								style={{
+									borderRadius: "50%",
+									border: "1px solid var(--border)",
+								}}
 							/>
 							<div style={{ minWidth: 0 }}>
 								<div style={{ fontWeight: 700, fontSize: 16 }}>
@@ -263,16 +271,24 @@ export default async function Account({
 												<li className="repo-row" key={r.fullName}>
 													<span className="repo-name">
 														<a href={r.htmlUrl}>{r.fullName}</a>
-														{r.private && <span className="repo-tag">{t.privateTag}</span>}
+														{r.private && (
+															<span className="repo-tag">{t.privateTag}</span>
+														)}
 													</span>
-													<Link className="repo-link" href={`${dashBase}/${r.fullName}`}>
+													<Link
+														className="repo-link"
+														href={`${dashBase}/${r.fullName}`}
+													>
 														{t.viewHistory} &rarr;
 													</Link>
 												</li>
 											))}
 										</ul>
 									) : (
-										<p className="muted" style={{ fontSize: 13.5, margin: "0 0 14px" }}>
+										<p
+											className="muted"
+											style={{ fontSize: 13.5, margin: "0 0 14px" }}
+										>
 											{t.noRepos}
 										</p>
 									)}
@@ -287,7 +303,14 @@ export default async function Account({
 											<h3>{t.activityTitle}</h3>
 											<span className="card-meta">{t.activitySub}</span>
 										</div>
-										<div style={{ display: "flex", gap: 12, margin: "0 0 14px", flexWrap: "wrap" }}>
+										<div
+											style={{
+												display: "flex",
+												gap: 12,
+												margin: "0 0 14px",
+												flexWrap: "wrap",
+											}}
+										>
 											<Stat label={t.statQ} value={orgStats.quarantined} />
 											<Stat label={t.statC} value={orgStats.cleared} />
 											<Stat label={t.statO} value={orgStats.open} />
@@ -295,19 +318,45 @@ export default async function Account({
 										</div>
 										<div className="dash-table-wrap">
 											{orgStats.recent.length === 0 ? (
-												<p className="muted" style={{ margin: 0 }}>{t.noActivity}</p>
+												<p className="muted" style={{ margin: 0 }}>
+													{t.noActivity}
+												</p>
 											) : (
 												<table className="dash-table">
 													<thead>
-														<tr><th>{t.colItem}</th><th>{t.colAuthor}</th><th>{t.colStatus}</th><th>{t.colWhen}</th></tr>
+														<tr>
+															<th>{t.colItem}</th>
+															<th>{t.colAuthor}</th>
+															<th>{t.colStatus}</th>
+															<th>{t.colWhen}</th>
+														</tr>
 													</thead>
 													<tbody>
 														{orgStats.recent.map((it) => (
 															<tr key={it.url}>
-																<td style={{ maxWidth: 300 }}><a href={it.url}>{it.kind === "pull_request" ? "PR" : "#"}{it.number}</a> <span className="muted">{it.title}</span></td>
+																<td style={{ maxWidth: 300 }}>
+																	<a href={it.url}>
+																		{it.kind === "pull_request" ? "PR" : "#"}
+																		{it.number}
+																	</a>{" "}
+																	<span className="muted">{it.title}</span>
+																</td>
 																<td>@{it.author}</td>
-																<td><span className="mono" style={{ fontSize: 12 }}>{it.labels.includes("slop-cleared") ? t.statusC : t.statusQ}</span></td>
-																<td className="muted" style={{ fontSize: 12 }}>{new Date(it.updatedAt).toISOString().slice(0, 10)}</td>
+																<td>
+																	<span
+																		className="mono"
+																		style={{ fontSize: 12 }}
+																	>
+																		{it.labels.includes("slop-cleared")
+																			? t.statusC
+																			: t.statusQ}
+																	</span>
+																</td>
+																<td className="muted" style={{ fontSize: 12 }}>
+																	{new Date(it.updatedAt)
+																		.toISOString()
+																		.slice(0, 10)}
+																</td>
 															</tr>
 														))}
 													</tbody>
@@ -324,20 +373,34 @@ export default async function Account({
 										<h3>{t.yourPlan}</h3>
 										<PlanBadge plan={plan} label={t.current} />
 									</div>
-									<div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-										<span style={{ fontSize: 24, fontWeight: 800 }}>{PLANS[plan].name}</span>
+									<div
+										style={{ display: "flex", alignItems: "baseline", gap: 8 }}
+									>
+										<span style={{ fontSize: 24, fontWeight: 800 }}>
+											{PLANS[plan].name}
+										</span>
 										{plan !== "free" && PLANS[plan].priceMonthly != null && (
-											<span className="muted mono" style={{ fontSize: 14 }}>${PLANS[plan].priceMonthly}{t.per}</span>
+											<span className="muted mono" style={{ fontSize: 14 }}>
+												${PLANS[plan].priceMonthly}
+												{t.per}
+											</span>
 										)}
 									</div>
-									<p className="muted" style={{ fontSize: 13, margin: "10px 0 14px" }}>
+									<p
+										className="muted"
+										style={{ fontSize: 13, margin: "10px 0 14px" }}
+									>
 										{plan === "free" ? t.planFreeNote : t.planPaidNote}
 									</p>
 									<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
 										{plan !== "free" && (
-											<a className="btn btn-ghost btn-sm" href={PORTAL_URL}>{t.manageBilling}</a>
+											<a className="btn btn-ghost btn-sm" href={PORTAL_URL}>
+												{t.manageBilling}
+											</a>
 										)}
-										<Link className="btn btn-ghost btn-sm" href={pricingHref}>{t.comparePlans}</Link>
+										<Link className="btn btn-ghost btn-sm" href={pricingHref}>
+											{t.comparePlans}
+										</Link>
 									</div>
 								</div>
 							</aside>
@@ -348,7 +411,10 @@ export default async function Account({
 							<div className="card-head">
 								<h3>{t.lookupTitle}</h3>
 							</div>
-							<p className="muted" style={{ fontSize: 13.5, margin: "0 0 12px" }}>
+							<p
+								className="muted"
+								style={{ fontSize: 13.5, margin: "0 0 12px" }}
+							>
 								{t.lookupSub}
 							</p>
 							<PublicRepoLookup lang={lang} />

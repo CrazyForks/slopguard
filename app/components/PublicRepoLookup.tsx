@@ -37,6 +37,10 @@ const T = {
 		full: "Full history",
 		cleared: "cleared",
 		quarantined: "quarantined",
+		stateOpen: "open",
+		stateClosed: "closed",
+		legend:
+			"Quarantined = SlopGuard flagged it for review. Cleared = a maintainer marked it OK. Open / closed is the PR or issue state on GitHub.",
 	},
 	ko: {
 		placeholder: "owner/repo",
@@ -53,6 +57,10 @@ const T = {
 		full: "전체 기록",
 		cleared: "해제됨",
 		quarantined: "격리됨",
+		stateOpen: "열림",
+		stateClosed: "닫힘",
+		legend:
+			"격리 = SlopGuard가 슬롭으로 보고 검토용 표시, 해제 = 메인테이너가 정상으로 확인, 열림/닫힘 = 그 PR이나 이슈의 GitHub 상태입니다.",
 	},
 } as const;
 
@@ -132,6 +140,7 @@ export default function PublicRepoLookup({ lang }: { lang: Lang }) {
 						<MiniStat label={t.o} value={stats.open} />
 						<MiniStat label={t.x} value={stats.closed} />
 					</div>
+					<p className="lookup-legend">{t.legend}</p>
 					{stats.items.length === 0 ? (
 						<p className="muted" style={{ fontSize: 13, margin: "12px 0 0" }}>
 							{t.none}
@@ -144,8 +153,13 @@ export default function PublicRepoLookup({ lang }: { lang: Lang }) {
 										{it.kind === "pull_request" ? "PR" : "#"}
 										{it.number}
 									</a>{" "}
-									<span className="muted">{it.title}</span>
-									<span className="mono lookup-tag">
+									<span className="muted lookup-title">{it.title}</span>
+									<span className="mono lookup-state">
+										{it.state === "open" ? t.stateOpen : t.stateClosed}
+									</span>
+									<span
+										className={`mono lookup-tag ${it.labels.includes("slop-cleared") ? "tag-c" : "tag-q"}`}
+									>
 										{it.labels.includes("slop-cleared")
 											? t.cleared
 											: t.quarantined}

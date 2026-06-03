@@ -21,6 +21,8 @@ const T = {
 		cleared: "cleared",
 		allRepos: "My Account",
 		stats: { q: "quarantined", c: "cleared", o: "open", x: "closed" },
+		legend:
+			"Quarantined = SlopGuard flagged it for review. Cleared = a maintainer marked it OK. Open / closed is the GitHub state. State and Status are separate columns below.",
 		install: "install the App",
 	},
 	ko: {
@@ -40,6 +42,8 @@ const T = {
 		cleared: "해제됨",
 		allRepos: "마이페이지",
 		stats: { q: "격리", c: "해제", o: "열림", x: "닫힘" },
+		legend:
+			"격리 = SlopGuard가 슬롭으로 보고 검토용 표시, 해제 = 메인테이너가 정상으로 확인, 열림/닫힘 = GitHub 상태. 아래 표의 상태와 처리는 서로 다릅니다.",
 		install: "앱 설치하기",
 	},
 } as const;
@@ -135,6 +139,9 @@ export default async function RepoDashboard({
 							<Stat label={t.stats.o} value={stats.open} />
 							<Stat label={t.stats.x} value={stats.closed} />
 						</div>
+						<p className="lookup-legend" style={{ marginTop: 10 }}>
+							{t.legend}
+						</p>
 
 						<h2 style={{ fontSize: 16, margin: "26px 0 8px" }}>{t.recent}</h2>
 						<div className="card" style={{ padding: 0, overflow: "hidden" }}>
