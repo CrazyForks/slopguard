@@ -2554,6 +2554,16 @@ footer.site.footer-app {
 	line-height: 1.65;
 }
 
+/* self-host setup form */
+.setup-form {
+	margin-top: 16px;
+}
+.setup-label {
+	display: block;
+	font-size: 13px;
+	color: var(--muted);
+}
+
 /* slop-history (repo dashboard) */
 .dash-error {
 	margin-top: 18px;

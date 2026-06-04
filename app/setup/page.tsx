@@ -5,9 +5,12 @@ export const metadata: Metadata = {
 	title: "Self-host SlopGuard",
 	description:
 		"Create your own SlopGuard GitHub App from a manifest and run it on your own server. Most people should use the hosted app instead.",
-	alternates: { canonical: "/setup" },
+	alternates: {
+		canonical: "/setup",
+		languages: { en: "/setup", ko: "/ko/setup" },
+	},
 };
 
 export default function SetupPage() {
-	return <SetupClient />;
+	return <SetupClient lang="en" />;
 }

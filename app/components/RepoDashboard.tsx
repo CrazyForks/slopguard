@@ -145,8 +145,14 @@ export default async function RepoDashboard({
 						{stats.quarantined + stats.cleared > 0 && (
 							<div className="slop-ratio" aria-hidden="true">
 								<div className="ratio-bar">
-									<span className="seg q" style={{ flexGrow: stats.quarantined || 0 }} />
-									<span className="seg c" style={{ flexGrow: stats.cleared || 0 }} />
+									<span
+										className="seg q"
+										style={{ flexGrow: stats.quarantined || 0 }}
+									/>
+									<span
+										className="seg c"
+										style={{ flexGrow: stats.cleared || 0 }}
+									/>
 								</div>
 								<div className="ratio-legend">
 									<span className="q">

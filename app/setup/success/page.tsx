@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { INSTALL_URL, REPO_URL } from "@/lib/config";
+import MarketingNav from "@/app/components/MarketingNav";
 import SiteFooter from "@/app/components/SiteFooter";
 
 export const dynamic = "force-dynamic";
@@ -49,21 +50,10 @@ export default async function CheckoutSuccess() {
 
 	return (
 		<>
-			<nav className="nav">
-				<Link className="brand" href={t.home}>
-					{/* eslint-disable-next-line @next/next/no-img-element */}
-					<img src="/shield.svg" alt="SlopGuard" />
-					SlopGuard
-				</Link>
-				<span className="nav-links">
-					<a href={REPO_URL}>GitHub</a>
-				</span>
-			</nav>
+			<MarketingNav lang={lang} enHref="/setup/success" koHref="/setup/success" />
 
-			<main className="wide" style={{ maxWidth: 680, paddingTop: 64 }}>
-				<span className="eyebrow">
-					<span className="dot" /> {t.confirmed}
-				</span>
+			<main className="wide" style={{ maxWidth: 680, paddingTop: 48 }}>
+				<span className="eyebrow">{t.confirmed}</span>
 				<h1
 					style={{
 						fontSize: 34,
@@ -97,9 +87,17 @@ export default async function CheckoutSuccess() {
 					</Link>
 				</div>
 
-				<div className="card" style={{ marginTop: 32 }}>
-					<h3 style={{ marginTop: 0, fontSize: 15 }}>{t.good}</h3>
-					<ul style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.8 }}>
+				<div className="why-pay" style={{ marginTop: 36 }}>
+					<h3>{t.good}</h3>
+					<ul
+						style={{
+							color: "var(--muted)",
+							fontSize: 14,
+							lineHeight: 1.8,
+							margin: "6px 0 0",
+							paddingLeft: 18,
+						}}
+					>
 						<li>
 							{t.g1a} <code>.github/SLOP_POLICY.yml</code> {t.g1b}
 						</li>

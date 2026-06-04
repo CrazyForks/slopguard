@@ -160,7 +160,11 @@ export default function InstallGuide({ lang }: { lang: Lang }) {
 						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img
 							src="/mascot-bot.png"
-							alt={lang === "ko" ? "SlopGuard 가디어 마스코트" : "SlopGuard guardian mascot"}
+							alt={
+								lang === "ko"
+									? "SlopGuard 가디어 마스코트"
+									: "SlopGuard guardian mascot"
+							}
 						/>
 					</figure>
 				</header>
