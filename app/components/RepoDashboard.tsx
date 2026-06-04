@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getRepoSlopStats, type RepoSlopStats } from "@/lib/github/storage";
 import type { Lang } from "@/lib/i18n";
-import AppNav from "./AppNav";
+import MarketingNav from "./MarketingNav";
 
 const T = {
 	en: {
@@ -81,7 +81,7 @@ export default async function RepoDashboard({
 
 	return (
 		<>
-			<AppNav
+			<MarketingNav
 				lang={lang}
 				enHref={`/dashboard/${full}`}
 				koHref={`/ko/dashboard/${full}`}

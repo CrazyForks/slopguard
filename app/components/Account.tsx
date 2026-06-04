@@ -12,7 +12,7 @@ import {
 	type OwnerRepo,
 	type OwnerSlopStats,
 } from "@/lib/github/storage";
-import AppNav from "./AppNav";
+import MarketingNav from "./MarketingNav";
 import SiteFooter from "@/app/components/SiteFooter";
 import PublicRepoLookup from "./PublicRepoLookup";
 
@@ -184,12 +184,14 @@ export default async function Account({
 
 	return (
 		<>
-			<AppNav lang={lang} enHref="/account" koHref="/ko/account" />
+			<MarketingNav lang={lang} enHref="/account" koHref="/ko/account" />
 
 			<main className="wide" style={{ maxWidth: 1040, paddingTop: 44 }}>
 				{!session || !plan ? (
 					<div style={{ maxWidth: 480 }}>
-						<span className="eyebrow">{lang === "ko" ? "마이페이지" : "account"}</span>
+						<span className="eyebrow">
+							{lang === "ko" ? "마이페이지" : "account"}
+						</span>
 						<h1 className="page-h1" style={{ margin: "12px 0 10px" }}>
 							{t.signedOutTitle}
 						</h1>
