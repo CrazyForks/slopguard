@@ -173,7 +173,7 @@ export default function DocsBody({ lang }: { lang: Lang }) {
 						<section id="quickstart" className="docs-section">
 							<h2>{t.quickTitle}</h2>
 							<p>{t.quick}</p>
-							<Link className="btn btn-primary" href={installHref}>
+							<Link className="btn btn-primary btn-lg" href={installHref}>
 								{t.cta}
 							</Link>
 						</section>

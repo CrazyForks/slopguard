@@ -11,8 +11,15 @@ export default function PricingBody({ lang }: { lang: Lang }) {
 	const t = ko
 		? {
 				eyebrow: "가격",
-				h1: "셀프호스팅은 무료, 매니지드만 결제",
-				sub: "SlopGuard는 오픈소스(MIT)입니다. 직접 돌리면 영원히 무료. 유료 플랜은 매니지드 LLM 비용, 비공개 레포, 레포 교차 분석, 조직 전체 가시성, 알림을 포함합니다. 결제는 Polar(Merchant of Record)를 통해 진행됩니다.",
+				h1: "직접 돌리면 공짜,\n맡기면 월 정액",
+				sub: "SlopGuard는 오픈소스(MIT)예요. 직접 서버에 올리면 언제까지나 무료입니다.",
+				addsTitle: "유료 플랜이 대신해주는 것",
+				adds: [
+					"매니지드 LLM, 서버와 API 비용 제로",
+					"비공개 레포와 레포 교차 탐지",
+					"조직 대시보드와 Slack 알림",
+				],
+				polar: "결제는 Polar(Merchant of Record)로 안전하게 처리됩니다.",
 				whyTitle: "오픈소스인데 왜 결제하나요?",
 				why: "셀프호스팅은 서버 운영, LLM API 비용, 유지보수를 직접 떠안는 겁니다. 유료 플랜은 그걸 전부 없애고, 단일 인스턴스로는 못 하는 것들을 더합니다. 전용 LLM 할당량, 레포 교차 봇 캠페인 탐지, 활동 로그가 있는 조직 대시보드, Slack/Discord/웹훅 알림. Sentry, PostHog, Plausible과 같은 모델입니다. 코드는 무료이고, 호스팅과 인텔리전스, 편의가 제품입니다.",
 				qPre: "궁금한 점이 있으면 ",
@@ -21,8 +28,15 @@ export default function PricingBody({ lang }: { lang: Lang }) {
 			}
 		: {
 				eyebrow: "pricing",
-				h1: "Free to self-host. Pay only for managed.",
-				sub: "SlopGuard is open source (MIT), run it yourself for free, forever. Paid tiers cover the managed LLM bill, private repos, cross-repo intelligence, org-wide visibility, and alerting. Checkout via Polar as Merchant of Record.",
+				h1: "Free to self-host.\nPaid only for managed.",
+				sub: "SlopGuard is open source (MIT). Run it on your own server and it stays free, forever.",
+				addsTitle: "What a paid plan handles for you",
+				adds: [
+					"Managed LLM (no server or API bill)",
+					"Private repos and cross-repo detection",
+					"Org dashboard and Slack alerts",
+				],
+				polar: "Checkout is handled securely by Polar (Merchant of Record).",
 				whyTitle: "Why pay if it is open source?",
 				why: "Self-hosting means running the server, paying the LLM API bill, and maintaining it yourself. Paid tiers remove all of that and add things a single self-hosted instance cannot do on its own: a dedicated LLM quota, cross-repo bot-campaign detection, an org-wide dashboard with an activity log, and Slack/Discord/webhook alerts. Same model as Sentry, PostHog, and Plausible. The code is free; the hosting, intelligence, and convenience are the product.",
 				qPre: "Questions? Open an issue on ",
@@ -41,8 +55,19 @@ export default function PricingBody({ lang }: { lang: Lang }) {
 			<header className="wide pricing-hero">
 				<div className="pricing-hero-copy">
 					<span className="eyebrow">{t.eyebrow}</span>
-					<h1 className="page-h1">{t.h1}</h1>
+					<h1 className="page-h1" style={{ whiteSpace: "pre-line" }}>
+						{t.h1}
+					</h1>
 					<p className="page-sub">{t.sub}</p>
+					<div className="pricing-adds">
+						<span className="pricing-adds-t">{t.addsTitle}</span>
+						<ul>
+							{t.adds.map((a) => (
+								<li key={a}>{a}</li>
+							))}
+						</ul>
+						<p className="pricing-polar">{t.polar}</p>
+					</div>
 				</div>
 				<figure className="plate pricing-plate">
 					<figcaption className="plate-bar">

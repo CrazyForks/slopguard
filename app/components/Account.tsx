@@ -355,6 +355,21 @@ export default async function Account({
 							</div>
 
 							<aside className="account-side">
+								<figure className="plate acct-radar">
+									<figcaption className="plate-bar">
+										<span>{lang === "ko" ? "감시 중" : "monitoring"}</span>
+										<span className="plate-coord">slopguard</span>
+									</figcaption>
+									<div className="plate-art">
+										{/* eslint-disable-next-line @next/next/no-img-element */}
+										<img src="/radar-circuit.png" alt="" />
+										<span className="acct-radar-n">
+											<b>{repos.length}</b>
+											{lang === "ko" ? "개 레포 감시 중" : "repos watched"}
+										</span>
+										<span className="plate-scan" aria-hidden="true" />
+									</div>
+								</figure>
 								<div className="card">
 									<div className="card-head">
 										<h3>{t.yourPlan}</h3>

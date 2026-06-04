@@ -307,7 +307,7 @@ export default function Landing({ lang }: { lang: Lang }) {
 
 	return (
 		<>
-			<MarketingNav lang={lang} enHref="/" koHref="/ko" hideInstall />
+			<MarketingNav lang={lang} enHref="/" koHref="/ko" />
 			<RevealOnScroll />
 
 			<header className="hero">
@@ -320,18 +320,32 @@ export default function Landing({ lang }: { lang: Lang }) {
 							{m.hero.h1c}
 						</h1>
 						<p className="sub">{m.hero.sub}</p>
-						<div className="btn-row">
+						<div className="hero-actions">
 							<Link className="btn btn-primary btn-lg" href={installHref}>
 								{m.hero.ctaInstall}
 							</Link>
 							<Link
-								className="btn btn-ghost btn-lg"
+								className="text-link"
 								href={lang === "ko" ? "/ko/how-it-works" : "/how-it-works"}
 							>
 								{lang === "ko" ? "동작 방식 보기" : "See how it works"}
+								<span aria-hidden="true">→</span>
 							</Link>
 						</div>
-						<p className="cta-note">{x.ctaNote}</p>
+						<ul className="hero-spec">
+							<li>
+								<b>0-100</b>
+								{lang === "ko" ? "슬롭 점수" : "slop score"}
+							</li>
+							<li>
+								<b>0</b>
+								{lang === "ko" ? "자동으로 닫음" : "auto-closed"}
+							</li>
+							<li>
+								<b>MIT</b>
+								{lang === "ko" ? "오픈소스" : "open source"}
+							</li>
+						</ul>
 					</div>
 					<figure className="plate plate-hero">
 						<figcaption className="plate-bar">
@@ -553,15 +567,16 @@ export default function Landing({ lang }: { lang: Lang }) {
 							? "클릭 한 번으로 레포에 추가하세요. 공개 레포는 무료이고, 절대 자동으로 닫지 않습니다."
 							: "Add it to a repo in one click. Free for public repos, and it never auto-closes."}
 					</p>
-					<div className="btn-row">
+					<div className="hero-actions">
 						<Link className="btn btn-primary btn-lg" href={installHref}>
 							{m.hero.ctaInstall}
 						</Link>
 						<Link
-							className="btn btn-ghost btn-lg"
+							className="text-link"
 							href={lang === "ko" ? "/ko/how-it-works" : "/how-it-works"}
 						>
-							{lang === "ko" ? "동작 방식" : "How it works"}
+							{lang === "ko" ? "동작 방식 보기" : "How it works"}
+							<span aria-hidden="true">→</span>
 						</Link>
 					</div>
 					<div className="outro-sig">

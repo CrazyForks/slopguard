@@ -47,7 +47,7 @@ a {
 	color: var(--fg);
 	text-decoration: none;
 }
-a:hover {
+a:not(.btn):hover {
 	color: var(--green);
 }
 /* inline prose links stay recognizable (but never restyle buttons/plates) */
@@ -290,6 +290,67 @@ code {
 	max-width: 30rem;
 	margin: 22px 0 30px;
 }
+/* one primary CTA + a quiet text link (no two-button slop) */
+.hero-actions {
+	display: flex;
+	align-items: center;
+	gap: 22px;
+	flex-wrap: wrap;
+}
+.text-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	color: var(--fg);
+	font-weight: 600;
+	font-size: 15px;
+}
+.text-link span {
+	transition: transform 0.18s ease;
+}
+.text-link:hover {
+	color: var(--green);
+}
+.text-link:hover span {
+	transform: translateX(4px);
+}
+/* editorial spec row (replaces banned hero tagline) */
+.hero-spec {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 34px 0 0;
+	padding: 18px 0 0;
+	border-top: 1px solid var(--border);
+	gap: 0;
+}
+.hero-spec li {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 0 22px;
+	font-size: 12px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--muted);
+	font-family: var(--mono);
+}
+.hero-spec li:first-child {
+	padding-left: 0;
+}
+.hero-spec li + li {
+	border-left: 1px solid var(--border);
+}
+.hero-spec b {
+	color: var(--green);
+	font-size: 19px;
+	letter-spacing: -0.01em;
+}
+@media (prefers-reduced-motion: reduce) {
+	.text-link span {
+		transition: none;
+	}
+}
 .hero .btn-row {
 	justify-content: flex-start;
 }
@@ -390,6 +451,29 @@ code {
 }
 .plate-pad {
 	padding: 22px;
+}
+/* account monitoring radar: repo count over the scope center */
+.acct-radar-n {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: 2px;
+	font-family: var(--mono);
+	font-size: 11.5px;
+	letter-spacing: 0.04em;
+	color: var(--muted);
+	text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+}
+.acct-radar-n b {
+	font-size: 42px;
+	line-height: 1;
+	font-weight: 800;
+	color: var(--green);
 }
 
 /* maintainer view: a real GitHub-style review, framed in a plate (not a card) */
@@ -2044,6 +2128,46 @@ footer.site.footer-app {
 		grid-template-columns: 1fr;
 		gap: 28px;
 	}
+}
+
+/* pricing hero: tight lead + scannable 'what paid adds' list */
+.pricing-adds {
+	margin-top: 28px;
+}
+.pricing-adds-t {
+	font-family: var(--mono);
+	font-size: 11px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+.pricing-adds ul {
+	list-style: none;
+	margin: 14px 0 0;
+	padding: 0;
+	display: grid;
+	gap: 9px;
+}
+.pricing-adds li {
+	position: relative;
+	padding-left: 24px;
+	font-size: 14.5px;
+	color: #c9d1d9;
+}
+.pricing-adds li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 6px;
+	width: 10px;
+	height: 10px;
+	border: 1.5px solid var(--green);
+	border-radius: 2px;
+}
+.pricing-polar {
+	margin-top: 18px;
+	font-size: 12.5px;
+	color: var(--muted);
 }
 
 /* why-pay: framed callout, not a card box */

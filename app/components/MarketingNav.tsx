@@ -13,28 +13,23 @@ export default function MarketingNav({
 	enHref,
 	koHref,
 	active,
-	hideInstall,
 }: {
 	lang: Lang;
 	enHref: string;
 	koHref: string;
 	active?: "how" | "pricing" | "docs";
-	/** hide the nav install CTA when the page already has a prominent one */
-	hideInstall?: boolean;
 }) {
 	const ko = lang === "ko";
 	const home = ko ? "/ko" : "/";
 	const how = ko ? "/ko/how-it-works" : "/how-it-works";
 	const pricing = ko ? "/ko/pricing" : "/pricing";
 	const docs = ko ? "/ko/docs" : "/docs";
-	const install = ko ? "/ko/install" : "/install";
 	const t = ko
-		? { how: "동작 방식", pricing: "가격", docs: "문서", install: "설치" }
+		? { how: "동작 방식", pricing: "가격", docs: "문서" }
 		: {
 				how: "How it works",
 				pricing: "Pricing",
 				docs: "Docs",
-				install: "Install",
 			};
 	return (
 		<nav className="nav">
@@ -61,11 +56,6 @@ export default function MarketingNav({
 						KO
 					</Link>
 				</span>
-				{!hideInstall && (
-					<Link className="btn btn-primary nav-cta" href={install}>
-						{t.install}
-					</Link>
-				)}
 				<ProfileMenu lang={lang} />
 			</span>
 		</nav>
