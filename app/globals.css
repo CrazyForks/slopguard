@@ -189,7 +189,7 @@ code {
 	background: linear-gradient(180deg, #3fb950 0%, #2ea043 100%);
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.26),
-		0 8px 22px rgba(35, 134, 54, 0.4);
+		0 8px 20px rgba(1, 4, 9, 0.5);
 	transform: translateY(-2px);
 }
 .btn-primary:hover::before {
@@ -289,7 +289,7 @@ code {
 	pointer-events: none;
 	background: radial-gradient(
 		320px circle at var(--mx, 72%) var(--my, 26%),
-		rgba(63, 185, 80, 0.1),
+		rgba(63, 185, 80, 0.07),
 		transparent 72%
 	);
 }
@@ -499,7 +499,6 @@ code {
 	line-height: 1;
 	font-weight: 800;
 	color: #fff;
-	text-shadow: 0 0 14px rgba(63, 185, 80, 0.5);
 }
 
 /* maintainer view: a real GitHub-style review, framed in a plate (not a card) */
@@ -1057,7 +1056,7 @@ code {
 	width: 100%;
 	max-width: 300px;
 	height: auto;
-	filter: drop-shadow(0 8px 30px rgba(63, 185, 80, 0.18));
+	filter: drop-shadow(0 14px 34px rgba(1, 4, 9, 0.55));
 }
 @media (max-width: 760px) {
 	.outro-grid {
