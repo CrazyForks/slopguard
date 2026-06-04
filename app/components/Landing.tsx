@@ -351,12 +351,12 @@ export default function Landing({ lang }: { lang: Lang }) {
 						</div>
 						<ul className="hero-spec">
 							<li>
-								<b>0-100</b>
+								<b>0–100</b>
 								{lang === "ko" ? "슬롭 점수" : "slop score"}
 							</li>
 							<li>
-								<b>0</b>
-								{lang === "ko" ? "자동으로 닫음" : "auto-closed"}
+								<b>{lang === "ko" ? "사람" : "human"}</b>
+								{lang === "ko" ? "최종 결정" : "makes the call"}
 							</li>
 							<li>
 								<b>MIT</b>

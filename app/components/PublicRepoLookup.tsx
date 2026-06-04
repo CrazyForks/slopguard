@@ -159,7 +159,9 @@ export default function PublicRepoLookup({ lang }: { lang: Lang }) {
 				<div className="lookup-result">
 					<div className="lookup-head">
 						<span className="lookup-repo">
-							<span className="lookup-scanned">{lang === "ko" ? "스캔 완료" : "scanned"}</span>
+							<span className="lookup-scanned">
+								{lang === "ko" ? "스캔 완료" : "scanned"}
+							</span>
 							<a href={`https://github.com/${stats.repo}`}>{stats.repo}</a>
 						</span>
 						<a className="lookup-full" href={`${dashBase}/${stats.repo}`}>
