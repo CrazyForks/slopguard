@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import ConsoleSidebar, { type SidebarItem } from "./ConsoleSidebar";
 import { shell, frame, card, muted } from "./console-styles";
@@ -45,7 +45,7 @@ export type SsoFullViewCopy = {
 	backToEnterprise: string;
 	entityIdLabel: string;
 	acsUrlLabel: string;
-	lastSyncLabel: (when: string) => string;
+	lastSyncLabel: string;
 	statusActive: string;
 	statusPending: string;
 	statusUnconfigured: string;
@@ -321,7 +321,7 @@ export default function SsoFullView({ copy }: { copy: SsoFullViewCopy }) {
 												fontFamily: "var(--mono)",
 											}}
 										>
-											{copy.lastSyncLabel(cfg.lastSync ?? "")}
+											{copy.lastSyncLabel}
 										</div>
 										<div
 											style={{
@@ -527,9 +527,8 @@ export default function SsoFullView({ copy }: { copy: SsoFullViewCopy }) {
 										}}
 									>
 										{copy.helpSteps.map((s) => (
-											<>
+											<Fragment key={s.name}>
 												<dt
-													key={`k-${s.name}`}
 													style={{
 														...muted,
 														fontFamily: "var(--mono)",
@@ -539,7 +538,6 @@ export default function SsoFullView({ copy }: { copy: SsoFullViewCopy }) {
 													{s.name}
 												</dt>
 												<dd
-													key={`v-${s.name}`}
 													style={{
 														margin: 0,
 														color: "#c9d1d9",
@@ -548,7 +546,7 @@ export default function SsoFullView({ copy }: { copy: SsoFullViewCopy }) {
 												>
 													{s.value}
 												</dd>
-											</>
+											</Fragment>
 										))}
 									</dl>
 								</div>

@@ -43,7 +43,7 @@ const copy: SsoFullViewCopy = {
 	backToEnterprise: "Enterprise로",
 	entityIdLabel: "SP 엔티티 ID",
 	acsUrlLabel: "ACS URL (Assertion Consumer)",
-	lastSyncLabel: () => "마지막 동기화",
+	lastSyncLabel: "마지막 동기화",
 	statusActive: "활성",
 	statusPending: "대기",
 	statusUnconfigured: "미설정",

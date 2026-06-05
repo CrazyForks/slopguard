@@ -43,7 +43,7 @@ const copy: SsoFullViewCopy = {
 	backToEnterprise: "Back to Enterprise",
 	entityIdLabel: "SP entity ID",
 	acsUrlLabel: "ACS URL (assertion consumer)",
-	lastSyncLabel: () => "Last sync",
+	lastSyncLabel: "Last sync",
 	statusActive: "Active",
 	statusPending: "Pending",
 	statusUnconfigured: "Unconfigured",
