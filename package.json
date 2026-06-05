@@ -13,7 +13,8 @@
     "test": "node --import tsx --test test/**/*.test.ts",
     "agent:demo": "node --env-file-if-exists=.env.local --import tsx scripts/test-agent.ts",
     "eval": "node --env-file-if-exists=.env.local --import tsx scripts/eval.ts",
-    "smee": "node scripts/smee.mjs"
+    "smee": "node scripts/smee.mjs",
+    "check-plan": "node --import tsx scripts/check-entitlement.ts"
   },
   "dependencies": {
     "@langchain/anthropic": "^0.3.11",

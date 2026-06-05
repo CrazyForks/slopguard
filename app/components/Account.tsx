@@ -407,6 +407,64 @@ export default async function Account({
 										</Link>
 									</div>
 								</div>
+
+								{/* Paid feature quick links (visible for paid plans) */}
+								{(plan === "pro" ||
+									plan === "team" ||
+									plan === "enterprise") && (
+									<div className="card" style={{ marginTop: 12 }}>
+										<div className="card-head">
+											<h3 style={{ fontSize: 14 }}>
+												{lang === "ko" ? "유료 기능 콘솔" : "Paid Consoles"}
+											</h3>
+										</div>
+										<div
+											style={{
+												display: "flex",
+												flexWrap: "wrap",
+												gap: 8,
+												fontSize: 13,
+											}}
+										>
+											{plan !== "pro" && (
+												<Link
+													href={lang === "ko" ? "/ko/org" : "/org"}
+													className="btn btn-ghost btn-sm"
+												>
+													Org Dashboard
+												</Link>
+											)}
+											{(plan === "team" || plan === "enterprise") && (
+												<Link
+													href={lang === "ko" ? "/ko/alerts" : "/alerts"}
+													className="btn btn-ghost btn-sm"
+												>
+													Alerts
+												</Link>
+											)}
+											<Link
+												href={lang === "ko" ? "/ko/campaigns" : "/campaigns"}
+												className="btn btn-ghost btn-sm"
+											>
+												Campaigns
+											</Link>
+											{plan === "enterprise" && (
+												<Link
+													href={
+														lang === "ko" ? "/ko/enterprise" : "/enterprise"
+													}
+													className="btn btn-ghost btn-sm"
+												>
+													Enterprise
+												</Link>
+											)}
+										</div>
+										<p className="muted" style={{ fontSize: 11, marginTop: 6 }}>
+											Pro/Team/Enterprise 전용 콘솔입니다. 실제 데이터는 GitHub
+											App 설치 후 표시됩니다.
+										</p>
+									</div>
+								)}
 							</aside>
 						</div>
 

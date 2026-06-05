@@ -18,8 +18,14 @@ afterEach(() => {
 
 test("normalizes GitHub owner values from checkout custom fields", () => {
 	assert.equal(normalizeGitHubOwner(" @Blue-B "), "blue-b");
-	assert.equal(normalizeGitHubOwner("https://github.com/Blue-B/slopguard"), "blue-b");
-	assert.equal(normalizeGitHubOwner("github.com/acme-inc?tab=repositories"), "acme-inc");
+	assert.equal(
+		normalizeGitHubOwner("https://github.com/Blue-B/slopguard"),
+		"blue-b",
+	);
+	assert.equal(
+		normalizeGitHubOwner("github.com/acme-inc?tab=repositories"),
+		"acme-inc",
+	);
 	assert.equal(normalizeGitHubOwner("not_valid"), "");
 });
 

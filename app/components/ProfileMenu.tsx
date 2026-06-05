@@ -127,9 +127,30 @@ export default function ProfileMenu({ lang }: { lang: Lang }) {
 						{t.account}
 					</a>
 					{paid && (
-						<a role="menuitem" href={PORTAL_URL}>
-							{t.billing}
-						</a>
+						<>
+							<a role="menuitem" href={PORTAL_URL}>
+								{t.billing}
+							</a>
+							{/* Quick console links for paid plans */}
+							{(me.plan === "team" || me.plan === "enterprise") && (
+								<a role="menuitem" href={ko ? "/ko/org" : "/org"}>
+									Org Dashboard
+								</a>
+							)}
+							{(me.plan === "team" || me.plan === "enterprise") && (
+								<a role="menuitem" href={ko ? "/ko/alerts" : "/alerts"}>
+									Alerts
+								</a>
+							)}
+							<a role="menuitem" href={ko ? "/ko/campaigns" : "/campaigns"}>
+								Campaigns
+							</a>
+							{me.plan === "enterprise" && (
+								<a role="menuitem" href={ko ? "/ko/enterprise" : "/enterprise"}>
+									Enterprise
+								</a>
+							)}
+						</>
 					)}
 					<a role="menuitem" className="profile-dd-out" href="/api/auth/logout">
 						{t.out}
