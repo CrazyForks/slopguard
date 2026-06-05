@@ -4,6 +4,7 @@ import {
 	SESSION_COOKIE,
 	cookieOptions,
 	encodeSession,
+	verifyOAuthState,
 } from "@/lib/auth/session";
 import { getAppBaseUrl } from "@/lib/env";
 
@@ -23,7 +24,9 @@ export async function GET(req: Request) {
 	const fail = (reason: string) =>
 		NextResponse.redirect(`${base}${lang}/account?error=${reason}`);
 
-	if (!code || !state || !cookieState || state !== cookieState) {
+	const validCookieState = Boolean(cookieState && state === cookieState);
+	const validSignedState = verifyOAuthState(state ?? undefined);
+	if (!code || !state || (!validCookieState && !validSignedState)) {
 		return fail("state");
 	}
 

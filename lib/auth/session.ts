@@ -33,8 +33,38 @@ function b64url(buf: Buffer | string): string {
 		.replace(/=+$/, "");
 }
 
+function fromB64url(value: string): string {
+	return Buffer.from(
+		value.replace(/-/g, "+").replace(/_/g, "/"),
+		"base64",
+	).toString("utf8");
+}
+
 function sign(payload: string): string {
 	return b64url(createHmac("sha256", secret()).update(payload).digest());
+}
+
+export function encodeOAuthState(nonce: string): string {
+	const payload = b64url(JSON.stringify({ nonce, ts: Date.now() }));
+	return `${payload}.${sign(payload)}`;
+}
+
+export function verifyOAuthState(value: string | undefined): boolean {
+	if (!value) return false;
+	const dot = value.lastIndexOf(".");
+	if (dot < 0) return false;
+	const payload = value.slice(0, dot);
+	const sig = value.slice(dot + 1);
+	const expected = sign(payload);
+	const a = Buffer.from(sig);
+	const b = Buffer.from(expected);
+	if (a.length !== b.length || !timingSafeEqual(a, b)) return false;
+	try {
+		const json = JSON.parse(fromB64url(payload)) as { ts?: number };
+		return typeof json.ts === "number" && Date.now() - json.ts <= 10 * 60 * 1000;
+	} catch {
+		return false;
+	}
 }
 
 /** Serialize + sign a session into a cookie value. */
@@ -55,12 +85,7 @@ export function decodeSession(value: string | undefined): SessionUser | null {
 	const b = Buffer.from(expected);
 	if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
 	try {
-		const json = JSON.parse(
-			Buffer.from(
-				payload.replace(/-/g, "+").replace(/_/g, "/"),
-				"base64",
-			).toString("utf8"),
-		) as SessionUser;
+		const json = JSON.parse(fromB64url(payload)) as SessionUser;
 		if (Date.now() - json.ts > MAX_AGE * 1000) return null;
 		return json;
 	} catch {

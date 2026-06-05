@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { authorizeUrl, oauthConfigured } from "@/lib/auth/github";
+import { encodeOAuthState } from "@/lib/auth/session";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,7 +17,7 @@ export function GET(req: Request) {
 	}
 	const lang =
 		new URL(req.url).searchParams.get("lang") === "ko" ? "ko" : "en";
-	const state = randomBytes(16).toString("hex");
+	const state = encodeOAuthState(randomBytes(16).toString("hex"));
 	const res = NextResponse.redirect(authorizeUrl(state));
 	res.cookies.set("sg_lang", lang, {
 		secure: process.env.NODE_ENV === "production",
