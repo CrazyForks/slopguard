@@ -59,7 +59,8 @@ const copy: OrgDashboardConsoleCopy = {
 	},
 	campaignTitle: "Campaign radar",
 	campaignSubtitle: "Top clusters by commit prefix",
-	campaignsEmpty: "No campaign clusters yet — once 3+ items share a prefix they show up here.",
+	campaignsEmpty:
+		"No campaign clusters yet — once 3+ items share a prefix they show up here.",
 	policyTitle: "Policy coverage",
 	policyBody: "Share of installed repos that are actively protected",
 	policyViewAll: "Open policy",

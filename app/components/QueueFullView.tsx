@@ -114,7 +114,8 @@ export default function QueueFullView({ copy }: { copy: QueueFullViewCopy }) {
 	}, []);
 
 	const isLoading = data === null && error === null;
-	const notInstalled = data !== null && "installed" in data && data.installed === false;
+	const notInstalled =
+		data !== null && "installed" in data && data.installed === false;
 	const live = data && data.installed ? data : null;
 
 	const rows = (live?.recent ?? []).map((it) => ({
@@ -125,7 +126,9 @@ export default function QueueFullView({ copy }: { copy: QueueFullViewCopy }) {
 		status: deriveStatus(it.labels),
 		owner: `@${it.author}`,
 		age: formatAge(it.updatedAt),
-		href: it.url.replace("api.github.com", "github.com").replace(/\/repos\//, "/"),
+		href: it.url
+			.replace("api.github.com", "github.com")
+			.replace(/\/repos\//, "/"),
 	}));
 
 	return (
@@ -269,30 +272,33 @@ export default function QueueFullView({ copy }: { copy: QueueFullViewCopy }) {
 						>
 							<thead>
 								<tr style={{ color: "#7d8590" }}>
-									{(["item", "repo", "score", "status", "owner", "age"] as const).map(
-										(k) => (
-											<th
-												key={k}
-												style={{
-													textAlign: k === "score" ? "right" : "left",
-													padding: "12px 4px",
-													fontSize: 10,
-													letterSpacing: ".14em",
-													textTransform: "uppercase",
-													fontWeight: 600,
-													fontFamily: "var(--mono)",
-													borderBottom: "1px solid #1c2530",
-												}}
-											>
-												{copy.columns[k]}
-											</th>
-										),
-									)}
+									{(
+										["item", "repo", "score", "status", "owner", "age"] as const
+									).map((k) => (
+										<th
+											key={k}
+											style={{
+												textAlign: k === "score" ? "right" : "left",
+												padding: "12px 4px",
+												fontSize: 10,
+												letterSpacing: ".14em",
+												textTransform: "uppercase",
+												fontWeight: 600,
+												fontFamily: "var(--mono)",
+												borderBottom: "1px solid #1c2530",
+											}}
+										>
+											{copy.columns[k]}
+										</th>
+									))}
 								</tr>
 							</thead>
 							<tbody>
 								{rows.map((row) => (
-									<tr key={row.key} style={{ borderBottom: "1px solid #161e29" }}>
+									<tr
+										key={row.key}
+										style={{ borderBottom: "1px solid #161e29" }}
+									>
 										<td
 											style={{
 												padding: "14px 4px",

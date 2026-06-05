@@ -7,8 +7,7 @@ import IntegrationsFullView, {
 
 export const metadata = {
 	title: "SlopGuard: 통합 — Enterprise",
-	description:
-		"Jira, PagerDuty, Datadog, Slack, Linear, Opsgenie와 연결.",
+	description: "Jira, PagerDuty, Datadog, Slack, Linear, Opsgenie와 연결.",
 };
 
 const copy: IntegrationsFullViewCopy = {

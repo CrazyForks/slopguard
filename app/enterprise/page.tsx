@@ -23,7 +23,7 @@ const copy: EnterpriseConsoleCopy = {
 		{ label: "Repos", href: "/org/repos", external: true },
 		{ label: "Campaigns", href: "/campaigns", external: true },
 		{ label: "Alerts", href: "/alerts", external: true },
-		{ label: "SSO", href: "/enterprise#sso" },
+		{ label: "SSO", href: "/enterprise/sso" },
 		{ label: "Audit", href: "/enterprise/audit" },
 		{ label: "Integrations", href: "/enterprise/integrations" },
 	],
@@ -45,7 +45,8 @@ const copy: EnterpriseConsoleCopy = {
 	auditViewAll: "Open full log",
 	auditViewAllHref: "/enterprise/audit",
 	integrationsTitle: "Integrations",
-	integrationsSubtitle: "Forward events to ticketing, paging, and observability tools",
+	integrationsSubtitle:
+		"Forward events to ticketing, paging, and observability tools",
 	integrationsViewAll: "Manage integrations",
 	integrationsViewAllHref: "/enterprise/integrations",
 	supportTitle: "Support",

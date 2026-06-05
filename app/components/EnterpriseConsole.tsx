@@ -105,13 +105,35 @@ export default function EnterpriseConsole({
 	const metrics = useMemo(() => {
 		if (!data) {
 			return [
-				{ label: "Audit entries", value: "—", detail: "loading", tone: "neutral" as const },
-				{ label: "Integrations", value: "—", detail: "loading", tone: "neutral" as const },
-				{ label: "SSO provider", value: "—", detail: "loading", tone: "neutral" as const },
-				{ label: "SSO status", value: "—", detail: "loading", tone: "neutral" as const },
+				{
+					label: "Audit entries",
+					value: "—",
+					detail: "loading",
+					tone: "neutral" as const,
+				},
+				{
+					label: "Integrations",
+					value: "—",
+					detail: "loading",
+					tone: "neutral" as const,
+				},
+				{
+					label: "SSO provider",
+					value: "—",
+					detail: "loading",
+					tone: "neutral" as const,
+				},
+				{
+					label: "SSO status",
+					value: "—",
+					detail: "loading",
+					tone: "neutral" as const,
+				},
 			];
 		}
-		const connected = data.integrations.filter((i) => i.status === "connected").length;
+		const connected = data.integrations.filter(
+			(i) => i.status === "connected",
+		).length;
 		return [
 			{
 				label: "Audit entries",
@@ -135,7 +157,8 @@ export default function EnterpriseConsole({
 				label: "SSO status",
 				value: data.sso.status,
 				detail: "SAML 2.0 ready",
-				tone: data.sso.status === "active" ? ("ok" as const) : ("warn" as const),
+				tone:
+					data.sso.status === "active" ? ("ok" as const) : ("warn" as const),
 			},
 		];
 	}, [data]);
@@ -303,9 +326,7 @@ export default function EnterpriseConsole({
 										style={{
 											padding: "20px 16px",
 											borderRight:
-												i < metrics.length - 1
-													? "1px solid #1c2530"
-													: "none",
+												i < metrics.length - 1 ? "1px solid #1c2530" : "none",
 										}}
 									>
 										<div
@@ -478,8 +499,7 @@ export default function EnterpriseConsole({
 												key={row.label}
 												style={{
 													padding: "0 12px",
-													borderRight:
-														i < 2 ? "1px solid #1c2530" : "none",
+													borderRight: i < 2 ? "1px solid #1c2530" : "none",
 												}}
 											>
 												<div

@@ -55,6 +55,21 @@ export interface Integration {
 	scope: string;
 }
 
+export type SsoProvider = "okta" | "azure-ad" | "google" | "onelogin" | "generic";
+export type SsoStatus = "active" | "pending" | "unconfigured";
+
+export interface SsoConfig {
+	provider: SsoProvider;
+	status: SsoStatus;
+	entityId: string;
+	acsUrl: string;
+	idpMetadataUrl: string;
+	emailAttribute: string;
+	loginAttribute: string;
+	enforced: boolean;
+	lastSync?: string;
+}
+
 export interface OwnerConsoleState {
 	owner: string;
 	channels: Channel[];
@@ -62,6 +77,7 @@ export interface OwnerConsoleState {
 	sentAlerts: SentAlert[];
 	audit: AuditEntry[];
 	integrations: Integration[];
+	ssoConfig: SsoConfig;
 }
 
 const store = new LRUCache<string, OwnerConsoleState>({
@@ -82,6 +98,20 @@ function emptyState(owner: string): OwnerConsoleState {
 		sentAlerts: [],
 		audit: [],
 		integrations: [],
+		ssoConfig: defaultSsoConfig(owner),
+	};
+}
+
+function defaultSsoConfig(owner: string): SsoConfig {
+	return {
+		provider: "okta",
+		status: "unconfigured",
+		entityId: `urn:slopguard:enterprise:${owner.toLowerCase()}`,
+		acsUrl: `https://slopguard.app/api/enterprise/sso/acs?owner=${encodeURIComponent(owner.toLowerCase())}`,
+		idpMetadataUrl: "",
+		emailAttribute: "email",
+		loginAttribute: "login",
+		enforced: false,
 	};
 }
 
@@ -105,3 +135,19 @@ export function mutateState(
 	return s;
 }
 
+export function pushAudit(
+	owner: string,
+	entry: Omit<AuditEntry, "id" | "owner" | "when">,
+): AuditEntry {
+	const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+	const e: AuditEntry = {
+		id,
+		owner: owner.toLowerCase(),
+		when: new Date().toISOString(),
+		...entry,
+	};
+	mutateState(owner, (s) => {
+		s.audit = [e, ...s.audit].slice(0, 200);
+	});
+	return e;
+}

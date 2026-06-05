@@ -37,10 +37,17 @@ export type IntegrationsFullViewCopy = {
 };
 
 function statusColor(s: Integration["status"]): string {
-	return s === "connected" ? "#3fb950" : s === "pending" ? "#d29922" : "#8b949e";
+	return s === "connected"
+		? "#3fb950"
+		: s === "pending"
+			? "#d29922"
+			: "#8b949e";
 }
 
-function statusLabel(s: Integration["status"], copy: IntegrationsFullViewCopy): string {
+function statusLabel(
+	s: Integration["status"],
+	copy: IntegrationsFullViewCopy,
+): string {
 	return s === "connected"
 		? copy.connected
 		: s === "pending"
@@ -302,7 +309,9 @@ export default function IntegrationsFullView({
 													: "btn btn-primary btn-sm"
 											}
 											disabled={busy === integration.name}
-											onClick={() => toggle(integration.name, integration.status)}
+											onClick={() =>
+												toggle(integration.name, integration.status)
+											}
 											style={{ alignSelf: "flex-start" }}
 										>
 											{busy === integration.name

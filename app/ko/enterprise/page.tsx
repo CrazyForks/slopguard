@@ -7,8 +7,7 @@ import SiteFooter from "@/app/components/SiteFooter";
 
 export const metadata = {
 	title: "SlopGuard: Enterprise — SSO, 감사, 컴플라이언스",
-	description:
-		"Enterprise 플랜 콘솔: SAML SSO, 감사 로그, 통합, 지원 계약.",
+	description: "Enterprise 플랜 콘솔: SAML SSO, 감사 로그, 통합, 지원 계약.",
 };
 
 const copy: EnterpriseConsoleCopy = {
@@ -23,7 +22,7 @@ const copy: EnterpriseConsoleCopy = {
 		{ label: "레포", href: "/ko/org/repos", external: true },
 		{ label: "캠페인", href: "/ko/campaigns", external: true },
 		{ label: "알림", href: "/ko/alerts", external: true },
-		{ label: "SSO", href: "/ko/enterprise#sso" },
+		{ label: "SSO", href: "/ko/enterprise/sso" },
 		{ label: "감사", href: "/ko/enterprise/audit" },
 		{ label: "통합", href: "/ko/enterprise/integrations" },
 	],

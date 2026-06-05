@@ -70,7 +70,8 @@ const copy: AlertsConsoleCopy = {
 	removeRule: "삭제",
 	logTitle: "발송 로그",
 	logSubtitle: "최근 발송, 실패, 재시도 내역.",
-	logEmpty: "발송 내역이 없습니다. 채널에서 테스트 발송을 실행하면 여기에 표시됩니다.",
+	logEmpty:
+		"발송 내역이 없습니다. 채널에서 테스트 발송을 실행하면 여기에 표시됩니다.",
 	logColumns: {
 		when: "시각",
 		item: "항목",

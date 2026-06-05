@@ -32,7 +32,8 @@ const copy: IntegrationsFullViewCopy = {
 	backHref: "/enterprise",
 	backLabel: "Overview",
 	heroEyebrow: "INTEGRATIONS · ENTERPRISE",
-	heroTitle: "Forward events to your ticketing, paging, and observability tools.",
+	heroTitle:
+		"Forward events to your ticketing, paging, and observability tools.",
 	heroBody:
 		"Connect a provider to wire SlopGuard alerts into the systems your team already uses. Each connect/disconnect action is recorded in the audit log.",
 	connect: "Connect",

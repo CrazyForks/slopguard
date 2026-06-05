@@ -55,18 +55,16 @@ export default function ConsoleSidebar({
 	const computedActive = useMemo(() => {
 		// Match the deepest path: /org/queue highlights "Queue".
 		// Strip locale prefix (/ko/) and base path (/org, /enterprise).
+		// Anchor-only links (e.g. /enterprise#sso) light up only when the
+		// current path is the same page; we deliberately do NOT read
+		// `location.hash` here so the active calc is pure and SSR-safe.
 		const cleanPath = pathname.replace(/^\/(ko|en)\//, "/");
 		let bestMatch: SidebarItem | undefined;
 		let bestLen = 0;
 		for (const item of nav) {
-			// ignore external markers, compare by href prefix
 			const base = item.href.split("#")[0];
 			if (!base || base === "/") continue;
-			if (
-				cleanPath === base ||
-				cleanPath.startsWith(base + "/") ||
-				(item.href.includes("#") && cleanPath + location.hash === item.href)
-			) {
+			if (cleanPath === base || cleanPath.startsWith(base + "/")) {
 				if (base.length > bestLen) {
 					bestLen = base.length;
 					bestMatch = item;

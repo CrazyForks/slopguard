@@ -8,7 +8,7 @@ import AuditFullView, {
 export const metadata = {
 	title: "SlopGuard: 감사 로그 — Enterprise",
 	description:
-	"조직에 영향을 주는 모든 액션을 기록합니다. JSON/CSV 내보내기 가능.",
+		"조직에 영향을 주는 모든 액션을 기록합니다. JSON/CSV 내보내기 가능.",
 };
 
 const copy: AuditFullViewCopy = {
@@ -28,8 +28,7 @@ const copy: AuditFullViewCopy = {
 		{ label: "통합", href: "/ko/enterprise/integrations" },
 	],
 	loading: "감사 로그 불러오는 중…",
-	empty:
-		"감사 항목이 없습니다. 설정 변경과 내보내기 실행이 기록됩니다.",
+	empty: "감사 항목이 없습니다. 설정 변경과 내보내기 실행이 기록됩니다.",
 	backHref: "/ko/enterprise",
 	backLabel: "개요",
 	heroEyebrow: "AUDIT · ENTERPRISE",
@@ -50,7 +49,11 @@ const copy: AuditFullViewCopy = {
 export default function AuditPage() {
 	return (
 		<>
-			<MarketingNav lang="ko" enHref="/enterprise/audit" koHref="/ko/enterprise/audit" />
+			<MarketingNav
+				lang="ko"
+				enHref="/enterprise/audit"
+				koHref="/ko/enterprise/audit"
+			/>
 			<PlanGate lang="ko" required="enterprise">
 				<AuditFullView copy={copy} />
 			</PlanGate>

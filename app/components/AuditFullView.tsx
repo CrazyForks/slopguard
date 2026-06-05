@@ -265,30 +265,33 @@ export default function AuditFullView({ copy }: { copy: AuditFullViewCopy }) {
 						>
 							<thead>
 								<tr style={{ color: "#7d8590" }}>
-									{(["when", "actor", "action", "target", "source"] as const).map(
-										(k) => (
-											<th
-												key={k}
-												style={{
-													textAlign: "left",
-													padding: "12px 4px",
-													fontSize: 10,
-													letterSpacing: ".14em",
-													textTransform: "uppercase",
-													fontWeight: 600,
-													fontFamily: "var(--mono)",
-													borderBottom: "1px solid #1c2530",
-												}}
-											>
-												{copy.columns[k]}
-											</th>
-										),
-									)}
+									{(
+										["when", "actor", "action", "target", "source"] as const
+									).map((k) => (
+										<th
+											key={k}
+											style={{
+												textAlign: "left",
+												padding: "12px 4px",
+												fontSize: 10,
+												letterSpacing: ".14em",
+												textTransform: "uppercase",
+												fontWeight: 600,
+												fontFamily: "var(--mono)",
+												borderBottom: "1px solid #1c2530",
+											}}
+										>
+											{copy.columns[k]}
+										</th>
+									))}
 								</tr>
 							</thead>
 							<tbody>
 								{entries.map((row) => (
-									<tr key={row.id} style={{ borderBottom: "1px solid #161e29" }}>
+									<tr
+										key={row.id}
+										style={{ borderBottom: "1px solid #161e29" }}
+									>
 										<td
 											style={{
 												padding: "14px 4px",

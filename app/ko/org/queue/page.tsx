@@ -7,8 +7,7 @@ import QueueFullView, {
 
 export const metadata = {
 	title: "SlopGuard: 격리 큐 — Team",
-	description:
-		"보호된 레포의 격리·정상 확인 항목 전체 (최신순).",
+	description: "보호된 레포의 격리·정상 확인 항목 전체 (최신순).",
 };
 
 const copy: QueueFullViewCopy = {

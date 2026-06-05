@@ -7,7 +7,14 @@ import { getState, mutateState } from "@/lib/billing/console-store";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SUPPORTED = ["Jira", "PagerDuty", "Datadog", "Slack", "Linear", "Opsgenie"];
+const SUPPORTED = [
+	"Jira",
+	"PagerDuty",
+	"Datadog",
+	"Slack",
+	"Linear",
+	"Opsgenie",
+];
 
 /**
  * GET /api/enterprise/integrations — list the owner's integrations (real

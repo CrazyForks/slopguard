@@ -50,7 +50,11 @@ const copy: AuditFullViewCopy = {
 export default function AuditPage() {
 	return (
 		<>
-			<MarketingNav lang="en" enHref="/enterprise/audit" koHref="/ko/enterprise/audit" />
+			<MarketingNav
+				lang="en"
+				enHref="/enterprise/audit"
+				koHref="/ko/enterprise/audit"
+			/>
 			<PlanGate lang="en" required="enterprise">
 				<AuditFullView copy={copy} />
 			</PlanGate>

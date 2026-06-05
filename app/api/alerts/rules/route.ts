@@ -28,7 +28,12 @@ export async function POST(req: Request) {
 		);
 	}
 
-	let body: { repo?: string; pattern?: string; channelId?: string; threshold?: number };
+	let body: {
+		repo?: string;
+		pattern?: string;
+		channelId?: string;
+		threshold?: number;
+	};
 	try {
 		body = await req.json();
 	} catch {
@@ -37,7 +42,10 @@ export async function POST(req: Request) {
 	const repo = (body.repo ?? "").trim();
 	const pattern = (body.pattern ?? "").trim();
 	const channelId = (body.channelId ?? "").trim();
-	const threshold = Math.max(1, Math.min(100, Math.floor(Number(body.threshold ?? 60))));
+	const threshold = Math.max(
+		1,
+		Math.min(100, Math.floor(Number(body.threshold ?? 60))),
+	);
 	if (!repo || !pattern || !channelId) {
 		return NextResponse.json(
 			{ error: "repo, pattern, and channelId are required" },

@@ -488,9 +488,7 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 										style={{
 											padding: "20px 16px",
 											borderRight:
-												i < metrics.length - 1
-													? "1px solid #1c2530"
-													: "none",
+												i < metrics.length - 1 ? "1px solid #1c2530" : "none",
 										}}
 									>
 										<div
@@ -625,9 +623,13 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 													type="button"
 													className="btn btn-ghost btn-sm"
 													disabled={busyChannel === channel.id}
-													onClick={() => removeChannel(channel.id, channel.label)}
+													onClick={() =>
+														removeChannel(channel.id, channel.label)
+													}
 												>
-													{busyChannel === channel.id ? "..." : copy.removeChannel}
+													{busyChannel === channel.id
+														? "..."
+														: copy.removeChannel}
 												</button>
 											</div>
 										))}
@@ -721,9 +723,7 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 											type="submit"
 											className="btn btn-primary btn-sm"
 											disabled={
-												addBusy ||
-												!addLabel.trim() ||
-												!addTarget.trim()
+												addBusy || !addLabel.trim() || !addTarget.trim()
 											}
 										>
 											{addBusy ? copy.addChannelBusy : copy.addChannelCta}

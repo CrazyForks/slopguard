@@ -36,11 +36,7 @@ export type PolicyFullViewCopy = {
 	docsHref: string;
 };
 
-export default function PolicyFullView({
-	copy,
-}: {
-	copy: PolicyFullViewCopy;
-}) {
+export default function PolicyFullView({ copy }: { copy: PolicyFullViewCopy }) {
 	const [data, setData] = useState<DashboardResponse | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +56,8 @@ export default function PolicyFullView({
 	}, []);
 
 	const isLoading = data === null && error === null;
-	const notInstalled = data !== null && "installed" in data && data.installed === false;
+	const notInstalled =
+		data !== null && "installed" in data && data.installed === false;
 	const live = data && data.installed ? data : null;
 
 	const total = live?.repoCount ?? 0;
@@ -357,10 +354,7 @@ export default function PolicyFullView({
 										{copy.policyFileBody}
 									</p>
 								</div>
-								<Link
-									href={copy.docsHref}
-									className="btn btn-ghost btn-sm"
-								>
+								<Link href={copy.docsHref} className="btn btn-ghost btn-sm">
 									Open docs →
 								</Link>
 							</div>

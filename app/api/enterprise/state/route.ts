@@ -35,9 +35,23 @@ export async function GET() {
 	return NextResponse.json({
 		owner: state.owner,
 		sso: {
-			provider: "Okta SAML 2.0",
-			status: "active",
-			lastSync: new Date(Date.now() - 1000 * 60 * 9).toISOString(),
+			provider:
+				state.ssoConfig.provider === "okta"
+					? "Okta SAML 2.0"
+					: state.ssoConfig.provider === "azure-ad"
+						? "Microsoft Entra ID SAML 2.0"
+						: state.ssoConfig.provider === "google"
+							? "Google Workspace SAML 2.0"
+							: state.ssoConfig.provider === "onelogin"
+								? "OneLogin SAML 2.0"
+								: "Generic SAML 2.0",
+			status: state.ssoConfig.status,
+			lastSync:
+				state.ssoConfig.lastSync ??
+				(state.ssoConfig.status === "active"
+					? new Date().toISOString()
+					: new Date(0).toISOString()),
+			enforced: state.ssoConfig.enforced,
 		},
 		audit: state.audit.slice(0, 20),
 		integrations: state.integrations,

@@ -52,7 +52,8 @@ export default function ReposFullView({ copy }: { copy: ReposFullViewCopy }) {
 	}, []);
 
 	const isLoading = data === null && error === null;
-	const notInstalled = data !== null && "installed" in data && data.installed === false;
+	const notInstalled =
+		data !== null && "installed" in data && data.installed === false;
 	const live = data && data.installed ? data : null;
 
 	return (
@@ -200,8 +201,7 @@ export default function ReposFullView({ copy }: { copy: ReposFullViewCopy }) {
 										<th
 											key={k}
 											style={{
-												textAlign:
-													k === "repo" ? "left" : "right",
+												textAlign: k === "repo" ? "left" : "right",
 												padding: "12px 4px",
 												fontSize: 10,
 												letterSpacing: ".14em",
@@ -218,7 +218,10 @@ export default function ReposFullView({ copy }: { copy: ReposFullViewCopy }) {
 							</thead>
 							<tbody>
 								{live.repos.map((row) => (
-									<tr key={row.repo} style={{ borderBottom: "1px solid #161e29" }}>
+									<tr
+										key={row.repo}
+										style={{ borderBottom: "1px solid #161e29" }}
+									>
 										<td
 											style={{
 												padding: "14px 4px",

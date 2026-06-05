@@ -162,7 +162,12 @@ export default function OrgDashboardConsole({
 	const metrics = useMemo(() => {
 		if (!live) {
 			return [
-				{ label: "Open reviews", value: "—", detail: "loading", tone: "neutral" as const },
+				{
+					label: "Open reviews",
+					value: "—",
+					detail: "loading",
+					tone: "neutral" as const,
+				},
 				{
 					label: "Protected repos",
 					value: "—",
@@ -186,10 +191,8 @@ export default function OrgDashboardConsole({
 		const avgScore =
 			live.recent.length > 0
 				? Math.round(
-						live.recent.reduce(
-							(s, it) => s + deriveScore(it.labels),
-							0,
-						) / live.recent.length,
+						live.recent.reduce((s, it) => s + deriveScore(it.labels), 0) /
+							live.recent.length,
 					)
 				: 0;
 		return [
@@ -294,10 +297,7 @@ export default function OrgDashboardConsole({
 							>
 								{copy.heroBody}
 							</p>
-							<Link
-								href={copy.heroCtaHref}
-								className="btn btn-primary btn-sm"
-							>
+							<Link href={copy.heroCtaHref} className="btn btn-primary btn-sm">
 								{copy.heroCta}
 							</Link>
 						</div>
@@ -445,9 +445,7 @@ export default function OrgDashboardConsole({
 										style={{
 											padding: "20px 16px",
 											borderRight:
-												i < metrics.length - 1
-													? "1px solid #1c2530"
-													: "none",
+												i < metrics.length - 1 ? "1px solid #1c2530" : "none",
 										}}
 									>
 										<div
@@ -537,16 +535,15 @@ export default function OrgDashboardConsole({
 											fontFamily: "var(--mono)",
 										}}
 									>
-										No items in the last 30 days. Install on more repos to
-										see activity.
+										No items in the last 30 days. Install on more repos to see
+										activity.
 									</div>
 								) : (
 									<div>
 										<div
 											style={{
 												display: "grid",
-												gridTemplateColumns:
-													"1fr 140px 70px 120px 60px",
+												gridTemplateColumns: "1fr 140px 70px 120px 60px",
 												gap: 12,
 												padding: "10px 4px",
 												color: "#7d8590",
@@ -572,8 +569,7 @@ export default function OrgDashboardConsole({
 												key={row.key}
 												style={{
 													display: "grid",
-													gridTemplateColumns:
-														"1fr 140px 70px 120px 60px",
+													gridTemplateColumns: "1fr 140px 70px 120px 60px",
 													gap: 12,
 													padding: "12px 4px",
 													borderBottom: "1px solid #161e29",
@@ -750,10 +746,7 @@ export default function OrgDashboardConsole({
 													style={{
 														textAlign: "right",
 														fontFamily: "var(--mono)",
-														color:
-															row.quarantined > 0
-																? "#f85149"
-																: "#8b949e",
+														color: row.quarantined > 0 ? "#f85149" : "#8b949e",
 													}}
 												>
 													{row.quarantined}
@@ -762,8 +755,7 @@ export default function OrgDashboardConsole({
 													style={{
 														textAlign: "right",
 														fontFamily: "var(--mono)",
-														color:
-															row.cleared > 0 ? "#3fb950" : "#8b949e",
+														color: row.cleared > 0 ? "#3fb950" : "#8b949e",
 													}}
 												>
 													{row.cleared}
