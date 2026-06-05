@@ -1,180 +1,92 @@
-import Link from "next/link";
 import MarketingNav from "@/app/components/MarketingNav";
+import OrgDashboardConsole, {
+	type OrgDashboardConsoleCopy,
+} from "@/app/components/OrgDashboardConsole";
 import SiteFooter from "@/app/components/SiteFooter";
 
 export const metadata = {
 	title: "SlopGuard: 조직 대시보드 — Team",
 	description:
-		"Team 플랜 전용 조직 전체 슬롭 활동, 감사 로그, 크로스 레포 인텔리전스.",
+		"Team 플랜용 조직 단위 격리 큐, 캠페인 클러스터, 정책 적용 현황 콘솔.",
+};
+
+const copy: OrgDashboardConsoleCopy = {
+	workspace: "SlopGuard",
+	workspaceSub: "Team 워크스페이스",
+	user: "Blue-B",
+	entitlement: "Team 권한 활성화",
+	connected: "● GitHub 연결됨",
+	nav: ["개요", "큐", "레포", "캠페인", "알림", "정책"],
+	activeNav: "개요",
+	eyebrow: "TEAM 기능",
+	title: "보호된 모든 레포의 리뷰 활동을 한 화면에서 확인합니다.",
+	subtitle:
+		"Team 플랜에는 이 조직 단위 콘솔이 포함됩니다. 격리 큐를 처리하고, 반복되는 캠페인 패턴을 확인하고, 레포별 정책 적용 상태를 한 곳에서 봅니다.",
+	account: "마이페이지",
+	alerts: "알림 설정",
+	accountHref: "/ko/account",
+	alertsHref: "/ko/alerts",
+	metrics: [
+		{ label: "열린 리뷰", value: "18", detail: "6건은 담당자 조치 필요" },
+		{ label: "보호 중인 레포", value: "17", detail: "이번 주 3개 추가" },
+		{ label: "평균 slop 점수", value: "42", detail: "지난주 대비 −11" },
+		{ label: "캠페인 클러스터", value: "3", detail: "1건은 높은 신뢰도" },
+	],
+	queueTitle: "격리 큐",
+	queueSubtitle: "점수와 정책 영향도 기준으로 우선순위 정렬",
+	updated: "방금 업데이트됨",
+	columns: {
+		item: "항목",
+		repo: "레포",
+		score: "점수",
+		status: "상태",
+		owner: "담당",
+		age: "경과",
+	},
+	queue: [
+		{
+			item: "feat: GitHub OAuth callback hardening",
+			repo: "blue-b/slopguard",
+			score: 78,
+			status: "격리됨",
+			owner: "보안 리뷰",
+			age: "12분",
+		},
+		{
+			item: "docs: setup page copy refresh",
+			repo: "blue-b/docs",
+			score: 31,
+			status: "정상 확인",
+			owner: "@blue-b",
+			age: "1시간",
+		},
+		{
+			item: "chore: dependency wave",
+			repo: "blue-b/api",
+			score: 64,
+			status: "관찰 중",
+			owner: "Policy bot",
+			age: "4시간",
+		},
+	],
+	campaignTitle: "캠페인 레이더",
+	campaignSubtitle: "반복되는 AI 스타일 패턴 기준으로 그룹화",
+	campaigns: [
+		{ name: "인증 표면 변경", repos: "7개 레포", risk: "높은 위험" },
+		{ name: "문서 전용 변경 폭증", repos: "3개 레포", risk: "낮은 위험" },
+		{ name: "Lockfile 일괄 갱신", repos: "5개 레포", risk: "중간 위험" },
+	],
+	policyTitle: "정책 적용 현황",
+	policyBody:
+		"14개 레포는 격리를 강제하고, 3개 레포는 관찰 모드입니다. 알림은 Team webhook 정책으로 라우팅됩니다.",
+	coverageLabel: "보호 레포의 82%가 Team 정책을 강제 적용 중",
 };
 
 export default function OrgDashboardKo() {
 	return (
 		<>
 			<MarketingNav lang="ko" enHref="/org" koHref="/ko/org" />
-
-			<main className="wide" style={{ paddingTop: 32 }}>
-				<div className="docs-hero" style={{ marginBottom: 32 }}>
-					<div className="grid-bg" aria-hidden="true" />
-					<div className="docs-hero-copy">
-						<span className="eyebrow">TEAM</span>
-						<h1 className="page-h1">조직 대시보드</h1>
-						<p className="page-sub">
-							조직 전체 슬롭 활동, 감사 로그, 크로스 레포 인텔리전스. Team 및
-							Enterprise 플랜 전용입니다.
-						</p>
-						<div style={{ marginTop: 16, display: "flex", gap: 12 }}>
-							<Link href="/ko/pricing" className="btn btn-primary btn-sm">
-								Team으로 업그레이드
-							</Link>
-							<Link href="/ko/account" className="btn btn-ghost btn-sm">
-								마이페이지로
-							</Link>
-						</div>
-					</div>
-					<figure className="plate docs-hero-plate" style={{ maxWidth: 520 }}>
-						<div className="plate-art" style={{ padding: 0 }}>
-							<img
-								src="/images/slopguard-team-dashboard.png"
-								alt="SlopGuard Team 조직 대시보드"
-								style={{
-									width: "100%",
-									height: "auto",
-									borderRadius: 8,
-									display: "block",
-								}}
-							/>
-						</div>
-					</figure>
-				</div>
-
-				<div className="card" style={{ marginBottom: 24 }}>
-					<div className="card-head">
-						<h3>조직 전체 활동</h3>
-						<span className="card-meta">최근 30일 • Acme Corp</span>
-					</div>
-					<div
-						style={{
-							display: "grid",
-							gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-							gap: 12,
-						}}
-					>
-						<div className="ministat">
-							<div className="ministat-n">142</div>
-							<div className="ministat-l">격리됨</div>
-						</div>
-						<div className="ministat">
-							<div className="ministat-n">89</div>
-							<div className="ministat-l">정상 확인</div>
-						</div>
-						<div className="ministat">
-							<div className="ministat-n">17</div>
-							<div className="ministat-l">레포</div>
-						</div>
-						<div className="ministat">
-							<div className="ministat-n">3</div>
-							<div className="ministat-l">캠페인 탐지</div>
-						</div>
-					</div>
-				</div>
-
-				<div className="card">
-					<div className="card-head">
-						<h3>조직 전체 최근 활동</h3>
-					</div>
-					<table
-						style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}
-					>
-						<thead>
-							<tr style={{ borderBottom: "1px solid var(--border)" }}>
-								<th style={{ textAlign: "left", padding: "8px 12px" }}>항목</th>
-								<th style={{ textAlign: "left", padding: "8px 12px" }}>레포</th>
-								<th style={{ textAlign: "left", padding: "8px 12px" }}>점수</th>
-								<th style={{ textAlign: "left", padding: "8px 12px" }}>상태</th>
-								<th style={{ textAlign: "left", padding: "8px 12px" }}>
-									처리자
-								</th>
-								<th style={{ textAlign: "left", padding: "8px 12px" }}>시점</th>
-							</tr>
-						</thead>
-						<tbody>
-							{[
-								{
-									item: "feat: add new auth flow",
-									repo: "acme/web",
-									score: 78,
-									status: "격리됨",
-									by: "—",
-									when: "2시간 전",
-								},
-								{
-									item: "fix: update deps",
-									repo: "acme/api",
-									score: 42,
-									status: "정상 확인",
-									by: "@jane",
-									when: "어제",
-								},
-								{
-									item: "docs: onboarding guide",
-									repo: "acme/docs",
-									score: 91,
-									status: "격리됨",
-									by: "—",
-									when: "2일 전",
-								},
-							].map((row, i) => (
-								<tr
-									key={i}
-									style={{ borderBottom: "1px solid var(--border-muted)" }}
-								>
-									<td
-										style={{ padding: "10px 12px", fontFamily: "var(--mono)" }}
-									>
-										{row.item}
-									</td>
-									<td style={{ padding: "10px 12px" }}>{row.repo}</td>
-									<td style={{ padding: "10px 12px" }}>
-										<span style={{ color: "var(--green)" }}>{row.score}</span>
-										/100
-									</td>
-									<td style={{ padding: "10px 12px" }}>
-										<span
-											style={{
-												background:
-													row.status === "격리됨"
-														? "var(--danger-dim)"
-														: "var(--green-dim)",
-												padding: "2px 8px",
-												borderRadius: 999,
-												fontSize: 12,
-											}}
-										>
-											{row.status}
-										</span>
-									</td>
-									<td style={{ padding: "10px 12px" }}>{row.by}</td>
-									<td style={{ padding: "10px 12px", color: "var(--muted)" }}>
-										{row.when}
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-					<p className="muted" style={{ fontSize: 12, marginTop: 12 }}>
-						GitHub에서 실시간으로 불러온 데이터입니다. 전체 기록은 조직의 GitHub
-						활동에서 확인하세요.
-					</p>
-				</div>
-
-				<div style={{ marginTop: 32, textAlign: "center" }}>
-					<Link href="/ko/pricing" className="btn btn-ghost">
-						요금제 비교
-					</Link>
-				</div>
-			</main>
-
+			<OrgDashboardConsole copy={copy} />
 			<SiteFooter lang="ko" />
 		</>
 	);
