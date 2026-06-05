@@ -29,7 +29,8 @@ const C = {
 			"Install the hosted app on your repo. No server, no setup. That is what you want unless you specifically need to self-host.",
 		hostedCta: "Install on your repo",
 		selfTitle: "Self-host setup",
-		selfLeadA: "One click creates the App with the exact permissions and webhook URL for",
+		selfLeadA:
+			"One click creates the App with the exact permissions and webhook URL for",
 		selfLeadB: "GitHub then returns credentials to paste into your env.",
 		thisDeploy: "this deployment",
 		appNameLabel: "GitHub App name (must be globally unique)",
@@ -47,7 +48,8 @@ const C = {
 			"호스팅된 앱을 레포에 설치하면 됩니다. 서버도, 설정도 없습니다. 직접 호스팅이 꼭 필요한 게 아니라면 이쪽이 맞습니다.",
 		hostedCta: "내 레포에 설치하기",
 		selfTitle: "셀프호스팅 설정",
-		selfLeadA: "클릭 한 번이면 정확한 권한과 웹훅 URL이 설정된 App을 만듭니다. 대상:",
+		selfLeadA:
+			"클릭 한 번이면 정확한 권한과 웹훅 URL이 설정된 App을 만듭니다. 대상:",
 		selfLeadB: "GitHub가 환경변수에 넣을 자격 증명을 돌려줍니다.",
 		thisDeploy: "이 배포",
 		appNameLabel: "GitHub App 이름 (전역에서 유일해야 함)",

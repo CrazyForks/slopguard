@@ -50,7 +50,11 @@ export default async function CheckoutSuccess() {
 
 	return (
 		<>
-			<MarketingNav lang={lang} enHref="/setup/success" koHref="/setup/success" />
+			<MarketingNav
+				lang={lang}
+				enHref="/setup/success"
+				koHref="/setup/success"
+			/>
 
 			<main className="wide" style={{ maxWidth: 680, paddingTop: 48 }}>
 				<span className="eyebrow">{t.confirmed}</span>

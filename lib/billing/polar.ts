@@ -11,7 +11,62 @@
 import { LRUCache } from "lru-cache";
 import { PLAN_RANK, type PlanId } from "./plans.js";
 
-const CUSTOM_FIELD_KEY = process.env.POLAR_GITHUB_FIELD_KEY ?? "github-login";
+function unique(values: (string | undefined)[]): string[] {
+	return Array.from(new Set(values.filter((v): v is string => Boolean(v))));
+}
+
+function customFieldKeys(): string[] {
+	return unique([
+		process.env.POLAR_GITHUB_FIELD_KEY,
+		"github-login",
+		"github_login",
+		"github-username",
+		"github_username",
+		"github",
+	]);
+}
+
+/** Normalize buyer input into a GitHub owner login (user/org). */
+export function normalizeGitHubOwner(value: string): string {
+	let s = value.trim().toLowerCase();
+	s = s.replace(/^https?:\/\/(www\.)?github\.com\//, "");
+	s = s.replace(/^github\.com\//, "");
+	s = s.replace(/^[@/]+/, "");
+	s = s.split(/[\s/?#]+/, 1)[0] ?? "";
+	s = s.replace(/\.git$/, "");
+	return /^[a-z0-9](?:[a-z0-9-]{0,37}[a-z0-9])?$/.test(s) ? s : "";
+}
+
+function githubOwnerFromCustomFields(
+	data: Record<string, unknown> | null | undefined,
+): string | undefined {
+	if (!data) return undefined;
+
+	for (const key of customFieldKeys()) {
+		const raw = data[key];
+		if (typeof raw !== "string") continue;
+		const owner = normalizeGitHubOwner(raw);
+		if (owner) return owner;
+	}
+
+	// Dashboard slugs can drift. As a last safe fallback, accept any string field
+	// whose key clearly names GitHub, e.g. `githubAccount` or `github_org`.
+	for (const [key, raw] of Object.entries(data)) {
+		if (!/github/i.test(key) || typeof raw !== "string") continue;
+		const owner = normalizeGitHubOwner(raw);
+		if (owner) return owner;
+	}
+	return undefined;
+}
+
+function parseIdList(envKey: string): Set<string> {
+	return new Set(
+		(process.env[envKey] ?? "")
+			.split(",")
+			.map((id) => id.trim())
+			.filter(Boolean),
+	);
+}
 
 function apiBase(): string {
 	return (process.env.POLAR_SERVER ?? "production") === "sandbox"
@@ -23,9 +78,14 @@ export function isPolarConfigured(): boolean {
 	return Boolean(process.env.POLAR_API_TOKEN);
 }
 
+interface PolarProductRef {
+	id?: string;
+	name?: string;
+}
+
 interface PolarSubscription {
 	status: string;
-	product?: { id?: string; name?: string } | null;
+	product?: PolarProductRef | null;
 	custom_field_data?: Record<string, unknown> | null;
 }
 
@@ -34,9 +94,16 @@ interface PolarListResponse<T> {
 	pagination?: { max_page?: number };
 }
 
-/** Map a Polar product (by name) to one of our plan tiers. */
-function planFromProduct(name: string | undefined | null): PlanId {
-	const n = (name ?? "").toLowerCase();
+/** Map a Polar product to one of our plan tiers. */
+function planFromProduct(product: PolarProductRef | undefined | null): PlanId {
+	const id = product?.id ?? "";
+	if (id && parseIdList("POLAR_PRODUCT_ENTERPRISE_IDS").has(id)) {
+		return "enterprise";
+	}
+	if (id && parseIdList("POLAR_PRODUCT_TEAM_IDS").has(id)) return "team";
+	if (id && parseIdList("POLAR_PRODUCT_PRO_IDS").has(id)) return "pro";
+
+	const n = (product?.name ?? "").toLowerCase();
 	if (n.includes("enterprise")) return "enterprise";
 	if (n.includes("team")) return "team";
 	// Any other active paid subscription (incl. annual variants) grants Pro.
@@ -91,10 +158,9 @@ async function fetchEntitlementMap(): Promise<Map<string, PlanId>> {
 
 		for (const sub of items) {
 			if (sub.status !== "active" && sub.status !== "trialing") continue;
-			const login = sub.custom_field_data?.[CUSTOM_FIELD_KEY];
-			if (typeof login !== "string" || !login.trim()) continue;
-			const owner = login.trim().toLowerCase().replace(/^@/, "");
-			const plan = planFromProduct(sub.product?.name);
+			const owner = githubOwnerFromCustomFields(sub.custom_field_data);
+			if (!owner) continue;
+			const plan = planFromProduct(sub.product);
 			// Keep the highest tier if a customer has multiple subscriptions.
 			const existing = map.get(owner);
 			if (!existing || PLAN_RANK[plan] > PLAN_RANK[existing]) {
