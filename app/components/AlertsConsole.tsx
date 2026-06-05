@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ConsoleSidebar, { type SidebarItem } from "./ConsoleSidebar";
-import { shell, frame, card, muted, toneColor } from "./console-styles";
+import { toneColor } from "./console-styles";
 
 type Channel = {
 	id: string;
@@ -47,7 +47,6 @@ export type AlertsConsoleCopy = {
 	entitlement: string;
 	connected: string;
 	nav: SidebarItem[];
-	activeNav: string;
 	loading: string;
 	backToOrg: string;
 	orgHref: string;
@@ -61,6 +60,15 @@ export type AlertsConsoleCopy = {
 	channelsTitle: string;
 	channelsSubtitle: string;
 	channelsEmpty: string;
+	addChannelTitle: string;
+	addChannelBody: string;
+	addChannelKindLabel: string;
+	addChannelLabelLabel: string;
+	addChannelTargetLabel: string;
+	addChannelCta: string;
+	addChannelBusy: string;
+	removeChannel: string;
+	channelsRemovedFlash: (label: string) => string;
 	rulesTitle: string;
 	rulesSubtitle: string;
 	rulesEmpty: string;
@@ -70,6 +78,14 @@ export type AlertsConsoleCopy = {
 		channel: string;
 		threshold: string;
 	};
+	addRuleTitle: string;
+	addRuleBody: string;
+	addRuleRepoLabel: string;
+	addRulePatternLabel: string;
+	addRuleChannelLabel: string;
+	addRuleThresholdLabel: string;
+	addRuleCta: string;
+	removeRule: string;
 	logTitle: string;
 	logSubtitle: string;
 	logEmpty: string;
@@ -99,7 +115,25 @@ function rowColor(s: SentRow["status"]): string {
 export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 	const [data, setData] = useState<StateResponse | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const [updatedAt, setUpdatedAt] = useState<string>("");
+	const [flash, setFlash] = useState<string>("");
+
+	// Add channel form state
+	const [addKind, setAddKind] = useState<"slack" | "discord" | "webhook">(
+		"slack",
+	);
+	const [addLabel, setAddLabel] = useState("");
+	const [addTarget, setAddTarget] = useState("");
+	const [addBusy, setAddBusy] = useState(false);
+
+	// Add rule form state
+	const [addRuleRepo, setAddRuleRepo] = useState("");
+	const [addRulePattern, setAddRulePattern] = useState("");
+	const [addRuleChannel, setAddRuleChannel] = useState("");
+	const [addRuleThreshold, setAddRuleThreshold] = useState(60);
+	const [addRuleBusy, setAddRuleBusy] = useState(false);
+
+	const [busyChannel, setBusyChannel] = useState<string | null>(null);
+	const [busyRule, setBusyRule] = useState<string | null>(null);
 
 	async function load() {
 		try {
@@ -108,12 +142,110 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 				setError(`HTTP ${res.status}`);
 				return;
 			}
-			const json = (await res.json()) as StateResponse;
-			setData(json);
+			setData((await res.json()) as StateResponse);
 			setError(null);
-			setUpdatedAt(new Date().toISOString());
 		} catch (e) {
 			setError(e instanceof Error ? e.message : "Failed to load alerts state");
+		}
+	}
+
+	async function addChannel(e: React.FormEvent) {
+		e.preventDefault();
+		if (!addLabel.trim() || !addTarget.trim()) return;
+		setAddBusy(true);
+		try {
+			const res = await fetch("/api/alerts/channels", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({
+					kind: addKind,
+					label: addLabel.trim(),
+					target: addTarget.trim(),
+				}),
+			});
+			if (!res.ok) {
+				setError(`Add channel failed: HTTP ${res.status}`);
+				return;
+			}
+			setAddLabel("");
+			setAddTarget("");
+			setFlash(`Channel added`);
+			setTimeout(() => setFlash(""), 2400);
+			await load();
+		} finally {
+			setAddBusy(false);
+		}
+	}
+
+	async function removeChannel(id: string, label: string) {
+		setBusyChannel(id);
+		try {
+			const res = await fetch(`/api/alerts/channels/${id}`, {
+				method: "DELETE",
+			});
+			if (!res.ok) {
+				setError(`Remove failed: HTTP ${res.status}`);
+				return;
+			}
+			setFlash(copy.channelsRemovedFlash(label));
+			setTimeout(() => setFlash(""), 2400);
+			await load();
+		} finally {
+			setBusyChannel(null);
+		}
+	}
+
+	async function addRule(e: React.FormEvent) {
+		e.preventDefault();
+		if (
+			!addRuleRepo.trim() ||
+			!addRulePattern.trim() ||
+			!addRuleChannel ||
+			!addRuleThreshold
+		)
+			return;
+		setAddRuleBusy(true);
+		try {
+			const res = await fetch("/api/alerts/rules", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({
+					repo: addRuleRepo.trim(),
+					pattern: addRulePattern.trim(),
+					channelId: addRuleChannel,
+					threshold: addRuleThreshold,
+				}),
+			});
+			if (!res.ok) {
+				const body = await res.json().catch(() => ({}));
+				setError(
+					`Add rule failed: HTTP ${res.status} ${body.error ?? ""}`.trim(),
+				);
+				return;
+			}
+			setAddRuleRepo("");
+			setAddRulePattern("");
+			setFlash(`Routing rule added`);
+			setTimeout(() => setFlash(""), 2400);
+			await load();
+		} finally {
+			setAddRuleBusy(false);
+		}
+	}
+
+	async function removeRule(id: string) {
+		setBusyRule(id);
+		try {
+			const res = await fetch(`/api/alerts/rules/${id}`, { method: "DELETE" });
+			if (!res.ok) {
+				setError(`Remove rule failed: HTTP ${res.status}`);
+				return;
+			}
+			setFlash("Routing rule removed");
+			setTimeout(() => setFlash(""), 2400);
+			await load();
+		} finally {
+			setBusyRule(null);
 		}
 	}
 
@@ -136,12 +268,12 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 		const avgLatency =
 			sent.length > 0
 				? Math.round(
-						sent
+						(sent
 							.map((s) => parseFloat(s.latency) || 0)
-							.reduce((a, b) => a + b, 0) * 1000,
-					) /
-					sent.length /
-					1000
+							.reduce((a, b) => a + b, 0) /
+							sent.length) *
+							100,
+					) / 100
 				: 0;
 		return [
 			{
@@ -157,14 +289,14 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 				tone: "neutral" as const,
 			},
 			{
-				label: "Delivered (24h)",
+				label: "Delivered",
 				value: String(delivered),
 				detail: `${sent.length} total sent`,
 				tone: delivered > 0 ? ("ok" as const) : ("neutral" as const),
 			},
 			{
 				label: "Avg. latency",
-				value: avgLatency > 0 ? `${avgLatency.toFixed(1)}s` : "—",
+				value: avgLatency > 0 ? `${avgLatency.toFixed(2)}s` : "—",
 				detail: `${sent.length} sample${sent.length === 1 ? "" : "s"}`,
 				tone: avgLatency >= 2 ? ("warn" as const) : ("ok" as const),
 			},
@@ -172,685 +304,793 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 	}, [data]);
 
 	return (
-		<main style={shell}>
-			<section style={frame}>
-				<div
-					style={{
-						display: "grid",
-						gridTemplateColumns: "240px 1fr",
-						minHeight: 760,
-					}}
-				>
-					<ConsoleSidebar
-						workspace={copy.workspace}
-						workspaceSub={copy.workspaceSub}
-						user={copy.user}
-						entitlement={copy.entitlement}
-						connected={copy.connected}
-						nav={copy.nav}
-						activeNav={copy.activeNav}
-					/>
+		<main
+			style={{
+				maxWidth: 1280,
+				margin: "0 auto",
+				padding: "24px 24px 64px",
+			}}
+		>
+			<div
+				style={{
+					display: "grid",
+					gridTemplateColumns: "240px 1fr",
+					gap: 24,
+				}}
+			>
+				<ConsoleSidebar
+					workspace={copy.workspace}
+					workspaceSub={copy.workspaceSub}
+					user={copy.user}
+					entitlement={copy.entitlement}
+					connected={copy.connected}
+					nav={copy.nav}
+				/>
 
-					<div style={{ padding: "26px 28px 32px" }}>
-						<header
+				<section>
+					<header
+						style={{
+							display: "grid",
+							gridTemplateColumns: "1.2fr 1fr",
+							gap: 16,
+							padding: "0 0 24px",
+							borderBottom: "1px solid #1c2530",
+							marginBottom: 0,
+						}}
+					>
+						<div style={{ padding: "8px 0" }}>
+							<div
+								style={{
+									color: "#3fb950",
+									fontSize: 10,
+									letterSpacing: ".18em",
+									textTransform: "uppercase",
+									fontFamily: "var(--mono)",
+									marginBottom: 10,
+								}}
+							>
+								{copy.heroEyebrow}
+							</div>
+							<h1
+								style={{
+									margin: 0,
+									fontSize: 26,
+									letterSpacing: "-.035em",
+									fontWeight: 800,
+									lineHeight: 1.15,
+								}}
+							>
+								{copy.heroTitle}
+							</h1>
+							<p
+								style={{
+									color: "#8b949e",
+									margin: "10px 0 14px",
+									maxWidth: 540,
+									fontSize: 13,
+									lineHeight: 1.55,
+								}}
+							>
+								{copy.heroBody}
+							</p>
+							<div style={{ display: "flex", gap: 8 }}>
+								<Link
+									href={copy.heroCtaHref}
+									className="btn btn-primary btn-sm"
+								>
+									{copy.heroCta}
+								</Link>
+								<Link href={copy.orgHref} className="btn btn-ghost btn-sm">
+									{copy.backToOrg}
+								</Link>
+							</div>
+						</div>
+						<div
 							style={{
-								display: "grid",
-								gridTemplateColumns: "1.2fr 1fr",
-								gap: 18,
-								marginBottom: 26,
+								position: "relative",
+								borderRadius: 12,
+								overflow: "hidden",
+								minHeight: 160,
+								background: "#0a0e15",
+								border: "1px solid #1c2530",
 							}}
 						>
+							<Image
+								src="/funnel-circuit.png"
+								alt="Alerts routing"
+								fill
+								style={{ objectFit: "cover", opacity: 0.7 }}
+								sizes="(max-width: 1280px) 100vw, 480px"
+							/>
 							<div
 								style={{
+									position: "absolute",
+									inset: 0,
 									background:
-										"radial-gradient(120% 80% at 0% 0%, rgba(63,185,80,.08), transparent 60%), linear-gradient(180deg, #0f1620 0%, #0b1016 100%)",
-									border: "1px solid #1c2530",
-									borderRadius: 16,
-									padding: "20px 22px",
+										"linear-gradient(180deg, rgba(10,14,21,.4) 0%, rgba(10,14,21,.92) 100%)",
 								}}
-							>
-								<div
-									style={{
-										color: "#3fb950",
-										fontSize: 11,
-										fontWeight: 800,
-										letterSpacing: ".14em",
-										fontFamily: "var(--mono)",
-									}}
-								>
-									{copy.heroEyebrow}
-								</div>
-								<h1
-									style={{
-										margin: "10px 0 8px",
-										fontSize: 30,
-										letterSpacing: "-.035em",
-										fontWeight: 800,
-										lineHeight: 1.1,
-									}}
-								>
-									{copy.heroTitle}
-								</h1>
-								<p
-									style={{
-										...muted,
-										margin: 0,
-										maxWidth: 540,
-										lineHeight: 1.55,
-										fontSize: 14,
-									}}
-								>
-									{copy.heroBody}
-								</p>
-								<div style={{ marginTop: 16, display: "flex", gap: 10 }}>
-									<Link
-										href={copy.heroCtaHref}
-										className="btn btn-primary btn-sm"
-									>
-										{copy.heroCta}
-									</Link>
-									<Link href={copy.orgHref} className="btn btn-ghost btn-sm">
-										{copy.backToOrg}
-									</Link>
-								</div>
-							</div>
+							/>
 							<div
 								style={{
-									border: "1px solid #1c2530",
-									borderRadius: 16,
-									overflow: "hidden",
-									position: "relative",
-									minHeight: 180,
-									background: "#0a0e15",
-								}}
-							>
-								<Image
-									src="/funnel-circuit.png"
-									alt="Alerts routing diagram"
-									fill
-									style={{ objectFit: "cover", opacity: 0.7 }}
-									sizes="(max-width: 1280px) 100vw, 480px"
-								/>
-								<div
-									style={{
-										position: "absolute",
-										inset: 0,
-										background:
-											"linear-gradient(180deg, rgba(10,14,21,.4) 0%, rgba(10,14,21,.9) 100%)",
-									}}
-								/>
-								<div
-									style={{
-										position: "absolute",
-										bottom: 14,
-										left: 16,
-										right: 16,
-										fontFamily: "var(--mono)",
-										fontSize: 11,
-										color: "#8b949e",
-										letterSpacing: ".05em",
-									}}
-								>
-									<div
-										style={{ color: "#f0f6fc", fontWeight: 700, fontSize: 12 }}
-									>
-										Routing fan-out
-									</div>
-									<div style={{ marginTop: 4 }}>
-										{data
-											? `${data.channels.length} channels · ${data.rules.length} rules`
-											: copy.loading}
-									</div>
-								</div>
-							</div>
-						</header>
-
-						{isLoading && (
-							<div
-								style={{
-									...card,
-									padding: "32px 24px",
-									textAlign: "center",
+									position: "absolute",
+									bottom: 12,
+									left: 14,
+									right: 14,
+									fontFamily: "var(--mono)",
+									fontSize: 11,
 									color: "#8b949e",
-									fontFamily: "var(--mono)",
-									fontSize: 12,
-									marginBottom: 24,
+									letterSpacing: ".05em",
 								}}
 							>
-								Loading live alert state…
+								<div style={{ color: "#f0f6fc", fontWeight: 700 }}>
+									Routing fan-out
+								</div>
+								<div style={{ marginTop: 4 }}>
+									{data
+										? `${data.channels.length} channels · ${data.rules.length} rules`
+										: copy.loading}
+								</div>
 							</div>
-						)}
+						</div>
+					</header>
 
-						{error && !isLoading && (
+					{flash && (
+						<div
+							style={{
+								padding: "10px 0",
+								color: "#3fb950",
+								fontFamily: "var(--mono)",
+								fontSize: 12,
+							}}
+						>
+							{flash}
+						</div>
+					)}
+					{error && (
+						<div
+							style={{
+								padding: "10px 0",
+								color: "#f85149",
+								fontFamily: "var(--mono)",
+								fontSize: 12,
+							}}
+						>
+							{error}
+						</div>
+					)}
+
+					{isLoading ? (
+						<div
+							style={{
+								padding: "48px 0",
+								textAlign: "center",
+								color: "#8b949e",
+								fontFamily: "var(--mono)",
+								fontSize: 12,
+							}}
+						>
+							{copy.loading}
+						</div>
+					) : (
+						<>
+							{/* Metrics row — no card box, just border-b + mono numbers */}
 							<div
 								style={{
-									...card,
-									padding: "16px 18px",
-									border: "1px solid rgba(248,81,73,.4)",
-									color: "#f85149",
-									fontSize: 12,
-									fontFamily: "var(--mono)",
-									marginBottom: 24,
+									display: "grid",
+									gridTemplateColumns: "repeat(4, 1fr)",
+									gap: 0,
+									borderBottom: "1px solid #1c2530",
 								}}
 							>
-								Failed to load: {error}
-							</div>
-						)}
-
-						{!isLoading && (
-							<>
-								{/* Metrics */}
-								<div
-									style={{
-										display: "grid",
-										gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-										gap: 0,
-										borderTop: "1px solid #1c2530",
-										borderBottom: "1px solid #1c2530",
-										marginBottom: 24,
-									}}
-								>
-									{metrics.map((metric, i) => (
-										<div
-											key={metric.label}
-											style={{
-												padding: "16px 18px",
-												borderRight:
-													i < metrics.length - 1 ? "1px solid #1c2530" : "none",
-											}}
-										>
-											<div
-												style={{
-													...muted,
-													fontSize: 10,
-													letterSpacing: ".14em",
-													textTransform: "uppercase",
-													fontFamily: "var(--mono)",
-												}}
-											>
-												{metric.label}
-											</div>
-											<div
-												style={{
-													fontSize: 28,
-													fontWeight: 800,
-													letterSpacing: "-.03em",
-													marginTop: 6,
-													color: toneColor[metric.tone ?? "neutral"],
-													fontFamily: "var(--mono)",
-												}}
-											>
-												{metric.value}
-											</div>
-											<div
-												style={{
-													...muted,
-													fontSize: 11,
-													marginTop: 4,
-												}}
-											>
-												{metric.detail}
-											</div>
-										</div>
-									))}
-								</div>
-
-								{/* Channels — id=channels anchor */}
-								<section
-									id="channels"
-									style={{ marginBottom: 24, scrollMarginTop: 80 }}
-								>
-									<header
+								{metrics.map((metric, i) => (
+									<div
+										key={metric.label}
 										style={{
-											display: "flex",
-											justifyContent: "space-between",
-											alignItems: "flex-end",
-											marginBottom: 12,
+											padding: "20px 16px",
+											borderRight:
+												i < metrics.length - 1
+													? "1px solid #1c2530"
+													: "none",
 										}}
 									>
-										<div>
-											<h2
-												style={{
-													margin: 0,
-													fontSize: 18,
-													letterSpacing: "-.02em",
-												}}
-											>
-												{copy.channelsTitle}
-											</h2>
-											<div style={{ ...muted, fontSize: 12, marginTop: 4 }}>
-												{copy.channelsSubtitle}
-											</div>
-										</div>
 										<div
 											style={{
-												...muted,
-												fontSize: 11,
+												color: "#8b949e",
+												fontSize: 10,
+												letterSpacing: ".14em",
+												textTransform: "uppercase",
 												fontFamily: "var(--mono)",
 											}}
 										>
-											{updatedAt
-												? `Updated ${new Date(updatedAt).toLocaleTimeString()}`
-												: ""}
+											{metric.label}
 										</div>
-									</header>
-									<div style={{ ...card, overflow: "hidden" }}>
-										{data!.channels.length === 0 ? (
+										<div
+											style={{
+												fontSize: 28,
+												fontWeight: 800,
+												letterSpacing: "-.03em",
+												marginTop: 6,
+												color: toneColor[metric.tone ?? "neutral"],
+												fontFamily: "var(--mono)",
+											}}
+										>
+											{metric.value}
+										</div>
+										<div
+											style={{
+												color: "#8b949e",
+												fontSize: 11,
+												marginTop: 4,
+											}}
+										>
+											{metric.detail}
+										</div>
+									</div>
+								))}
+							</div>
+
+							{/* Channels section */}
+							<section style={{ padding: "20px 0 0" }}>
+								<header style={{ marginBottom: 12 }}>
+									<h2
+										style={{
+											margin: 0,
+											fontSize: 15,
+											letterSpacing: "-.02em",
+										}}
+									>
+										{copy.channelsTitle}
+									</h2>
+									<div
+										style={{
+											color: "#8b949e",
+											fontSize: 12,
+											marginTop: 4,
+										}}
+									>
+										{copy.channelsSubtitle}
+									</div>
+								</header>
+								{data!.channels.length === 0 ? (
+									<div
+										style={{
+											padding: "24px 0",
+											color: "#8b949e",
+											fontSize: 12,
+											fontFamily: "var(--mono)",
+										}}
+									>
+										{copy.channelsEmpty}
+									</div>
+								) : (
+									<div>
+										{data!.channels.map((channel) => (
 											<div
+												key={channel.id}
 												style={{
-													padding: "32px 24px",
-													textAlign: "center",
-													color: "#8b949e",
-													fontSize: 12,
-													fontFamily: "var(--mono)",
+													display: "grid",
+													gridTemplateColumns: "90px 1fr 1fr auto auto",
+													gap: 12,
+													padding: "12px 4px",
+													borderBottom: "1px solid #161e29",
+													fontSize: 13,
+													alignItems: "center",
 												}}
 											>
-												{copy.channelsEmpty}
-											</div>
-										) : (
-											data!.channels.map((channel, i) => (
-												<div
-													key={channel.id}
+												<span
 													style={{
-														display: "grid",
-														gridTemplateColumns: "1fr 1fr auto",
-														gap: 12,
-														padding: "12px 16px",
-														borderTop: i === 0 ? "none" : "1px solid #161e29",
-														alignItems: "center",
+														display: "inline-block",
+														padding: "1px 8px",
+														borderRadius: 99,
+														fontSize: 10,
+														fontFamily: "var(--mono)",
+														textTransform: "uppercase",
+														letterSpacing: ".08em",
+														background: "rgba(63,185,80,0.10)",
+														color: "#3fb950",
+														textAlign: "center",
 													}}
 												>
-													<div>
-														<div
-															style={{
-																display: "flex",
-																alignItems: "center",
-																gap: 8,
-															}}
-														>
-															<span
-																style={{
-																	display: "inline-block",
-																	padding: "1px 8px",
-																	borderRadius: 99,
-																	fontSize: 10,
-																	fontFamily: "var(--mono)",
-																	textTransform: "uppercase",
-																	letterSpacing: ".08em",
-																	background: "rgba(63,185,80,0.10)",
-																	color: "#3fb950",
-																}}
-															>
-																{channel.kind}
-															</span>
-															<span style={{ fontWeight: 600 }}>
-																{channel.label}
-															</span>
-														</div>
-														<div
-															style={{
-																...muted,
-																fontSize: 11,
-																marginTop: 4,
-																fontFamily: "var(--mono)",
-															}}
-														>
-															{channel.target}
-														</div>
-													</div>
-													<div
-														style={{
-															fontSize: 11,
-															color: "#8b949e",
-															fontFamily: "var(--mono)",
-														}}
-													>
-														{channel.lastSent
-															? `last sent ${channel.lastSent}${
-																	channel.lastLatencyMs
-																		? ` · ${channel.lastLatencyMs}ms`
-																		: ""
-																}`
-															: "no sends yet"}
-													</div>
-													<span
-														style={{
-															fontSize: 11,
-															padding: "2px 8px",
-															borderRadius: 99,
-															fontFamily: "var(--mono)",
-															background:
-																channel.status === "active"
-																	? "rgba(63,185,80,.12)"
-																	: channel.status === "paused"
-																		? "rgba(210,153,34,.12)"
-																		: "rgba(248,81,73,.12)",
-															color: statusColor(channel.status),
-														}}
-													>
-														{channel.status}
-													</span>
-												</div>
-											))
-										)}
+													{channel.kind}
+												</span>
+												<span style={{ fontWeight: 600, color: "#c9d1d9" }}>
+													{channel.label}
+												</span>
+												<span
+													style={{
+														color: "#8b949e",
+														fontFamily: "var(--mono)",
+														fontSize: 12,
+														overflow: "hidden",
+														textOverflow: "ellipsis",
+														whiteSpace: "nowrap",
+													}}
+												>
+													{channel.target}
+												</span>
+												<span
+													style={{
+														fontSize: 10,
+														padding: "2px 7px",
+														borderRadius: 99,
+														fontFamily: "var(--mono)",
+														background: `${statusColor(channel.status)}20`,
+														color: statusColor(channel.status),
+														textAlign: "center",
+													}}
+												>
+													{channel.status}
+												</span>
+												<button
+													type="button"
+													className="btn btn-ghost btn-sm"
+													disabled={busyChannel === channel.id}
+													onClick={() => removeChannel(channel.id, channel.label)}
+												>
+													{busyChannel === channel.id ? "..." : copy.removeChannel}
+												</button>
+											</div>
+										))}
 									</div>
-								</section>
+								)}
 
-								{/* Rules — id=rules anchor */}
-								<section
-									id="rules"
-									style={{ marginBottom: 24, scrollMarginTop: 80 }}
+								{/* Add channel form — real */}
+								<form
+									onSubmit={addChannel}
+									style={{
+										marginTop: 20,
+										padding: "16px 0",
+										borderTop: "1px solid #1c2530",
+										borderBottom: "1px solid #1c2530",
+									}}
 								>
-									<header
+									<div
 										style={{
-											display: "flex",
-											justifyContent: "space-between",
-											alignItems: "flex-end",
+											fontSize: 12,
+											color: "#8b949e",
+											fontFamily: "var(--mono)",
 											marginBottom: 12,
 										}}
 									>
-										<div>
-											<h2
-												style={{
-													margin: 0,
-													fontSize: 18,
-													letterSpacing: "-.02em",
-												}}
-											>
-												{copy.rulesTitle}
-											</h2>
-											<div style={{ ...muted, fontSize: 12, marginTop: 4 }}>
-												{copy.rulesSubtitle}
-											</div>
-										</div>
-									</header>
-									<div style={{ ...card, overflow: "hidden" }}>
-										{data!.rules.length === 0 ? (
-											<div
-												style={{
-													padding: "32px 24px",
-													textAlign: "center",
-													color: "#8b949e",
-													fontSize: 12,
-													fontFamily: "var(--mono)",
-												}}
-											>
-												{copy.rulesEmpty}
-											</div>
-										) : (
-											<table
-												style={{
-													width: "100%",
-													borderCollapse: "collapse",
-													fontSize: 13,
-												}}
-											>
-												<thead>
-													<tr
-														style={{
-															color: "#7d8590",
-															borderBottom: "1px solid #1c2530",
-														}}
-													>
-														{(
-															[
-																"repo",
-																"pattern",
-																"channel",
-																"threshold",
-															] as const
-														).map((k) => (
-															<th
-																key={k}
-																style={{
-																	textAlign:
-																		k === "threshold" ? "right" : "left",
-																	padding: "10px 14px",
-																	fontSize: 10,
-																	letterSpacing: ".14em",
-																	textTransform: "uppercase",
-																	fontWeight: 600,
-																	fontFamily: "var(--mono)",
-																}}
-															>
-																{copy.rulesColumns[k]}
-															</th>
-														))}
-													</tr>
-												</thead>
-												<tbody>
-													{data!.rules.map((row) => (
-														<tr
-															key={row.id}
-															style={{
-																borderBottom: "1px solid #161e29",
-															}}
-														>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	fontFamily: "var(--mono)",
-																	color: "#c9d1d9",
-																}}
-															>
-																{row.repo}
-															</td>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	fontFamily: "var(--mono)",
-																	color: "#c9d1d9",
-																}}
-															>
-																{row.pattern}
-															</td>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	color: "#c9d1d9",
-																}}
-															>
-																{row.channel}
-															</td>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	textAlign: "right",
-																	fontFamily: "var(--mono)",
-																	color:
-																		row.threshold >= 80
-																			? "#f85149"
-																			: row.threshold >= 60
-																				? "#d29922"
-																				: "#3fb950",
-																}}
-															>
-																≥ {row.threshold}
-															</td>
-														</tr>
-													))}
-												</tbody>
-											</table>
-										)}
+										{copy.addChannelTitle}
 									</div>
-								</section>
-
-								{/* Sent log — id=log anchor */}
-								<section id="log" style={{ scrollMarginTop: 80 }}>
-									<header
+									<div
 										style={{
-											display: "flex",
-											justifyContent: "space-between",
-											alignItems: "flex-end",
+											display: "grid",
+											gridTemplateColumns: "120px 1fr 2fr auto",
+											gap: 8,
+											alignItems: "center",
+										}}
+									>
+										<select
+											aria-label={copy.addChannelKindLabel}
+											value={addKind}
+											onChange={(e) =>
+												setAddKind(e.target.value as typeof addKind)
+											}
+											style={{
+												background: "#0a1018",
+												border: "1px solid #1c2530",
+												borderRadius: 8,
+												padding: "8px 10px",
+												color: "#f0f6fc",
+												fontFamily: "var(--mono)",
+												fontSize: 12,
+											}}
+										>
+											<option value="slack">slack</option>
+											<option value="discord">discord</option>
+											<option value="webhook">webhook</option>
+										</select>
+										<input
+											aria-label={copy.addChannelLabelLabel}
+											placeholder="Label (e.g. Security alerts)"
+											value={addLabel}
+											onChange={(e) => setAddLabel(e.target.value)}
+											style={{
+												background: "#0a1018",
+												border: "1px solid #1c2530",
+												borderRadius: 8,
+												padding: "8px 10px",
+												color: "#f0f6fc",
+												fontSize: 12,
+											}}
+										/>
+										<input
+											aria-label={copy.addChannelTargetLabel}
+											placeholder={
+												addKind === "slack"
+													? "https://hooks.slack.com/services/..."
+													: addKind === "discord"
+														? "https://discord.com/api/webhooks/..."
+														: "https://your-endpoint.example.com/inbound"
+											}
+											value={addTarget}
+											onChange={(e) => setAddTarget(e.target.value)}
+											style={{
+												background: "#0a1018",
+												border: "1px solid #1c2530",
+												borderRadius: 8,
+												padding: "8px 10px",
+												color: "#f0f6fc",
+												fontFamily: "var(--mono)",
+												fontSize: 12,
+											}}
+										/>
+										<button
+											type="submit"
+											className="btn btn-primary btn-sm"
+											disabled={
+												addBusy ||
+												!addLabel.trim() ||
+												!addTarget.trim()
+											}
+										>
+											{addBusy ? copy.addChannelBusy : copy.addChannelCta}
+										</button>
+									</div>
+								</form>
+							</section>
+
+							{/* Routing rules section */}
+							<section style={{ padding: "20px 0 0" }}>
+								<header style={{ marginBottom: 12 }}>
+									<h2
+										style={{
+											margin: 0,
+											fontSize: 15,
+											letterSpacing: "-.02em",
+										}}
+									>
+										{copy.rulesTitle}
+									</h2>
+									<div
+										style={{
+											color: "#8b949e",
+											fontSize: 12,
+											marginTop: 4,
+										}}
+									>
+										{copy.rulesSubtitle}
+									</div>
+								</header>
+								{data!.rules.length === 0 ? (
+									<div
+										style={{
+											padding: "24px 0",
+											color: "#8b949e",
+											fontSize: 12,
+											fontFamily: "var(--mono)",
+										}}
+									>
+										{copy.rulesEmpty}
+									</div>
+								) : (
+									<div>
+										<div
+											style={{
+												display: "grid",
+												gridTemplateColumns: "1fr 1fr 1fr 80px 80px",
+												gap: 12,
+												padding: "10px 4px",
+												color: "#7d8590",
+												fontSize: 10,
+												letterSpacing: ".14em",
+												textTransform: "uppercase",
+												fontFamily: "var(--mono)",
+												borderBottom: "1px solid #1c2530",
+											}}
+										>
+											<span>{copy.rulesColumns.repo}</span>
+											<span>{copy.rulesColumns.pattern}</span>
+											<span>{copy.rulesColumns.channel}</span>
+											<span style={{ textAlign: "right" }}>
+												{copy.rulesColumns.threshold}
+											</span>
+											<span></span>
+										</div>
+										{data!.rules.map((row) => (
+											<div
+												key={row.id}
+												style={{
+													display: "grid",
+													gridTemplateColumns: "1fr 1fr 1fr 80px 80px",
+													gap: 12,
+													padding: "12px 4px",
+													borderBottom: "1px solid #161e29",
+													fontSize: 13,
+													alignItems: "center",
+												}}
+											>
+												<span
+													style={{
+														fontFamily: "var(--mono)",
+														color: "#c9d1d9",
+													}}
+												>
+													{row.repo}
+												</span>
+												<span
+													style={{
+														fontFamily: "var(--mono)",
+														color: "#c9d1d9",
+													}}
+												>
+													{row.pattern}
+												</span>
+												<span style={{ color: "#c9d1d9" }}>{row.channel}</span>
+												<span
+													style={{
+														textAlign: "right",
+														fontFamily: "var(--mono)",
+														color:
+															row.threshold >= 80
+																? "#f85149"
+																: row.threshold >= 60
+																	? "#d29922"
+																	: "#3fb950",
+													}}
+												>
+													≥ {row.threshold}
+												</span>
+												<button
+													type="button"
+													className="btn btn-ghost btn-sm"
+													disabled={busyRule === row.id}
+													onClick={() => removeRule(row.id)}
+												>
+													{busyRule === row.id ? "..." : copy.removeRule}
+												</button>
+											</div>
+										))}
+									</div>
+								)}
+
+								{/* Add rule form — real */}
+								<form
+									onSubmit={addRule}
+									style={{
+										marginTop: 20,
+										padding: "16px 0",
+										borderTop: "1px solid #1c2530",
+										borderBottom: "1px solid #1c2530",
+									}}
+								>
+									<div
+										style={{
+											fontSize: 12,
+											color: "#8b949e",
+											fontFamily: "var(--mono)",
 											marginBottom: 12,
 										}}
 									>
-										<div>
-											<h2
-												style={{
-													margin: 0,
-													fontSize: 18,
-													letterSpacing: "-.02em",
-												}}
-											>
-												{copy.logTitle}
-											</h2>
-											<div style={{ ...muted, fontSize: 12, marginTop: 4 }}>
-												{copy.logSubtitle}
-											</div>
+										{copy.addRuleTitle}
+									</div>
+									<div
+										style={{
+											display: "grid",
+											gridTemplateColumns: "1.4fr 1fr 1fr 90px auto",
+											gap: 8,
+											alignItems: "center",
+										}}
+									>
+										<input
+											aria-label={copy.addRuleRepoLabel}
+											placeholder="owner/repo"
+											value={addRuleRepo}
+											onChange={(e) => setAddRuleRepo(e.target.value)}
+											style={{
+												background: "#0a1018",
+												border: "1px solid #1c2530",
+												borderRadius: 8,
+												padding: "8px 10px",
+												color: "#f0f6fc",
+												fontFamily: "var(--mono)",
+												fontSize: 12,
+											}}
+										/>
+										<input
+											aria-label={copy.addRulePatternLabel}
+											placeholder="pattern (e.g. auth_surface)"
+											value={addRulePattern}
+											onChange={(e) => setAddRulePattern(e.target.value)}
+											style={{
+												background: "#0a1018",
+												border: "1px solid #1c2530",
+												borderRadius: 8,
+												padding: "8px 10px",
+												color: "#f0f6fc",
+												fontFamily: "var(--mono)",
+												fontSize: 12,
+											}}
+										/>
+										<select
+											aria-label={copy.addRuleChannelLabel}
+											value={addRuleChannel}
+											onChange={(e) => setAddRuleChannel(e.target.value)}
+											disabled={data!.channels.length === 0}
+											style={{
+												background: "#0a1018",
+												border: "1px solid #1c2530",
+												borderRadius: 8,
+												padding: "8px 10px",
+												color: "#f0f6fc",
+												fontFamily: "var(--mono)",
+												fontSize: 12,
+											}}
+										>
+											<option value="">channel…</option>
+											{data!.channels.map((c) => (
+												<option key={c.id} value={c.id}>
+													{c.label} ({c.kind})
+												</option>
+											))}
+										</select>
+										<input
+											aria-label={copy.addRuleThresholdLabel}
+											type="number"
+											min={1}
+											max={100}
+											value={addRuleThreshold}
+											onChange={(e) =>
+												setAddRuleThreshold(parseInt(e.target.value, 10) || 60)
+											}
+											style={{
+												background: "#0a1018",
+												border: "1px solid #1c2530",
+												borderRadius: 8,
+												padding: "8px 10px",
+												color: "#f0f6fc",
+												fontFamily: "var(--mono)",
+												fontSize: 12,
+												textAlign: "right",
+											}}
+										/>
+										<button
+											type="submit"
+											className="btn btn-primary btn-sm"
+											disabled={
+												addRuleBusy ||
+												!addRuleRepo.trim() ||
+												!addRulePattern.trim() ||
+												!addRuleChannel
+											}
+										>
+											{addRuleBusy ? "..." : copy.addRuleCta}
+										</button>
+									</div>
+								</form>
+							</section>
+
+							{/* Sent log */}
+							<section style={{ padding: "20px 0 0" }}>
+								<header style={{ marginBottom: 8 }}>
+									<h2
+										style={{
+											margin: 0,
+											fontSize: 15,
+											letterSpacing: "-.02em",
+										}}
+									>
+										{copy.logTitle}
+									</h2>
+									<div
+										style={{
+											color: "#8b949e",
+											fontSize: 12,
+											marginTop: 4,
+										}}
+									>
+										{copy.logSubtitle}
+									</div>
+								</header>
+								{data!.sent.length === 0 ? (
+									<div
+										style={{
+											padding: "24px 0",
+											color: "#8b949e",
+											fontSize: 12,
+											fontFamily: "var(--mono)",
+										}}
+									>
+										{copy.logEmpty}
+									</div>
+								) : (
+									<div>
+										<div
+											style={{
+												display: "grid",
+												gridTemplateColumns: "120px 1fr 60px 1fr 90px 70px",
+												gap: 12,
+												padding: "10px 4px",
+												color: "#7d8590",
+												fontSize: 10,
+												letterSpacing: ".14em",
+												textTransform: "uppercase",
+												fontFamily: "var(--mono)",
+												borderBottom: "1px solid #1c2530",
+											}}
+										>
+											<span>{copy.logColumns.when}</span>
+											<span>{copy.logColumns.item}</span>
+											<span style={{ textAlign: "right" }}>
+												{copy.logColumns.score}
+											</span>
+											<span>{copy.logColumns.dest}</span>
+											<span>{copy.logColumns.status}</span>
+											<span style={{ textAlign: "right" }}>
+												{copy.logColumns.latency}
+											</span>
 										</div>
-									</header>
-									<div style={{ ...card, overflow: "hidden" }}>
-										{data!.sent.length === 0 ? (
+										{data!.sent.map((row) => (
 											<div
+												key={row.id}
 												style={{
-													padding: "32px 24px",
-													textAlign: "center",
-													color: "#8b949e",
-													fontSize: 12,
-													fontFamily: "var(--mono)",
-												}}
-											>
-												{copy.logEmpty}
-											</div>
-										) : (
-											<table
-												style={{
-													width: "100%",
-													borderCollapse: "collapse",
+													display: "grid",
+													gridTemplateColumns: "120px 1fr 60px 1fr 90px 70px",
+													gap: 12,
+													padding: "12px 4px",
+													borderBottom: "1px solid #161e29",
 													fontSize: 13,
 												}}
 											>
-												<thead>
-													<tr
-														style={{
-															color: "#7d8590",
-															borderBottom: "1px solid #1c2530",
-														}}
-													>
-														{(
-															[
-																"when",
-																"item",
-																"score",
-																"dest",
-																"status",
-																"latency",
-															] as const
-														).map((k) => (
-															<th
-																key={k}
-																style={{
-																	textAlign:
-																		k === "score" || k === "latency"
-																			? "right"
-																			: "left",
-																	padding: "10px 14px",
-																	fontSize: 10,
-																	letterSpacing: ".14em",
-																	textTransform: "uppercase",
-																	fontWeight: 600,
-																	fontFamily: "var(--mono)",
-																}}
-															>
-																{copy.logColumns[k]}
-															</th>
-														))}
-													</tr>
-												</thead>
-												<tbody>
-													{data!.sent.map((row) => (
-														<tr
-															key={row.id}
-															style={{
-																borderBottom: "1px solid #161e29",
-															}}
-														>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	fontFamily: "var(--mono)",
-																	color: "#8b949e",
-																}}
-															>
-																{row.when}
-															</td>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	fontFamily: "var(--mono)",
-																	color: "#c9d1d9",
-																}}
-															>
-																{row.item}
-															</td>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	textAlign: "right",
-																	fontFamily: "var(--mono)",
-																	color:
-																		row.score >= 80
-																			? "#f85149"
-																			: row.score >= 60
-																				? "#d29922"
-																				: "#3fb950",
-																}}
-															>
-																{row.score}
-															</td>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	color: "#c9d1d9",
-																}}
-															>
-																{row.dest}
-															</td>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	color: rowColor(row.status),
-																	fontFamily: "var(--mono)",
-																}}
-															>
-																{row.status}
-															</td>
-															<td
-																style={{
-																	padding: "11px 14px",
-																	textAlign: "right",
-																	color: "#8b949e",
-																	fontFamily: "var(--mono)",
-																}}
-															>
-																{row.latency}
-															</td>
-														</tr>
-													))}
-												</tbody>
-											</table>
-										)}
+												<span
+													style={{
+														fontFamily: "var(--mono)",
+														color: "#8b949e",
+													}}
+												>
+													{row.when}
+												</span>
+												<span
+													style={{
+														fontFamily: "var(--mono)",
+														color: "#c9d1d9",
+													}}
+												>
+													{row.item}
+												</span>
+												<span
+													style={{
+														textAlign: "right",
+														fontFamily: "var(--mono)",
+														color:
+															row.score >= 80
+																? "#f85149"
+																: row.score >= 60
+																	? "#d29922"
+																	: "#3fb950",
+													}}
+												>
+													{row.score}
+												</span>
+												<span style={{ color: "#c9d1d9" }}>{row.dest}</span>
+												<span
+													style={{
+														fontFamily: "var(--mono)",
+														color: rowColor(row.status),
+													}}
+												>
+													{row.status}
+												</span>
+												<span
+													style={{
+														textAlign: "right",
+														color: "#8b949e",
+														fontFamily: "var(--mono)",
+													}}
+												>
+													{row.latency}
+												</span>
+											</div>
+										))}
 									</div>
-								</section>
-							</>
-						)}
-
-						<div
-							style={{
-								marginTop: 24,
-								display: "flex",
-								gap: 10,
-								justifyContent: "flex-end",
-							}}
-						>
-							<Link href={copy.accountHref} className="btn btn-ghost btn-sm">
-								Account settings
-							</Link>
-						</div>
-					</div>
-				</div>
-			</section>
+								)}
+							</section>
+						</>
+					)}
+				</section>
+			</div>
 		</main>
 	);
 }

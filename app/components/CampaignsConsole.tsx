@@ -44,7 +44,7 @@ export type CampaignsConsoleCopy = {
 	entitlement: string;
 	connected: string;
 	nav: SidebarItem[];
-	activeNav: string;
+	activeNav?: string;
 	loading: string;
 	emptyTitle: string;
 	emptyBody: string;

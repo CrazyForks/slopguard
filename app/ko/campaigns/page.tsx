@@ -25,7 +25,6 @@ const copy: CampaignsConsoleCopy = {
 		{ label: "알림", href: "/ko/alerts", external: true },
 		{ label: "정책", href: "/ko/org#policy" },
 	],
-	activeNav: "캠페인",
 	loading: "불러오는 중…",
 	emptyTitle: "캠페인 데이터가 아직 없습니다",
 	emptyBody:
@@ -44,7 +43,8 @@ const copy: CampaignsConsoleCopy = {
 	heroCtaHref: "/ko/alerts",
 	clustersTitle: "활성 클러스터",
 	clustersSubtitle: "설치된 레포들 사이에서 커밋 제목 prefix별로 묶음",
-	clustersEmpty: "클러스터가 없습니다 — prefix가 반복되기 시작하면 여기에 표시됩니다.",
+	clustersEmpty:
+		"클러스터가 없습니다 — prefix가 반복되기 시작하면 여기에 표시됩니다.",
 	scoreBoostTitle: "점수 부스트 구간",
 	scoreBoostBody: "플랜 등급이 레포 간 매칭 신뢰도에 미치는 영향",
 };

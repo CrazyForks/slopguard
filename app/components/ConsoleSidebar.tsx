@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export type SidebarItem = {
 	label: string;
@@ -12,6 +15,9 @@ const aside: React.CSSProperties = {
 	padding: 18,
 	display: "flex",
 	flexDirection: "column",
+	position: "sticky",
+	top: 76,
+	height: "calc(100dvh - 76px)",
 };
 
 const card: React.CSSProperties = {
@@ -38,8 +44,40 @@ export default function ConsoleSidebar({
 	entitlement: string;
 	connected: string;
 	nav: SidebarItem[];
-	activeNav: string;
+	/**
+	 * Optional explicit active label. When omitted, the active item is
+	 * derived from `usePathname()` so each routed page (e.g. /org/queue)
+	 * lights its own nav entry without the page having to pass a prop.
+	 */
+	activeNav?: string;
 }) {
+	const pathname = usePathname() ?? "";
+	const computedActive = useMemo(() => {
+		// Match the deepest path: /org/queue highlights "Queue".
+		// Strip locale prefix (/ko/) and base path (/org, /enterprise).
+		const cleanPath = pathname.replace(/^\/(ko|en)\//, "/");
+		let bestMatch: SidebarItem | undefined;
+		let bestLen = 0;
+		for (const item of nav) {
+			// ignore external markers, compare by href prefix
+			const base = item.href.split("#")[0];
+			if (!base || base === "/") continue;
+			if (
+				cleanPath === base ||
+				cleanPath.startsWith(base + "/") ||
+				(item.href.includes("#") && cleanPath + location.hash === item.href)
+			) {
+				if (base.length > bestLen) {
+					bestLen = base.length;
+					bestMatch = item;
+				}
+			}
+		}
+		return bestMatch?.label;
+	}, [pathname, nav]);
+
+	const activeLabel = activeNav ?? computedActive ?? "";
+
 	return (
 		<aside style={aside}>
 			<div style={{ marginBottom: 26 }}>
@@ -70,7 +108,7 @@ export default function ConsoleSidebar({
 				aria-label="Console sections"
 			>
 				{nav.map((item) => {
-					const active = item.label === activeNav;
+					const active = item.label === activeLabel;
 					const linkStyle: React.CSSProperties = {
 						borderRadius: 8,
 						padding: "8px 10px",
@@ -87,7 +125,12 @@ export default function ConsoleSidebar({
 						transition: "background .15s, color .15s",
 					};
 					return (
-						<Link key={item.label} href={item.href} style={linkStyle}>
+						<Link
+							key={item.label}
+							href={item.href}
+							style={linkStyle}
+							aria-current={active ? "page" : undefined}
+						>
 							<span>{item.label}</span>
 							{active ? (
 								<span style={{ fontSize: 10, color: "#3fb950" }}>●</span>
@@ -145,3 +188,6 @@ export default function ConsoleSidebar({
 		</aside>
 	);
 }
+
+// re-export useMemo to keep this file's imports tight in client trees
+import { useMemo } from "react";

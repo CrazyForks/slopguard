@@ -25,7 +25,6 @@ const copy: CampaignsConsoleCopy = {
 		{ label: "Alerts", href: "/alerts", external: true },
 		{ label: "Policy", href: "/org#policy" },
 	],
-	activeNav: "Campaigns",
 	loading: "Loading…",
 	emptyTitle: "No campaign data yet",
 	emptyBody:
@@ -43,7 +42,8 @@ const copy: CampaignsConsoleCopy = {
 	heroCta: "Open alerts",
 	heroCtaHref: "/alerts",
 	clustersTitle: "Active clusters",
-	clustersSubtitle: "Clustered by commit-title prefix across your installed repos",
+	clustersSubtitle:
+		"Clustered by commit-title prefix across your installed repos",
 	clustersEmpty: "No clusters yet — once a prefix repeats, it shows up here.",
 	scoreBoostTitle: "Score boost tiers",
 	scoreBoostBody: "How plan tier affects confidence on cross-repo matches",

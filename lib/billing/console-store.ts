@@ -70,13 +70,18 @@ const store = new LRUCache<string, OwnerConsoleState>({
 });
 
 function emptyState(owner: string): OwnerConsoleState {
+	// Real production data only. The owner must explicitly add channels,
+	// rules, integrations, and the audit log records the actions they take.
+	// The previous seed data made the consoles look "populated" without
+	// representing anything the user actually did, which the product team
+	// flagged as marketing-dummy behavior in 2026-06.
 	return {
 		owner: owner.toLowerCase(),
-		channels: seedChannels(owner),
-		rules: seedRules(owner),
-		sentAlerts: seedAlerts(owner),
-		audit: seedAudit(owner),
-		integrations: seedIntegrations(),
+		channels: [],
+		rules: [],
+		sentAlerts: [],
+		audit: [],
+		integrations: [],
 	};
 }
 
@@ -100,162 +105,3 @@ export function mutateState(
 	return s;
 }
 
-function id(): string {
-	return Math.random().toString(36).slice(2, 10);
-}
-
-// ── Seeds (sample data so first-time visitors see real-looking state) ─────
-function seedChannels(owner: string): Channel[] {
-	return [
-		{
-			id: "ch_slack_security",
-			kind: "slack",
-			label: "Security alerts",
-			target: "hooks.slack.com/services/.../security",
-			status: "active",
-			lastSent: "12m ago",
-			lastLatencyMs: 1100,
-		},
-		{
-			id: "ch_discord_eng",
-			kind: "discord",
-			label: "Engineering",
-			target: "discord.com/api/webhooks/.../eng",
-			status: "active",
-			lastSent: "1h ago",
-			lastLatencyMs: 900,
-		},
-		{
-			id: "ch_webhook_relay",
-			kind: "webhook",
-			label: "Custom relay",
-			target: "ops.internal/slopguard/inbound",
-			status: "failed",
-			lastSent: "4h ago",
-			lastLatencyMs: 2400,
-		},
-	];
-}
-
-function seedRules(_owner: string): RoutingRule[] {
-	return [
-		{
-			id: id(),
-			repo: "blue-b/slopguard",
-			pattern: "auth_surface",
-			channelId: "ch_slack_security",
-			threshold: 60,
-		},
-		{
-			id: id(),
-			repo: "blue-b/api",
-			pattern: "lockfile_refresh",
-			channelId: "ch_discord_eng",
-			threshold: 75,
-		},
-		{
-			id: id(),
-			repo: "blue-b/docs",
-			pattern: "docs_only",
-			channelId: "ch_webhook_relay",
-			threshold: 90,
-		},
-	];
-}
-
-function seedAlerts(owner: string): SentAlert[] {
-	return [
-		{
-			id: id(),
-			owner: owner.toLowerCase(),
-			when: "2026-06-04 14:22",
-			item: "acme/web#128",
-			score: 87,
-			dest: "Slack #security",
-			channelId: "ch_slack_security",
-			channelKind: "slack",
-			status: "delivered",
-			latency: "1.1s",
-			latencyMs: 1100,
-		},
-		{
-			id: id(),
-			owner: owner.toLowerCase(),
-			when: "2026-06-03 09:11",
-			item: "acme/api#44",
-			score: 71,
-			dest: "Discord",
-			channelId: "ch_discord_eng",
-			channelKind: "discord",
-			status: "delivered",
-			latency: "0.9s",
-			latencyMs: 900,
-		},
-		{
-			id: id(),
-			owner: owner.toLowerCase(),
-			when: "2026-06-02 18:05",
-			item: "acme/docs#7",
-			score: 94,
-			dest: "Custom relay",
-			channelId: "ch_webhook_relay",
-			channelKind: "webhook",
-			status: "retrying",
-			latency: "2.4s",
-			latencyMs: 2400,
-		},
-	];
-}
-
-function seedAudit(owner: string): AuditEntry[] {
-	const handle = owner.toLowerCase();
-	return [
-		{
-			id: id(),
-			owner: handle,
-			when: "2026-06-04 14:22",
-			actor: `${handle}@acme.com`,
-			action: "cleared quarantine",
-			target: "acme/web#128",
-			source: "SSO",
-		},
-		{
-			id: id(),
-			owner: handle,
-			when: "2026-06-04 11:08",
-			actor: "ops-bot",
-			action: "rotated webhook secret",
-			target: "org settings",
-			source: "API",
-		},
-		{
-			id: id(),
-			owner: handle,
-			when: "2026-06-03 18:44",
-			actor: "bob@acme.com",
-			action: "added repository",
-			target: "acme/api",
-			source: "Admin",
-		},
-	];
-}
-
-function seedIntegrations(): Integration[] {
-	return [
-		{
-			name: "Jira",
-			status: "connected",
-			scope: "Create tickets for quarantined PRs",
-		},
-		{
-			name: "PagerDuty",
-			status: "pending",
-			scope: "Page on-call on High-risk campaign",
-		},
-		{
-			name: "Datadog",
-			status: "available",
-			scope: "Forward audit events as logs",
-		},
-	];
-}
