@@ -1,19 +1,14 @@
-import { cookies } from "next/headers";
 import MarketingNav from "@/app/components/MarketingNav";
 import AlertsConsole, {
 	type AlertsConsoleCopy,
 } from "@/app/components/AlertsConsole";
-import AlertsConsoleClient from "@/app/components/AlertsConsoleClient";
 import PlanGate from "@/app/components/PlanGate";
 import SiteFooter from "@/app/components/SiteFooter";
-import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
-import { hasAlerts } from "@/lib/billing/entitlement";
-import { getState } from "@/lib/billing/console-store";
 
 export const metadata = {
-	title: "SlopGuard: 알림 & 웹훅 — Team",
+	title: "SlopGuard: 알림 설정 — Team",
 	description:
-		"Team 플랜용 콘솔: Slack, Discord, 웹훅 채널과 라우팅 규칙, 발송 로그를 한 곳에서.",
+		"Team 플랜 알림 콘솔: Slack/Discord/웹훅 채널 추가, 레포·패턴별 라우팅, 발송 로그 실시간 확인.",
 };
 
 const copy: AlertsConsoleCopy = {
@@ -27,190 +22,52 @@ const copy: AlertsConsoleCopy = {
 		{ label: "큐", href: "/ko/org#queue" },
 		{ label: "레포", href: "/ko/org#repos" },
 		{ label: "캠페인", href: "/ko/campaigns", external: true },
-		{ label: "알림", href: "/ko/alerts", external: true },
+		{ label: "알림", href: "/ko/alerts" },
 		{ label: "정책", href: "/ko/org#policy" },
 	],
 	activeNav: "알림",
-	eyebrow: "TEAM 기능",
-	title: "격리 알림을 적절한 사람에게 라우팅합니다.",
-	subtitle:
-		"Team 플랜은 이 알림 콘솔을 포함합니다: Slack, Discord, 웹훅 채널을 관리하고, 레포와 패턴 별로 어느 점수 임계값에서 어떤 채널로 보낼지 결정하고, 실제 발송 내역을 검토하세요.",
-	backToOrg: "조직 대시보드",
-	testSend: "테스트 발송 로그",
-	accountHref: "/ko/account",
-	campaignsHref: "/ko/campaigns",
+	loading: "불러오는 중…",
+	backToOrg: "조직 페이지로",
 	orgHref: "/ko/org",
+	campaignsHref: "/ko/campaigns",
+	accountHref: "/ko/account",
 	heroEyebrow: "ALERTS · TEAM 플랜",
-	heroTitle: "청중별 채널, 발송별 단일 진실.",
+	heroTitle: "대상별 채널, 실제로 라우팅되는 규칙.",
 	heroBody:
-		"보안은 Slack, 엔지니어링은 Discord, SIEM은 커스텀 웹훅. 각 채널은 자체 발송 로그를 유지해 무엇이 도착했고 무엇이 도착하지 않았는지 한눈에 보입니다.",
-	heroCta: "알림 테스트",
-	heroCtaHref: "#channels",
-	metrics: [
-		{
-			label: "활성 채널",
-			value: "3",
-			detail: "Slack · Discord · 웹훅",
-			tone: "ok",
-		},
-		{
-			label: "라우팅 규칙",
-			value: "5",
-			detail: "점수 2 · 패턴 3",
-			tone: "neutral",
-		},
-		{ label: "발송 (30일)", value: "47", detail: "96% 도착", tone: "ok" },
-		{ label: "평균 지연", value: "1.4s", detail: "p95 3.1s", tone: "neutral" },
-	],
-	channelsTitle: "채널",
-	channelsSubtitle: "격리 알림이 전달되는 곳",
-	addChannel: "채널 추가",
-	channels: [
-		{
-			kind: "slack",
-			label: "보안 알림",
-			target: "hooks.slack.com/services/.../security",
-			status: "active",
-			lastSent: "12분 전",
-		},
-		{
-			kind: "discord",
-			label: "엔지니어링",
-			target: "discord.com/api/webhooks/.../eng",
-			status: "active",
-			lastSent: "1시간 전",
-		},
-		{
-			kind: "webhook",
-			label: "커스텀 릴레이",
-			target: "ops.internal/slopguard/inbound",
-			status: "failed",
-			lastSent: "4시간 전",
-		},
-	],
+		"Slack·Discord·커스텀 웹훅을 추가하고, 레포+패턴을 채널에 묶고 slop 점수 임계값을 설정합니다. 아래 로그는 실제 발송 내역입니다.",
+	heroCta: "캠페인 페이지 열기",
+	heroCtaHref: "/ko/campaigns",
+	channelsTitle: "활성 채널",
+	channelsSubtitle: "Slack, Discord, 일반 웹훅. 대상은 owner 단위로 저장됩니다.",
+	channelsEmpty: "채널이 없습니다 — API로 채널을 추가하면 알림이 도착합니다.",
 	rulesTitle: "라우팅 규칙",
-	rulesSubtitle: "어떤 패턴이 어떤 채널에 어느 임계값으로 발사되는지",
-	addRule: "규칙 추가",
-	columns: {
+	rulesSubtitle: "레포+패턴 매칭, 점수 ≥ 임계값일 때만 발송.",
+	rulesEmpty: "라우팅 규칙이 없습니다 — 채널을 먼저 추가한 뒤 규칙을 만드세요.",
+	rulesColumns: {
 		repo: "레포",
 		pattern: "패턴",
 		channel: "채널",
-		threshold: "점수 ≥",
+		threshold: "임계값",
 	},
-	rules: [
-		{
-			repo: "blue-b/slopguard",
-			pattern: "auth_surface",
-			channel: "보안 알림",
-			threshold: 60,
-		},
-		{
-			repo: "blue-b/api",
-			pattern: "lockfile_refresh",
-			channel: "엔지니어링",
-			threshold: 75,
-		},
-		{
-			repo: "blue-b/docs",
-			pattern: "docs_only",
-			channel: "커스텀 릴레이",
-			threshold: 90,
-		},
-		{
-			repo: "blue-b/*",
-			pattern: "high_confidence_campaign",
-			channel: "보안 알림",
-			threshold: 85,
-		},
-	],
 	logTitle: "발송 로그",
-	logSubtitle: "전달된 것과 실패한 것, 그리고 얼마나 빨리",
+	logSubtitle: "최근 발송, 실패, 재시도 내역.",
+	logEmpty: "발송 내역이 없습니다 — 채널에서 테스트 발송을 실행하면 여기에 표시됩니다.",
 	logColumns: {
-		when: "시간",
+		when: "시각",
 		item: "항목",
 		score: "점수",
-		dest: "목적지",
+		dest: "대상",
 		status: "상태",
 		latency: "지연",
 	},
-	log: [
-		{
-			when: "2026-06-04 14:22",
-			item: "acme/web#128",
-			score: 87,
-			dest: "Slack #security",
-			status: "delivered",
-			latency: "1.1s",
-		},
-		{
-			when: "2026-06-03 09:11",
-			item: "acme/api#44",
-			score: 71,
-			dest: "Discord",
-			status: "delivered",
-			latency: "0.9s",
-		},
-		{
-			when: "2026-06-02 18:05",
-			item: "acme/docs#7",
-			score: 94,
-			dest: "webhook_url",
-			status: "retrying",
-			latency: "2.4s",
-		},
-		{
-			when: "2026-06-02 11:48",
-			item: "acme/api#39",
-			score: 62,
-			dest: "Slack #security",
-			status: "queued",
-			latency: "—",
-		},
-	],
-	note: "전송은 best-effort로 동작합니다. 전체 내역은 Slack/Discord 또는 웹훅 엔드포인트에 미러링됩니다.",
 };
 
-export default async function AlertsPageKo() {
-	const store = await cookies();
-	const session = decodeSession(store.get(SESSION_COOKIE)?.value);
-	let live: {
-		channels: ReturnType<typeof getState>["channels"];
-		sentAlerts: ReturnType<typeof getState>["sentAlerts"];
-	} | null = null;
-	if (session && (await hasAlerts(session.login))) {
-		const state = getState(session.login);
-		live = {
-			channels: state.channels,
-			sentAlerts: state.sentAlerts.slice(0, 20),
-		};
-	}
+export default function AlertsPage() {
 	return (
 		<>
 			<MarketingNav lang="ko" enHref="/alerts" koHref="/ko/alerts" />
 			<PlanGate lang="ko" required="team">
 				<AlertsConsole copy={copy} />
-				{live ? (
-					<div
-						style={{ maxWidth: 1200, margin: "0 auto 56px", padding: "0 20px" }}
-					>
-						<AlertsConsoleClient
-							channels={live.channels}
-							sentAlerts={live.sentAlerts}
-							addChannelLabel="채널 추가 (실제 동작)"
-							channelKindLabel="유형"
-							targetLabel="웹훅 URL"
-							kindSlack="Slack"
-							kindDiscord="Discord"
-							kindWebhook="범용 웹훅"
-							submitLabel="채널 추가"
-							testSendLabel="테스트 발송"
-							sendingLabel="전송 중…"
-							successLabel="전송 완료"
-							failedLabel="전송 실패"
-							emptyChannelsLabel="아직 설정된 채널이 없습니다."
-						/>
-					</div>
-				) : null}
 			</PlanGate>
 			<SiteFooter lang="ko" />
 		</>

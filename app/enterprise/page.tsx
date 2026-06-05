@@ -1,83 +1,54 @@
-import { cookies } from "next/headers";
 import MarketingNav from "@/app/components/MarketingNav";
 import EnterpriseConsole, {
 	type EnterpriseConsoleCopy,
 } from "@/app/components/EnterpriseConsole";
-import EnterpriseClient from "@/app/components/EnterpriseClient";
 import PlanGate from "@/app/components/PlanGate";
 import SiteFooter from "@/app/components/SiteFooter";
-import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
-import { hasSso } from "@/lib/billing/entitlement";
-import { getState } from "@/lib/billing/console-store";
 
 export const metadata = {
-	title: "SlopGuard: Enterprise Portal — SSO, Audit, Self-host",
+	title: "SlopGuard: Enterprise — SSO, Audit, Compliance",
 	description:
-		"Enterprise console: SAML/SSO configuration, audit log, support contract, and custom integrations.",
+		"Enterprise plan console: SAML SSO, audit log, integrations, and support.",
 };
 
 const copy: EnterpriseConsoleCopy = {
 	workspace: "SlopGuard",
 	workspaceSub: "Enterprise workspace",
-	user: "Blue-B",
-	entitlement: "Enterprise entitlement active",
-	connected: "● Connected via SSO",
+	user: "blue-b",
+	entitlement: "Enterprise plan",
+	connected: "Connected to GitHub",
 	nav: [
 		{ label: "Overview", href: "/org" },
 		{ label: "Queue", href: "/org#queue" },
 		{ label: "Repos", href: "/org#repos" },
 		{ label: "Campaigns", href: "/campaigns", external: true },
 		{ label: "Alerts", href: "/alerts", external: true },
-		{ label: "SSO", href: "#sso" },
-		{ label: "Audit", href: "#audit" },
-		{ label: "Support", href: "#support" },
+		{ label: "SSO", href: "/enterprise#sso" },
+		{ label: "Audit", href: "/enterprise#audit" },
+		{ label: "Integrations", href: "/enterprise#integrations" },
 	],
-	activeNav: "Overview",
-	eyebrow: "ENTERPRISE FEATURE",
-	title: "Run SlopGuard across your entire organization with controls.",
-	subtitle:
-		"The Enterprise plan includes this portal: SAML/SSO configuration, audit log with export, custom integrations, and a named support contact with a 1-hour P1 SLA.",
-	backToOrg: "Org dashboard",
+	activeNav: "SSO",
+	loading: "Loading…",
+	backToOrg: "Back to org",
 	contactSales: "Contact sales",
 	accountHref: "/account",
 	orgHref: "/org",
 	alertsHref: "/alerts",
 	campaignsHref: "/campaigns",
 	heroEyebrow: "ENTERPRISE · COMPLIANCE",
-	heroTitle: "Run SlopGuard with the controls procurement asks for.",
+	heroTitle: "Run SlopGuard with the controls your security team expects.",
 	heroBody:
-		"SAML/SSO, an exportable audit log, a named support contact, and a 1h P1 SLA. Designed to drop into a procurement review without a custom contract.",
-	heroCta: "Open audit log",
-	heroCtaHref: "#audit",
-	metrics: [
-		{ label: "SSO", value: "Active", detail: "Okta · SAML 2.0", tone: "ok" },
-		{
-			label: "Audit retention",
-			value: "365d",
-			detail: "configurable per plan",
-			tone: "neutral",
-		},
-		{
-			label: "Self-host",
-			value: "On",
-			detail: "managed by your team",
-			tone: "neutral",
-		},
-		{
-			label: "Support SLA",
-			value: "1h P1",
-			detail: "24×7, named contact",
-			tone: "ok",
-		},
-	],
-	ssoTitle: "SSO / SAML",
-	ssoSubtitle: "Identity provider and session policy",
-	ssoStatus: "Status",
-	ssoProvider: "Provider",
-	ssoLastSync: "Last SCIM sync",
-	ssoConfigure: "Configure",
+		"SAML SSO, full audit trail, custom integrations, and a 24/7 support contract. The audit log records every config change, channel send, and export.",
+	heroCta: "Export audit CSV",
+	heroCtaHref: "/api/audit/export?format=csv",
+	ssoTitle: "SAML SSO",
+	ssoSubtitle: "Identity is governed by your IdP, not by SlopGuard.",
+	ssoProviderLabel: "Provider",
+	ssoStatusLabel: "Status",
+	ssoLastSyncLabel: "Last sync",
 	auditTitle: "Audit log",
-	auditSubtitle: "Every privileged action across SlopGuard, exportable",
+	auditSubtitle: "Every action that affects the org is recorded here. Exportable.",
+	auditEmpty: "No audit entries yet — config changes and exports will appear here.",
 	auditColumns: {
 		when: "When",
 		actor: "Actor",
@@ -85,106 +56,24 @@ const copy: EnterpriseConsoleCopy = {
 		target: "Target",
 		source: "Source",
 	},
-	audit: [
-		{
-			when: "2026-06-04 14:22",
-			actor: "alice@acme.com",
-			action: "cleared quarantine",
-			target: "acme/web#128",
-			source: "SSO",
-		},
-		{
-			when: "2026-06-04 11:08",
-			actor: "ops-bot",
-			action: "rotated webhook secret",
-			target: "org settings",
-			source: "API",
-		},
-		{
-			when: "2026-06-03 18:44",
-			actor: "bob@acme.com",
-			action: "added repository",
-			target: "acme/api",
-			source: "Admin",
-		},
-		{
-			when: "2026-06-03 09:11",
-			actor: "ci-bot",
-			action: "configured alert channel",
-			target: "Slack #security",
-			source: "API",
-		},
-		{
-			when: "2026-06-02 16:02",
-			actor: "carol@acme.com",
-			action: "exported audit log",
-			target: "Q2 2026",
-			source: "SSO",
-		},
-	],
-	exportAudit: "Export JSON",
-	integrationsTitle: "Custom integrations",
-	integrationsSubtitle: "Connect SlopGuard to your internal systems",
+	exportAudit: "Export CSV",
+	integrationsTitle: "Integrations",
+	integrationsSubtitle: "Forward events to your ticketing, paging, and observability tools",
 	connect: "Connect",
-	integrations: [
-		{
-			name: "Jira",
-			status: "connected",
-			scope: "Create tickets for quarantined PRs in ENG project",
-		},
-		{
-			name: "PagerDuty",
-			status: "pending",
-			scope: "Page on-call on High-risk campaign detection",
-		},
-		{
-			name: "Datadog",
-			status: "available",
-			scope: "Forward audit events as Datadog logs",
-		},
-		{
-			name: "Internal ticketing",
-			status: "available",
-			scope: "Generic webhook with custom payload template",
-		},
-	],
-	supportTitle: "Support contract",
-	supportSubtitle: "Named contact, SLA, and escalation path",
-	supportSla: "SLA",
+	disconnect: "Disconnect",
+	supportTitle: "Support",
+	supportSubtitle: "Dedicated channel for P1 incidents and security reviews.",
+	supportSla: "P1 SLA",
 	supportHours: "Hours",
-	supportAccountMgr: "Account manager",
+	supportAccountMgr: "Account mgr",
 };
 
-export default async function EnterprisePage() {
-	const store = await cookies();
-	const session = decodeSession(store.get(SESSION_COOKIE)?.value);
-	let live: {
-		audit: ReturnType<typeof getState>["audit"];
-		integrations: ReturnType<typeof getState>["integrations"];
-	} | null = null;
-	if (session && (await hasSso(session.login))) {
-		const state = getState(session.login);
-		live = { audit: state.audit, integrations: state.integrations };
-	}
+export default function EnterprisePage() {
 	return (
 		<>
 			<MarketingNav lang="en" enHref="/enterprise" koHref="/ko/enterprise" />
 			<PlanGate lang="en" required="enterprise">
 				<EnterpriseConsole copy={copy} />
-				{live ? (
-					<div
-						style={{ maxWidth: 1200, margin: "0 auto 56px", padding: "0 20px" }}
-					>
-						<EnterpriseClient
-							audit={live.audit}
-							integrations={live.integrations}
-							exportJsonLabel="Export JSON"
-							exportCsvLabel="Export CSV"
-							connectLabel="Connect"
-							disconnectLabel="Disconnect"
-						/>
-					</div>
-				) : null}
 			</PlanGate>
 			<SiteFooter lang="en" />
 		</>

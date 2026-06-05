@@ -192,8 +192,9 @@ export default function OrgDashboardConsole({
 		if (!live) return [];
 		return live.recent.slice(0, 8).map((it) => {
 			const repo =
-				it.url.match(/github\.com\/([^/]+)\/([^/]+)\//i)?.[0]?.replace(/\/$/, "") ??
-				"";
+				it.url
+					.match(/github\.com\/([^/]+)\/([^/]+)\//i)?.[0]
+					?.replace(/\/$/, "") ?? "";
 			// url is https://api.github.com/repos/o/r/issues/N — extract o/r
 			const m = it.url.match(/repos\/([^/]+)\/([^/]+)\//);
 			const repoLabel = m ? `${m[1]}/${m[2]}` : repo || "—";
@@ -221,10 +222,8 @@ export default function OrgDashboardConsole({
 		const avgScore =
 			repos > 0
 				? Math.round(
-						live.recent.reduce(
-							(s, it) => s + deriveScore(it.labels),
-							0,
-						) / Math.max(1, live.recent.length),
+						live.recent.reduce((s, it) => s + deriveScore(it.labels), 0) /
+							Math.max(1, live.recent.length),
 					)
 				: 0;
 		return [
@@ -518,9 +517,7 @@ export default function OrgDashboardConsole({
 										style={{
 											padding: "16px 18px",
 											borderRight:
-												i < metrics.length - 1
-													? "1px solid #1c2530"
-													: "none",
+												i < metrics.length - 1 ? "1px solid #1c2530" : "none",
 										}}
 									>
 										<div
@@ -562,7 +559,10 @@ export default function OrgDashboardConsole({
 
 						{/* Quarantine queue */}
 						{!isLoading && !notInstalled && (
-							<section id="queue" style={{ marginBottom: 24, scrollMarginTop: 80 }}>
+							<section
+								id="queue"
+								style={{ marginBottom: 24, scrollMarginTop: 80 }}
+							>
 								<header
 									style={{
 										display: "flex",
@@ -608,9 +608,9 @@ export default function OrgDashboardConsole({
 												fontFamily: "var(--mono)",
 											}}
 										>
-											No quarantine activity in the last 30 days. New items
-											will show up here as SlopGuard detects them on your
-											installed repos.
+											No quarantine activity in the last 30 days. New items will
+											show up here as SlopGuard detects them on your installed
+											repos.
 										</div>
 									) : (
 										<table
@@ -679,7 +679,9 @@ export default function OrgDashboardConsole({
 																{row.item}
 															</Link>
 														</td>
-														<td style={{ padding: "11px 14px", color: "#c9d1d9" }}>
+														<td
+															style={{ padding: "11px 14px", color: "#c9d1d9" }}
+														>
 															{row.repo}
 														</td>
 														<td
@@ -759,7 +761,10 @@ export default function OrgDashboardConsole({
 
 						{/* Repos section — real per-repo data */}
 						{!isLoading && !notInstalled && (
-							<section id="repos" style={{ marginBottom: 24, scrollMarginTop: 80 }}>
+							<section
+								id="repos"
+								style={{ marginBottom: 24, scrollMarginTop: 80 }}
+							>
 								<header
 									style={{
 										display: "flex",
@@ -1107,7 +1112,9 @@ export default function OrgDashboardConsole({
 											fontSize: 12,
 										}}
 									>
-										<span style={{ color: "#c9d1d9" }}>{copy.coverageLabel}</span>
+										<span style={{ color: "#c9d1d9" }}>
+											{copy.coverageLabel}
+										</span>
 										<span style={{ color: "#3fb950", fontWeight: 700 }}>
 											{coverage.percent}% of {coverage.repos}
 										</span>

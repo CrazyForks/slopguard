@@ -52,7 +52,8 @@ const copy: OrgDashboardConsoleCopy = {
 	queue: [],
 	reposTitle: "레포",
 	reposSubtitle: "격리·정상 확인 활동이 있는 설치된 레포",
-	reposEmpty: "활동이 있는 레포가 없습니다 — 레포에 SlopGuard를 설치하면 표시됩니다.",
+	reposEmpty:
+		"활동이 있는 레포가 없습니다 — 레포에 SlopGuard를 설치하면 표시됩니다.",
 	reposColumns: {
 		repo: "레포지터리",
 		quarantined: "격리",
@@ -62,7 +63,8 @@ const copy: OrgDashboardConsoleCopy = {
 	campaignTitle: "캠페인 레이더",
 	campaignSubtitle: "커밋 prefix 기반으로 묶인 레포 간 클러스터",
 	campaigns: [],
-	campaignsEmpty: "캠페인 클러스터가 아직 없습니다 — 유사 항목이 3건 이상 쌓이면 여기에 표시됩니다.",
+	campaignsEmpty:
+		"캠페인 클러스터가 아직 없습니다 — 유사 항목이 3건 이상 쌓이면 여기에 표시됩니다.",
 	policyTitle: "정책 커버리지",
 	policyBody:
 		"커버리지는 설치된 레포 중 격리·정상 확인 활동이 있는 비율(즉, 실제로 보호 중인 레포)을 반영합니다.",

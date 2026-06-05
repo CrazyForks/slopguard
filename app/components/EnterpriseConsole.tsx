@@ -1,15 +1,19 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ConsoleSidebar, { type SidebarItem } from "./ConsoleSidebar";
 import { shell, frame, card, muted, toneColor } from "./console-styles";
 
-type Metric = {
-	label: string;
-	value: string;
-	detail: string;
-	tone?: "neutral" | "warn" | "danger" | "ok";
+type SsoState = {
+	provider: string;
+	status: "active" | "pending" | "unconfigured";
+	lastSync: string;
 };
 type AuditEntry = {
+	id: string;
+	owner: string;
 	when: string;
 	actor: string;
 	action: string;
@@ -22,6 +26,13 @@ type Integration = {
 	scope: string;
 };
 
+type StateResponse = {
+	owner: string;
+	sso: SsoState;
+	audit: AuditEntry[];
+	integrations: Integration[];
+};
+
 export type EnterpriseConsoleCopy = {
 	workspace: string;
 	workspaceSub: string;
@@ -30,24 +41,26 @@ export type EnterpriseConsoleCopy = {
 	connected: string;
 	nav: SidebarItem[];
 	activeNav: string;
-	eyebrow: string;
-	title: string;
-	subtitle: string;
+	loading: string;
 	backToOrg: string;
 	contactSales: string;
 	accountHref: string;
 	orgHref: string;
 	alertsHref: string;
 	campaignsHref: string;
-	metrics: Metric[];
+	heroEyebrow: string;
+	heroTitle: string;
+	heroBody: string;
+	heroCta: string;
+	heroCtaHref: string;
 	ssoTitle: string;
 	ssoSubtitle: string;
-	ssoStatus: string;
-	ssoProvider: string;
-	ssoLastSync: string;
-	ssoConfigure: string;
+	ssoProviderLabel: string;
+	ssoStatusLabel: string;
+	ssoLastSyncLabel: string;
 	auditTitle: string;
 	auditSubtitle: string;
+	auditEmpty: string;
 	auditColumns: {
 		when: string;
 		actor: string;
@@ -55,26 +68,30 @@ export type EnterpriseConsoleCopy = {
 		target: string;
 		source: string;
 	};
-	audit: AuditEntry[];
 	exportAudit: string;
 	integrationsTitle: string;
 	integrationsSubtitle: string;
 	connect: string;
-	integrations: Integration[];
+	disconnect: string;
 	supportTitle: string;
 	supportSubtitle: string;
 	supportSla: string;
 	supportHours: string;
 	supportAccountMgr: string;
-	heroEyebrow: string;
-	heroTitle: string;
-	heroBody: string;
-	heroCta: string;
-	heroCtaHref: string;
 };
 
 function sourceColor(s: AuditEntry["source"]): string {
 	return s === "SSO" ? "#a371f7" : s === "Admin" ? "#3fb950" : "#d29922";
+}
+
+function formatLastSync(iso: string): string {
+	const ms = Date.now() - new Date(iso).getTime();
+	const m = Math.floor(ms / 60000);
+	if (m < 1) return "just now";
+	if (m < 60) return `${m}m ago`;
+	const h = Math.floor(m / 60);
+	if (h < 24) return `${h}h ago`;
+	return new Date(iso).toISOString().slice(0, 10);
 }
 
 export default function EnterpriseConsole({
@@ -82,6 +99,62 @@ export default function EnterpriseConsole({
 }: {
 	copy: EnterpriseConsoleCopy;
 }) {
+	const [data, setData] = useState<StateResponse | null>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	async function load() {
+		try {
+			const res = await fetch("/api/enterprise/state", { cache: "no-store" });
+			if (!res.ok) {
+				setError(`HTTP ${res.status}`);
+				return;
+			}
+			const json = (await res.json()) as StateResponse;
+			setData(json);
+			setError(null);
+		} catch (e) {
+			setError(e instanceof Error ? e.message : "Failed to load Enterprise state");
+		}
+	}
+
+	useEffect(() => {
+		load();
+		const t = setInterval(load, 15_000);
+		return () => clearInterval(t);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const isLoading = data === null && error === null;
+
+	const metrics = [
+		{
+			label: "Audit entries",
+			value: data ? String(data.audit.length) : "—",
+			detail: data ? "most recent 20" : "loading",
+			tone: "ok" as const,
+		},
+		{
+			label: "Integrations",
+			value: data ? String(data.integrations.length) : "—",
+			detail: data
+				? `${data.integrations.filter((i) => i.status === "connected").length} connected`
+				: "loading",
+			tone: "ok" as const,
+		},
+		{
+			label: "SSO provider",
+			value: data?.sso.provider ?? "—",
+			detail: data?.sso ? `last sync ${formatLastSync(data.sso.lastSync)}` : "loading",
+			tone: "ok" as const,
+		},
+		{
+			label: "SSO status",
+			value: data?.sso.status ?? "—",
+			detail: data ? "SAML 2.0 ready" : "loading",
+			tone: data?.sso.status === "active" ? ("ok" as const) : ("warn" as const),
+		},
+	];
+
 	return (
 		<main style={shell}>
 			<section style={frame}>
@@ -208,459 +281,527 @@ export default function EnterpriseConsole({
 										Compliance · Audit · SSO
 									</div>
 									<div style={{ marginTop: 4 }}>
-										SOC2 / HIPAA / ISO 27001 ready
+										{data
+											? `${data.audit.length} audit · ${data.integrations.length} integrations`
+											: copy.loading}
 									</div>
 								</div>
 							</div>
 						</header>
 
-						<div
-							style={{
-								display: "grid",
-								gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-								gap: 0,
-								borderTop: "1px solid #1c2530",
-								borderBottom: "1px solid #1c2530",
-								marginBottom: 24,
-							}}
-						>
-							{copy.metrics.map((metric, i) => (
-								<div
-									key={metric.label}
-									style={{
-										padding: "16px 18px",
-										borderRight:
-											i < copy.metrics.length - 1
-												? "1px solid #1c2530"
-												: "none",
-									}}
-								>
-									<div
-										style={{
-											...muted,
-											fontSize: 10,
-											letterSpacing: ".14em",
-											textTransform: "uppercase",
-											fontFamily: "var(--mono)",
-										}}
-									>
-										{metric.label}
-									</div>
-									<div
-										style={{
-											fontSize: 28,
-											fontWeight: 800,
-											letterSpacing: "-.03em",
-											marginTop: 6,
-											color: toneColor[metric.tone ?? "neutral"],
-											fontFamily: "var(--mono)",
-										}}
-									>
-										{metric.value}
-									</div>
-									<div
-										style={{
-											...muted,
-											fontSize: 11,
-											marginTop: 4,
-										}}
-									>
-										{metric.detail}
-									</div>
-								</div>
-							))}
-						</div>
+						{isLoading && (
+							<div
+								style={{
+									...card,
+									padding: "32px 24px",
+									textAlign: "center",
+									color: "#8b949e",
+									fontFamily: "var(--mono)",
+									fontSize: 12,
+									marginBottom: 24,
+								}}
+							>
+								Loading live Enterprise state…
+							</div>
+						)}
 
-						<div
-							style={{
-								display: "grid",
-								gridTemplateColumns: "1fr 1fr",
-								gap: 14,
-								marginBottom: 24,
-							}}
-						>
-							<section style={{ ...card, padding: "16px 18px" }}>
-								<div
-									style={{
-										color: "#a371f7",
-										fontSize: 10,
-										letterSpacing: ".14em",
-										textTransform: "uppercase",
-										fontFamily: "var(--mono)",
-										marginBottom: 8,
-									}}
-								>
-									{copy.ssoTitle}
-								</div>
-								<h3
-									style={{
-										margin: 0,
-										fontSize: 16,
-										letterSpacing: "-.02em",
-									}}
-								>
-									{copy.ssoSubtitle}
-								</h3>
-								<div
-									style={{
-										marginTop: 14,
-										display: "grid",
-										gap: 10,
-									}}
-								>
-									<div
-										style={{
-											display: "flex",
-											justifyContent: "space-between",
-											fontSize: 12,
-										}}
-									>
-										<span
-											style={{ color: "#8b949e", fontFamily: "var(--mono)" }}
-										>
-											Provider
-										</span>
-										<span
-											style={{
-												color: "#f0f6fc",
-												fontFamily: "var(--mono)",
-											}}
-										>
-											{copy.ssoProvider}
-										</span>
-									</div>
-									<div
-										style={{
-											display: "flex",
-											justifyContent: "space-between",
-											fontSize: 12,
-										}}
-									>
-										<span
-											style={{ color: "#8b949e", fontFamily: "var(--mono)" }}
-										>
-											Status
-										</span>
-										<span
-											style={{
-												color: "#3fb950",
-												fontFamily: "var(--mono)",
-												fontWeight: 600,
-											}}
-										>
-											● {copy.ssoStatus}
-										</span>
-									</div>
-									<div
-										style={{
-											display: "flex",
-											justifyContent: "space-between",
-											fontSize: 12,
-										}}
-									>
-										<span
-											style={{ color: "#8b949e", fontFamily: "var(--mono)" }}
-										>
-											Last sync
-										</span>
-										<span
-											style={{
-												color: "#f0f6fc",
-												fontFamily: "var(--mono)",
-											}}
-										>
-											{copy.ssoLastSync}
-										</span>
-									</div>
-								</div>
-								<div style={{ marginTop: 14 }}>
-									<Link
-										href={copy.accountHref}
-										className="btn btn-ghost btn-sm"
-									>
-										{copy.ssoConfigure}
-									</Link>
-								</div>
-							</section>
+						{error && !isLoading && (
+							<div
+								style={{
+									...card,
+									padding: "16px 18px",
+									border: "1px solid rgba(248,81,73,.4)",
+									color: "#f85149",
+									fontSize: 12,
+									fontFamily: "var(--mono)",
+									marginBottom: 24,
+								}}
+							>
+								Failed to load: {error}
+							</div>
+						)}
 
-							<section style={{ ...card, padding: "16px 18px" }}>
+						{!isLoading && data && (
+							<>
+								{/* Metrics */}
 								<div
 									style={{
-										color: "#a371f7",
-										fontSize: 10,
-										letterSpacing: ".14em",
-										textTransform: "uppercase",
-										fontFamily: "var(--mono)",
-										marginBottom: 8,
-									}}
-								>
-									{copy.supportTitle}
-								</div>
-								<h3
-									style={{
-										margin: 0,
-										fontSize: 16,
-										letterSpacing: "-.02em",
-									}}
-								>
-									{copy.supportSubtitle}
-								</h3>
-								<div
-									style={{
-										marginTop: 14,
 										display: "grid",
-										gridTemplateColumns: "1fr 1fr 1fr",
-										gap: 10,
+										gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+										gap: 0,
+										borderTop: "1px solid #1c2530",
+										borderBottom: "1px solid #1c2530",
+										marginBottom: 24,
 									}}
 								>
-									{[
-										{ label: copy.supportSla, value: "1h P1" },
-										{ label: copy.supportHours, value: "24 / 7" },
-										{ label: copy.supportAccountMgr, value: "assigned" },
-									].map((row) => (
+									{metrics.map((metric, i) => (
 										<div
-											key={row.label}
+											key={metric.label}
 											style={{
-												border: "1px solid #1c2530",
-												borderRadius: 10,
-												padding: "10px 12px",
-												background: "#0a1018",
+												padding: "16px 18px",
+												borderRight:
+													i < metrics.length - 1
+														? "1px solid #1c2530"
+														: "none",
 											}}
 										>
 											<div
 												style={{
-													color: "#8b949e",
+													...muted,
 													fontSize: 10,
 													letterSpacing: ".14em",
 													textTransform: "uppercase",
 													fontFamily: "var(--mono)",
 												}}
 											>
-												{row.label}
+												{metric.label}
 											</div>
 											<div
 												style={{
-													fontSize: 18,
+													fontSize: metric.label === "SSO provider" ? 18 : 28,
 													fontWeight: 800,
+													letterSpacing: "-.03em",
+													marginTop: 6,
+													color: toneColor[metric.tone ?? "neutral"],
 													fontFamily: "var(--mono)",
-													color: "#f0f6fc",
+												}}
+											>
+												{metric.value}
+											</div>
+											<div
+												style={{
+													...muted,
+													fontSize: 11,
 													marginTop: 4,
 												}}
 											>
-												{row.value}
+												{metric.detail}
 											</div>
 										</div>
 									))}
 								</div>
-							</section>
-						</div>
 
-						<section style={{ marginBottom: 24 }}>
-							<header
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									alignItems: "flex-end",
-									marginBottom: 12,
-								}}
-							>
-								<div>
-									<h2
-										style={{ margin: 0, fontSize: 18, letterSpacing: "-.02em" }}
-									>
-										{copy.auditTitle}
-									</h2>
-									<div style={{ ...muted, fontSize: 12, marginTop: 4 }}>
-										{copy.auditSubtitle}
-									</div>
-								</div>
-								<Link
-									href={`/api/audit/export`}
-									className="btn btn-ghost btn-sm"
-									prefetch={false}
-								>
-									{copy.exportAudit}
-								</Link>
-							</header>
-							<div style={{ ...card, overflow: "hidden" }}>
-								<table
+								{/* SSO + Support side-by-side */}
+								<div
 									style={{
-										width: "100%",
-										borderCollapse: "collapse",
-										fontSize: 13,
+										display: "grid",
+										gridTemplateColumns: "1fr 1fr",
+										gap: 14,
+										marginBottom: 24,
 									}}
 								>
-									<thead>
-										<tr
-											style={{
-												color: "#7d8590",
-												borderBottom: "1px solid #1c2530",
-											}}
-										>
-											{(
-												["when", "actor", "action", "target", "source"] as const
-											).map((k) => (
-												<th
-													key={k}
-													style={{
-														textAlign: "left",
-														padding: "10px 14px",
-														fontSize: 10,
-														letterSpacing: ".14em",
-														textTransform: "uppercase",
-														fontWeight: 600,
-														fontFamily: "var(--mono)",
-													}}
-												>
-													{copy.auditColumns[k]}
-												</th>
-											))}
-										</tr>
-									</thead>
-									<tbody>
-										{copy.audit.map((row, i) => (
-											<tr key={i} style={{ borderBottom: "1px solid #161e29" }}>
-												<td
-													style={{
-														padding: "11px 14px",
-														fontFamily: "var(--mono)",
-														color: "#8b949e",
-													}}
-												>
-													{row.when}
-												</td>
-												<td
-													style={{
-														padding: "11px 14px",
-														color: "#c9d1d9",
-													}}
-												>
-													{row.actor}
-												</td>
-												<td
-													style={{
-														padding: "11px 14px",
-														color: "#c9d1d9",
-													}}
-												>
-													{row.action}
-												</td>
-												<td
-													style={{
-														padding: "11px 14px",
-														color: "#c9d1d9",
-													}}
-												>
-													{row.target}
-												</td>
-												<td
-													style={{
-														padding: "11px 14px",
-														color: sourceColor(row.source),
-														fontFamily: "var(--mono)",
-													}}
-												>
-													{row.source}
-												</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						</section>
-
-						<section>
-							<header
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									alignItems: "flex-end",
-									marginBottom: 12,
-								}}
-							>
-								<div>
-									<h2
-										style={{ margin: 0, fontSize: 18, letterSpacing: "-.02em" }}
-									>
-										{copy.integrationsTitle}
-									</h2>
-									<div style={{ ...muted, fontSize: 12, marginTop: 4 }}>
-										{copy.integrationsSubtitle}
-									</div>
-								</div>
-							</header>
-							<div
-								style={{
-									display: "grid",
-									gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-									gap: 10,
-								}}
-							>
-								{copy.integrations.map((integration) => (
-									<div
-										key={integration.name}
-										style={{
-											...card,
-											padding: "12px 14px",
-										}}
+									<section
+										id="sso"
+										style={{ ...card, padding: "16px 18px", scrollMarginTop: 80 }}
 									>
 										<div
 											style={{
-												display: "flex",
-												justifyContent: "space-between",
-												alignItems: "center",
+												color: "#a371f7",
+												fontSize: 10,
+												letterSpacing: ".14em",
+												textTransform: "uppercase",
+												fontFamily: "var(--mono)",
+												marginBottom: 8,
 											}}
 										>
-											<div style={{ fontWeight: 700 }}>{integration.name}</div>
-											<span
+											{copy.ssoTitle}
+										</div>
+										<h3
+											style={{
+												margin: 0,
+												fontSize: 16,
+												letterSpacing: "-.02em",
+											}}
+										>
+											{copy.ssoSubtitle}
+										</h3>
+										<div style={{ marginTop: 14, display: "grid", gap: 10 }}>
+											<div
 												style={{
-													fontSize: 10,
-													padding: "1px 8px",
-													borderRadius: 99,
-													fontFamily: "var(--mono)",
-													textTransform: "uppercase",
-													letterSpacing: ".08em",
-													background:
-														integration.status === "connected"
-															? "rgba(63,185,80,.12)"
-															: integration.status === "pending"
-																? "rgba(210,153,34,.12)"
-																: "rgba(141,148,158,.12)",
-													color:
-														integration.status === "connected"
-															? "#3fb950"
-															: integration.status === "pending"
-																? "#d29922"
-																: "#8b949e",
+													display: "flex",
+													justifyContent: "space-between",
+													fontSize: 12,
 												}}
 											>
-												{integration.status}
-											</span>
+												<span
+													style={{ color: "#8b949e", fontFamily: "var(--mono)" }}
+												>
+													{copy.ssoProviderLabel}
+												</span>
+												<span
+													style={{
+														color: "#f0f6fc",
+														fontFamily: "var(--mono)",
+													}}
+												>
+													{data.sso.provider}
+												</span>
+											</div>
+											<div
+												style={{
+													display: "flex",
+													justifyContent: "space-between",
+													fontSize: 12,
+												}}
+											>
+												<span
+													style={{ color: "#8b949e", fontFamily: "var(--mono)" }}
+												>
+													{copy.ssoStatusLabel}
+												</span>
+												<span
+													style={{
+														color: "#3fb950",
+														fontFamily: "var(--mono)",
+														fontWeight: 600,
+													}}
+												>
+													● {data.sso.status}
+												</span>
+											</div>
+											<div
+												style={{
+													display: "flex",
+													justifyContent: "space-between",
+													fontSize: 12,
+												}}
+											>
+												<span
+													style={{ color: "#8b949e", fontFamily: "var(--mono)" }}
+												>
+													{copy.ssoLastSyncLabel}
+												</span>
+												<span
+													style={{
+														color: "#f0f6fc",
+														fontFamily: "var(--mono)",
+													}}
+												>
+													{formatLastSync(data.sso.lastSync)}
+												</span>
+											</div>
 										</div>
+									</section>
+
+									<section style={{ ...card, padding: "16px 18px" }}>
 										<div
 											style={{
-												color: "#8b949e",
-												fontSize: 11,
-												marginTop: 4,
+												color: "#a371f7",
+												fontSize: 10,
+												letterSpacing: ".14em",
+												textTransform: "uppercase",
 												fontFamily: "var(--mono)",
+												marginBottom: 8,
 											}}
 										>
-											{integration.scope}
+											{copy.supportTitle}
 										</div>
-										<button
-											type="button"
-											className="btn btn-ghost btn-sm"
-											disabled={integration.status === "pending"}
-											style={{ marginTop: 10 }}
+										<h3
+											style={{
+												margin: 0,
+												fontSize: 16,
+												letterSpacing: "-.02em",
+											}}
 										>
-											{integration.status === "connected"
-												? "Disconnect"
-												: copy.connect}
-										</button>
+											{copy.supportSubtitle}
+										</h3>
+										<div
+											style={{
+												marginTop: 14,
+												display: "grid",
+												gridTemplateColumns: "1fr 1fr 1fr",
+												gap: 10,
+											}}
+										>
+											{[
+												{ label: copy.supportSla, value: "1h P1" },
+												{ label: copy.supportHours, value: "24 / 7" },
+												{ label: copy.supportAccountMgr, value: "assigned" },
+											].map((row) => (
+												<div
+													key={row.label}
+													style={{
+														border: "1px solid #1c2530",
+														borderRadius: 10,
+														padding: "10px 12px",
+														background: "#0a1018",
+													}}
+												>
+													<div
+														style={{
+															color: "#8b949e",
+															fontSize: 10,
+															letterSpacing: ".14em",
+															textTransform: "uppercase",
+															fontFamily: "var(--mono)",
+														}}
+													>
+														{row.label}
+													</div>
+													<div
+														style={{
+															fontSize: 18,
+															fontWeight: 800,
+															fontFamily: "var(--mono)",
+															color: "#f0f6fc",
+															marginTop: 4,
+														}}
+													>
+														{row.value}
+													</div>
+												</div>
+											))}
+										</div>
+									</section>
+								</div>
+
+								{/* Audit log — id=audit anchor */}
+								<section
+									id="audit"
+									style={{ marginBottom: 24, scrollMarginTop: 80 }}
+								>
+									<header
+										style={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "flex-end",
+											marginBottom: 12,
+										}}
+									>
+										<div>
+											<h2
+												style={{
+													margin: 0,
+													fontSize: 18,
+													letterSpacing: "-.02em",
+												}}
+											>
+												{copy.auditTitle}
+											</h2>
+											<div style={{ ...muted, fontSize: 12, marginTop: 4 }}>
+												{copy.auditSubtitle}
+											</div>
+										</div>
+										<div style={{ display: "flex", gap: 8 }}>
+											<Link
+												href="/api/audit/export?format=json"
+												className="btn btn-ghost btn-sm"
+												prefetch={false}
+											>
+												Export JSON
+											</Link>
+											<Link
+												href="/api/audit/export?format=csv"
+												className="btn btn-primary btn-sm"
+												prefetch={false}
+											>
+												{copy.exportAudit}
+											</Link>
+										</div>
+									</header>
+									<div style={{ ...card, overflow: "hidden" }}>
+										{data.audit.length === 0 ? (
+											<div
+												style={{
+													padding: "32px 24px",
+													textAlign: "center",
+													color: "#8b949e",
+													fontSize: 12,
+													fontFamily: "var(--mono)",
+												}}
+											>
+												{copy.auditEmpty}
+											</div>
+										) : (
+											<table
+												style={{
+													width: "100%",
+													borderCollapse: "collapse",
+													fontSize: 13,
+												}}
+											>
+												<thead>
+													<tr
+														style={{
+															color: "#7d8590",
+															borderBottom: "1px solid #1c2530",
+														}}
+													>
+														{(["when", "actor", "action", "target", "source"] as const).map(
+															(k) => (
+																<th
+																	key={k}
+																	style={{
+																		textAlign: "left",
+																		padding: "10px 14px",
+																		fontSize: 10,
+																		letterSpacing: ".14em",
+																		textTransform: "uppercase",
+																		fontWeight: 600,
+																		fontFamily: "var(--mono)",
+																	}}
+																>
+																	{copy.auditColumns[k]}
+																</th>
+															),
+														)}
+													</tr>
+												</thead>
+												<tbody>
+													{data.audit.map((row) => (
+														<tr
+															key={row.id}
+															style={{ borderBottom: "1px solid #161e29" }}
+														>
+															<td
+																style={{
+																	padding: "11px 14px",
+																	fontFamily: "var(--mono)",
+																	color: "#8b949e",
+																}}
+															>
+																{row.when}
+															</td>
+															<td
+																style={{
+																	padding: "11px 14px",
+																	color: "#c9d1d9",
+																}}
+															>
+																{row.actor}
+															</td>
+															<td
+																style={{
+																	padding: "11px 14px",
+																	color: "#c9d1d9",
+																}}
+															>
+																{row.action}
+															</td>
+															<td
+																style={{
+																	padding: "11px 14px",
+																	color: "#c9d1d9",
+																}}
+															>
+																{row.target}
+															</td>
+															<td
+																style={{
+																	padding: "11px 14px",
+																	color: sourceColor(row.source),
+																	fontFamily: "var(--mono)",
+																}}
+															>
+																{row.source}
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										)}
 									</div>
-								))}
-							</div>
-						</section>
+								</section>
+
+								{/* Integrations — id=integrations anchor */}
+								<section id="integrations" style={{ scrollMarginTop: 80 }}>
+									<header
+										style={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "flex-end",
+											marginBottom: 12,
+										}}
+									>
+										<div>
+											<h2
+												style={{
+													margin: 0,
+													fontSize: 18,
+													letterSpacing: "-.02em",
+												}}
+											>
+												{copy.integrationsTitle}
+											</h2>
+											<div style={{ ...muted, fontSize: 12, marginTop: 4 }}>
+												{copy.integrationsSubtitle}
+											</div>
+										</div>
+									</header>
+									<div
+										style={{
+											display: "grid",
+											gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+											gap: 10,
+										}}
+									>
+										{data.integrations.map((integration) => (
+											<div
+												key={integration.name}
+												style={{
+													...card,
+													padding: "12px 14px",
+												}}
+											>
+												<div
+													style={{
+														display: "flex",
+														justifyContent: "space-between",
+														alignItems: "center",
+													}}
+												>
+													<div style={{ fontWeight: 700 }}>{integration.name}</div>
+													<span
+														style={{
+															fontSize: 10,
+															padding: "1px 8px",
+															borderRadius: 99,
+															fontFamily: "var(--mono)",
+															textTransform: "uppercase",
+															letterSpacing: ".08em",
+															background:
+																integration.status === "connected"
+																	? "rgba(63,185,80,.12)"
+																	: integration.status === "pending"
+																		? "rgba(210,153,34,.12)"
+																		: "rgba(141,148,158,.12)",
+															color:
+																integration.status === "connected"
+																	? "#3fb950"
+																	: integration.status === "pending"
+																		? "#d29922"
+																		: "#8b949e",
+														}}
+													>
+														{integration.status}
+													</span>
+												</div>
+												<div
+													style={{
+														color: "#8b949e",
+														fontSize: 11,
+														marginTop: 4,
+														fontFamily: "var(--mono)",
+													}}
+												>
+													{integration.scope}
+												</div>
+												<button
+													type="button"
+													className="btn btn-ghost btn-sm"
+													disabled={integration.status === "pending"}
+													style={{ marginTop: 10 }}
+												>
+													{integration.status === "connected"
+														? copy.disconnect
+														: copy.connect}
+												</button>
+											</div>
+										))}
+									</div>
+								</section>
+							</>
+						)}
 
 						<div
 							style={{

@@ -65,7 +65,11 @@ export async function GET() {
 				fingerprint: v.sample,
 				repos: v.repos,
 				risk:
-					v.commits >= 10 ? "high" : v.commits >= 4 ? "medium" : ("low" as const),
+					v.commits >= 10
+						? "high"
+						: v.commits >= 4
+							? "medium"
+							: ("low" as const),
 				commits: v.commits,
 				authors: v.authors.size,
 				// bar width 0-100, scaled by commit volume

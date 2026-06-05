@@ -34,9 +34,24 @@ const copy: OrgDashboardConsoleCopy = {
 	emptyCtaHref: "/setup",
 	metrics: [
 		{ label: "Open reviews", value: "—", detail: "loading", tone: "neutral" },
-		{ label: "Protected repos", value: "—", detail: "loading", tone: "neutral" },
-		{ label: "Avg. slop score", value: "—", detail: "loading", tone: "neutral" },
-		{ label: "Active clusters", value: "—", detail: "loading", tone: "neutral" },
+		{
+			label: "Protected repos",
+			value: "—",
+			detail: "loading",
+			tone: "neutral",
+		},
+		{
+			label: "Avg. slop score",
+			value: "—",
+			detail: "loading",
+			tone: "neutral",
+		},
+		{
+			label: "Active clusters",
+			value: "—",
+			detail: "loading",
+			tone: "neutral",
+		},
 	],
 	queueTitle: "Quarantine queue",
 	queueSubtitle: "Recent items across every protected repo",
@@ -52,7 +67,8 @@ const copy: OrgDashboardConsoleCopy = {
 	queue: [],
 	reposTitle: "Repos",
 	reposSubtitle: "Installed repos that have quarantine or cleared activity",
-	reposEmpty: "No repos with activity yet — install SlopGuard on your repos to start.",
+	reposEmpty:
+		"No repos with activity yet — install SlopGuard on your repos to start.",
 	reposColumns: {
 		repo: "Repository",
 		quarantined: "Quarantined",
@@ -62,7 +78,8 @@ const copy: OrgDashboardConsoleCopy = {
 	campaignTitle: "Campaign radar",
 	campaignSubtitle: "Clusters grouped by commit prefix across your repos",
 	campaigns: [],
-	campaignsEmpty: "No campaign clusters yet — once you have 3+ similar items, they show up here.",
+	campaignsEmpty:
+		"No campaign clusters yet — once you have 3+ similar items, they show up here.",
 	policyTitle: "Policy coverage",
 	policyBody:
 		"Coverage reflects how many of your installed repos have quarantine/cleared activity (i.e. are actually being protected).",
