@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import ConsoleSidebar, { type SidebarItem } from "./ConsoleSidebar";
-import { muted, toneColor } from "./console-styles";
+import type { SidebarItem } from "./ConsoleSidebar";
+import { riskBg, riskColor, toneColor } from "./console-styles";
 
 type Cluster = {
 	id: string;
@@ -77,8 +78,7 @@ export default function CampaignsConsole({
 				setError(`HTTP ${res.status}`);
 				return;
 			}
-			const json = (await res.json()) as ListResponse;
-			setData(json);
+			setData((await res.json()) as ListResponse);
 			setError(null);
 		} catch (e) {
 			setError(e instanceof Error ? e.message : "Failed to load campaigns");
@@ -96,385 +96,205 @@ export default function CampaignsConsole({
 	const notInstalled =
 		data !== null && "installed" in data && data.installed === false;
 	const live = data && data.installed ? data : null;
-
 	const detailBase = copy.heroCtaHref.startsWith("/ko/")
 		? "/ko/campaigns"
 		: "/campaigns";
+	const highCount = live?.clusters.filter((c) => c.risk === "high").length ?? 0;
+	const totalHits = live?.clusters.reduce((s, c) => s + c.hits, 0) ?? 0;
+	const authorCount = live
+		? new Set(live.clusters.flatMap((c) => c.authors)).size
+		: 0;
+	const lead = live?.clusters[0] ?? null;
 
 	const metrics = [
 		{
 			label: "Active clusters",
 			value: live ? String(live.clusters.length) : "-",
-			detail: live
-				? `${live.clusters.filter((c) => c.risk === "high").length} high-risk`
-				: "loading",
-			tone:
-				live && live.clusters.some((c) => c.risk === "high")
-					? ("danger" as const)
-					: ("neutral" as const),
+			tone: highCount > 0 ? "danger" : "neutral",
 		},
+		{ label: "Total hits", value: live ? String(totalHits) : "-", tone: "ok" },
 		{
-			label: "Total hits",
-			value: live ? String(live.clusters.reduce((s, c) => s + c.hits, 0)) : "-",
-			detail: live ? `${live.repoCount} installed repos` : "loading",
-			tone: "ok" as const,
+			label: "Authors",
+			value: live ? String(authorCount) : "-",
+			tone: "neutral",
 		},
-		{
-			label: "Authors involved",
-			value: live
-				? String(new Set(live.clusters.flatMap((c) => c.authors)).size)
-				: "-",
-			detail: live ? "unique handles" : "loading",
-			tone: "neutral" as const,
-		},
-		{
-			label: "Repos monitored",
-			value: live ? String(live.repoCount) : "-",
-			detail: live ? "in this account" : "loading",
-			tone: "ok" as const,
-		},
-	];
+		{ label: "Repos", value: live ? String(live.repoCount) : "-", tone: "ok" },
+	] as const;
 
 	return (
-		<main
-			style={{
-				maxWidth: 1480,
-				margin: "0 auto",
-				padding: "18px 32px 96px",
-			}}
-		>
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "280px minmax(0, 1fr)",
-					gap: 0,
-					alignItems: "start",
-				}}
-			>
-				<ConsoleSidebar
-					workspace={copy.workspace}
-					workspaceSub={copy.workspaceSub}
-					user={copy.user}
-					entitlement={copy.entitlement}
-					connected={copy.connected}
-					nav={copy.nav}
-					activeNav={copy.activeNav}
-				/>
-
-				<div style={{ paddingLeft: 36, paddingTop: 8 }}>
-					<div
-						style={{
-							position: "relative",
-							overflow: "hidden",
-							borderRadius: 18,
-							border: "1px solid #1c2530",
-							minHeight: 206,
-							marginBottom: 34,
-							background: "#0a0e15",
-						}}
-					>
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							src="/paid-command-mesh.png"
-							alt=""
-							style={{
-								position: "absolute",
-								inset: 0,
-								width: "100%",
-								height: "100%",
-								objectFit: "cover",
-								opacity: 0.52,
-							}}
-						/>
-						<div
-							style={{
-								position: "absolute",
-								inset: 0,
-								background:
-									"linear-gradient(90deg, rgba(10,14,21,0.96) 0%, rgba(10,14,21,0.74) 48%, rgba(10,14,21,0.36) 100%)",
-							}}
-						/>
-						<div style={{ position: "relative", padding: "34px 38px" }}>
-							<div
-								style={{
-									color: "#3fb950",
-									fontSize: 10,
-									letterSpacing: "0.18em",
-									fontFamily: "var(--mono)",
-									marginBottom: 10,
-								}}
+		<main className="campaign-experience">
+			<div className="grid-bg" aria-hidden="true" />
+			<div className="wide campaign-wide">
+				<nav className="campaign-topnav" aria-label="Campaign console sections">
+					<Link href={copy.orgHref}>{copy.backToOrg}</Link>
+					<div className="campaign-nav-center">
+						{copy.nav.map((item) => (
+							<Link
+								key={item.label}
+								href={item.href}
+								className={item.label === copy.activeNav ? "active" : ""}
 							>
-								{copy.heroEyebrow}
-							</div>
-							<h1
-								style={{
-									margin: 0,
-									fontSize: 34,
-									letterSpacing: "-0.04em",
-									fontWeight: 780,
-									lineHeight: 1.05,
-									maxWidth: 680,
-								}}
-							>
-								{copy.heroTitle}
-							</h1>
-							<p
-								style={{
-									...muted,
-									marginTop: 12,
-									maxWidth: 600,
-									fontSize: 14,
-									lineHeight: 1.55,
-								}}
-							>
-								{copy.heroBody}
-							</p>
-						</div>
+								{item.label}
+								{item.external ? <span>↗</span> : null}
+							</Link>
+						))}
 					</div>
+					<Link href={copy.accountHref}>{copy.user}</Link>
+				</nav>
 
-					{isLoading && (
-						<div
-							style={{
-								padding: "48px 0",
-								textAlign: "center",
-								color: "#8b949e",
-								fontFamily: "var(--mono)",
-								fontSize: 12,
-							}}
-						>
-							Loading live campaign state…
+				<header className="campaign-hero-redesign">
+					<div className="campaign-hero-copy">
+						<div className="eyebrow mono">{copy.heroEyebrow}</div>
+						<h1>{copy.heroTitle}</h1>
+						<p>{copy.heroBody}</p>
+						<ul className="hero-spec campaign-spec">
+							{metrics.map((m) => (
+								<li key={m.label}>
+									<span>{m.label}</span>
+									<b style={{ color: toneColor[m.tone] }}>{m.value}</b>
+								</li>
+							))}
+						</ul>
+					</div>
+					<figure className="plate campaign-hero-plate">
+						<figcaption className="plate-bar">
+							<span>campaign radar</span>
+							<span className="plate-coord">{copy.connected}</span>
+						</figcaption>
+						<div className="plate-art">
+							<Image
+								src="/org-wave-command.png"
+								alt="Campaign spread radar"
+								width={1568}
+								height={882}
+								priority
+							/>
+							<span className="plate-scan" aria-hidden="true" />
 						</div>
-					)}
+					</figure>
+				</header>
 
-					{error && !isLoading && (
-						<div
-							style={{
-								padding: "16px 0",
-								color: "#f85149",
-								fontSize: 12,
-								fontFamily: "var(--mono)",
-							}}
-						>
-							Failed to load: {error}
-						</div>
-					)}
+				{isLoading && <StatusLine>{copy.loading}</StatusLine>}
+				{error && !isLoading && (
+					<StatusLine danger>Failed to load: {error}</StatusLine>
+				)}
+				{notInstalled && (
+					<section className="plate campaign-empty">
+						<h2>{copy.emptyTitle}</h2>
+						<p>{copy.emptyBody}</p>
+						<Link href={copy.emptyCtaHref} className="btn btn-primary btn-sm">
+							{copy.emptyCta}
+						</Link>
+					</section>
+				)}
 
-					{notInstalled && (
-						<div style={{ padding: "48px 0", textAlign: "center" }}>
-							<h2
-								style={{
-									margin: "0 0 8px",
-									fontSize: 17,
-									letterSpacing: "-.02em",
-									color: "#f0f6fc",
-								}}
-							>
-								{copy.emptyTitle}
-							</h2>
-							<p
-								style={{
-									...muted,
-									margin: "0 auto",
-									maxWidth: 460,
-									lineHeight: 1.55,
-									fontSize: 13,
-								}}
-							>
-								{copy.emptyBody}
-							</p>
-							<div style={{ marginTop: 20 }}>
-								<Link
-									href={copy.emptyCtaHref}
-									className="btn btn-primary btn-sm"
-								>
-									{copy.emptyCta}
-								</Link>
-							</div>
-						</div>
-					)}
-
-					{!isLoading && !notInstalled && live && (
-						<>
-							{/* Elegant, refined metrics (no card grid) */}
-							<div
-								style={{
-									display: "grid",
-									gridTemplateColumns: "repeat(4, 1fr)",
-									gap: 0,
-									borderTop: "1px solid #1c2530",
-									borderBottom: "1px solid #1c2530",
-									marginBottom: 36,
-								}}
-							>
-								{metrics.map((metric, i) => (
-									<div
-										key={metric.label}
-										style={{
-											padding: "18px 22px 18px 0",
-											borderRight: i < 3 ? "1px solid #1c2530" : "none",
-										}}
-									>
-										<div
+				{live && (
+					<section className="campaign-workspace section">
+						<div className="campaign-lead">
+							<SectionTitle
+								title={copy.clustersTitle}
+								sub={copy.clustersSubtitle}
+							/>
+							{lead ? (
+								<article className="campaign-priority plate">
+									<div className="campaign-priority-head">
+										<span
 											style={{
-												...muted,
-												fontSize: 10,
-												letterSpacing: "0.14em",
-												fontFamily: "var(--mono)",
+												color: riskColor[lead.risk],
+												background: riskBg[lead.risk],
 											}}
 										>
-											{metric.label}
+											{lead.risk}
+										</span>
+										<em>first seen {lead.firstSeen}</em>
+									</div>
+									<h2>{lead.fingerprint}</h2>
+									<p>
+										{lead.hits} repeated hits across {lead.repoCount} repos with{" "}
+										{lead.authorCount} authors involved.
+									</p>
+									<Link
+										href={`${detailBase}/${lead.id}`}
+										className="btn btn-primary btn-sm"
+										prefetch={false}
+									>
+										{copy.investigate}
+									</Link>
+								</article>
+							) : (
+								<EmptyLine>{copy.clustersEmpty}</EmptyLine>
+							)}
+						</div>
+
+						<div className="campaign-stream">
+							<div className="campaign-stream-head mono">
+								<span>fingerprint</span>
+								<span>scope</span>
+								<span>risk</span>
+								<span />
+							</div>
+							{live.clusters.length === 0 ? (
+								<EmptyLine>{copy.clustersEmpty}</EmptyLine>
+							) : (
+								live.clusters.map((cluster) => (
+									<div className="campaign-row" key={cluster.id}>
+										<div>
+											<b>{cluster.fingerprint}</b>
+											<small>{cluster.firstSeen}</small>
 										</div>
-										<div
+										<span>
+											{cluster.hits} hits / {cluster.repoCount} repos
+										</span>
+										<em
 											style={{
-												fontSize: 26,
-												fontWeight: 700,
-												letterSpacing: "-0.02em",
-												marginTop: 4,
-												color: toneColor[metric.tone ?? "neutral"],
-												fontFamily: "var(--mono)",
+												color: riskColor[cluster.risk],
+												background: riskBg[cluster.risk],
 											}}
 										>
-											{metric.value}
-										</div>
-										<div style={{ ...muted, fontSize: 11, marginTop: 2 }}>
-											{metric.detail}
-										</div>
+											{cluster.risk}
+										</em>
+										<Link href={`${detailBase}/${cluster.id}`} prefetch={false}>
+											{copy.investigate}
+											<span>→</span>
+										</Link>
 									</div>
-								))}
-							</div>
-
-							{/* Clusters - clean, spacious, designer list (no heavy cards) */}
-							<div style={{ marginBottom: 12 }}>
-								<div style={{ marginBottom: 14 }}>
-									<div
-										style={{
-											fontSize: 13,
-											fontWeight: 600,
-											letterSpacing: "-0.01em",
-										}}
-									>
-										{copy.clustersTitle}
-									</div>
-									<div style={{ ...muted, fontSize: 12, marginTop: 2 }}>
-										{copy.clustersSubtitle}
-									</div>
-								</div>
-
-								{live.clusters.length === 0 ? (
-									<div
-										style={{
-											padding: "40px 0",
-											color: "#8b949e",
-											fontSize: 13,
-											fontFamily: "var(--mono)",
-										}}
-									>
-										{copy.clustersEmpty}
-									</div>
-								) : (
-									<div style={{ borderTop: "1px solid #1c2530" }}>
-										{live.clusters.map((cluster, index) => {
-											const rs = {
-												low: { c: "#3fb950", bg: "rgba(63,185,80,0.09)" },
-												medium: { c: "#d29922", bg: "rgba(210,153,34,0.09)" },
-												high: { c: "#f85149", bg: "rgba(248,81,73,0.09)" },
-											}[cluster.risk];
-
-											return (
-												<div
-													key={cluster.id}
-													style={{
-														padding: "17px 0",
-														borderBottom:
-															index < live.clusters.length - 1
-																? "1px solid #1c2530"
-																: "none",
-													}}
-												>
-													<div
-														style={{
-															display: "flex",
-															justifyContent: "space-between",
-															alignItems: "center",
-															gap: 16,
-														}}
-													>
-														<div style={{ flex: 1, minWidth: 0 }}>
-															<div
-																style={{
-																	display: "flex",
-																	alignItems: "center",
-																	gap: 10,
-																	marginBottom: 5,
-																}}
-															>
-																<span
-																	style={{
-																		display: "inline-block",
-																		padding: "1px 8px",
-																		borderRadius: 999,
-																		fontSize: 9,
-																		fontFamily: "var(--mono)",
-																		letterSpacing: "0.05em",
-																		background: rs.bg,
-																		color: rs.c,
-																	}}
-																>
-																	{cluster.risk}
-																</span>
-																<span
-																	style={{
-																		fontFamily: "var(--mono)",
-																		fontSize: 14,
-																		color: "#e6edf3",
-																		fontWeight: 500,
-																	}}
-																>
-																	{cluster.fingerprint}
-																</span>
-															</div>
-															<div style={{ fontSize: 12, color: "#8b949e" }}>
-																{cluster.hits} hits across {cluster.repoCount}{" "}
-																repos / {cluster.authorCount} authors
-															</div>
-														</div>
-
-														<div
-															style={{
-																display: "flex",
-																alignItems: "center",
-																gap: 14,
-																flexShrink: 0,
-															}}
-														>
-															<span
-																style={{
-																	fontSize: 11,
-																	color: "#8b949e",
-																	fontFamily: "var(--mono)",
-																}}
-															>
-																{cluster.firstSeen}
-															</span>
-															<Link
-																href={`${detailBase}/${cluster.id}`}
-																className="btn btn-ghost btn-sm"
-																prefetch={false}
-															>
-																{copy.investigate}
-															</Link>
-														</div>
-													</div>
-												</div>
-											);
-										})}
-									</div>
-								)}
-							</div>
-						</>
-					)}
-				</div>
+								))
+							)}
+						</div>
+					</section>
+				)}
 			</div>
 		</main>
 	);
+}
+
+function SectionTitle({ title, sub }: { title: string; sub: string }) {
+	return (
+		<header className="campaign-section-title">
+			<h2>{title}</h2>
+			<p>{sub}</p>
+		</header>
+	);
+}
+
+function StatusLine({
+	children,
+	danger = false,
+}: {
+	children: React.ReactNode;
+	danger?: boolean;
+}) {
+	return (
+		<div
+			className={
+				danger ? "campaign-status danger mono" : "campaign-status mono"
+			}
+		>
+			{children}
+		</div>
+	);
+}
+
+function EmptyLine({ children }: { children: React.ReactNode }) {
+	return <div className="campaign-empty-line mono">{children}</div>;
 }

@@ -192,8 +192,6 @@ export default function OrgDashboardConsole({
 	const campaignHref =
 		copy.nav.find((item) => item.href.includes("/campaigns"))?.href ??
 		"/campaigns";
-	const flowTitle = `${copy.queueTitle} / ${copy.reposTitle} / ${copy.campaignTitle} / ${copy.policyTitle}`;
-	const flowSub = copy.heroBody;
 	const activeBase = copy.nav.reduce<string | null>((best, item) => {
 		const base = item.href.split("#")[0];
 		const match = pathname === base || pathname.startsWith(`${base}/`);
@@ -376,33 +374,6 @@ export default function OrgDashboardConsole({
 							</aside>
 						</section>
 
-						<section className="org-flow-section section">
-							<div className="section-head-lite">
-								<h2>{flowTitle}</h2>
-								<p>{flowSub}</p>
-							</div>
-							<figure className="plate org-flow-plate">
-								<figcaption className="plate-bar">
-									<span>queue / repos / campaigns / policy</span>
-									<span className="plate-coord">{covered} repos covered</span>
-								</figcaption>
-								<div className="plate-art org-flow-art">
-									<Image
-										src="/org-flow-plate.png"
-										alt="Team protection workflow"
-										width={1450}
-										height={1054}
-									/>
-									<div className="org-flow-links">
-										<Link href={copy.queueViewAllHref}>Queue</Link>
-										<Link href={copy.reposViewAllHref}>Repos</Link>
-										<Link href={campaignHref}>Campaigns</Link>
-										<Link href={copy.policyViewAllHref}>Policy</Link>
-									</div>
-									<span className="plate-scan" aria-hidden="true" />
-								</div>
-							</figure>
-						</section>
 					</>
 				)}
 			</div>
