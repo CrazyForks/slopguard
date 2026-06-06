@@ -150,6 +150,11 @@ export default function OrgDashboardConsole({
 				emptyQueue: "최근 30일 안에 처리할 항목이 없습니다.",
 				emptyRepos: "아직 활동이 있는 레포가 없습니다.",
 				campaignCta: "캠페인 열기",
+				orgCommand: "조직 운영 콘솔",
+				metricOpen: "열린 검토",
+				metricRepos: "보호 레포",
+				metricScore: "평균 점수",
+				metricPolicy: "정책",
 				policyReadout: (coveredCount: number, totalCount: number) =>
 					`설치 레포 ${totalCount}개 중 ${coveredCount}개에서 정책 신호가 동작 중`,
 			}
@@ -158,6 +163,11 @@ export default function OrgDashboardConsole({
 				emptyQueue: "No items in the last 30 days.",
 				emptyRepos: "No repos with activity yet.",
 				campaignCta: "Open campaigns",
+				orgCommand: "organization command",
+				metricOpen: "Open reviews",
+				metricRepos: "Protected repos",
+				metricScore: "Avg score",
+				metricPolicy: "Policy",
 				policyReadout: (coveredCount: number, totalCount: number) =>
 					`Enforcing on ${coveredCount} of ${totalCount} installed repos`,
 			};
@@ -192,21 +202,21 @@ export default function OrgDashboardConsole({
 
 	const metrics = [
 		{
-			label: "Open reviews",
+			label: labels.metricOpen,
 			value: live ? String(live.open) : "-",
 			tone: live && live.open > 0 ? "warn" : "ok",
 		},
 		{
-			label: "Protected repos",
+			label: labels.metricRepos,
 			value: live ? String(covered) : "-",
 			tone: "ok",
 		},
 		{
-			label: "Avg score",
+			label: labels.metricScore,
 			value: live ? String(avgScore) : "-",
 			tone: avgScore >= 60 ? "warn" : "ok",
 		},
-		{ label: "Policy", value: live ? `${pct}%` : "-", tone: "neutral" },
+		{ label: labels.metricPolicy, value: live ? `${pct}%` : "-", tone: "neutral" },
 	] as const;
 
 	const campaignHref =
@@ -271,7 +281,7 @@ export default function OrgDashboardConsole({
 					</div>
 					<figure className="plate org-hero-plate">
 						<figcaption className="plate-bar">
-							<span>organization command</span>
+							<span>{labels.orgCommand}</span>
 							<span className="plate-coord">{copy.connected}</span>
 						</figcaption>
 						<div className="plate-art">
