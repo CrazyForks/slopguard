@@ -72,7 +72,7 @@ export default function PolicyFullView({ copy }: { copy: PolicyFullViewCopy }) {
 			style={{ maxWidth: 1480, margin: "0 auto", padding: "18px 32px 96px" }}
 		>
 			<div
-				style={{ display: "grid", gridTemplateColumns: "260px minmax(0, 1fr)", gap: 32 }}
+				style={{ display: "grid", gridTemplateColumns: "280px minmax(0, 1fr)", gap: 32 }}
 			>
 				<ConsoleSidebar
 					workspace={copy.workspace}

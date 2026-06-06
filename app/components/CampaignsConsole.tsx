@@ -146,7 +146,7 @@ export default function CampaignsConsole({
 			<div
 				style={{
 					display: "grid",
-					gridTemplateColumns: "260px minmax(0, 1fr)",
+					gridTemplateColumns: "280px minmax(0, 1fr)",
 					gap: 0,
 					alignItems: "start",
 				}}

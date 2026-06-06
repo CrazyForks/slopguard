@@ -314,7 +314,7 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 			<div
 				style={{
 					display: "grid",
-					gridTemplateColumns: "260px minmax(0, 1fr)",
+					gridTemplateColumns: "280px minmax(0, 1fr)",
 					gap: 24,
 				}}
 			>
