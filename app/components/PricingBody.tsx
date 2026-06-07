@@ -1,4 +1,7 @@
-import { REPO_URL } from "@/lib/config";
+import { cookies } from "next/headers";
+import { PORTAL_URL, REPO_URL } from "@/lib/config";
+import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
+import { planForOwner } from "@/lib/billing/entitlement";
 import type { Lang } from "@/lib/i18n";
 import MarketingNav from "./MarketingNav";
 import RevealOnScroll from "./RevealOnScroll";
@@ -6,8 +9,14 @@ import PricingPlans from "./PricingPlans";
 import SiteFooter from "./SiteFooter";
 
 /** Dedicated pricing page body, shared by the EN and KO routes. */
-export default function PricingBody({ lang }: { lang: Lang }) {
+export default async function PricingBody({ lang }: { lang: Lang }) {
 	const ko = lang === "ko";
+	// Personalize the plan grid for a signed-in user: their active tier renders as
+	// "current" (not buyable) and other paid tiers route to the portal, so they
+	// can never start a duplicate subscription from this page.
+	const store = await cookies();
+	const session = decodeSession(store.get(SESSION_COOKIE)?.value);
+	const currentPlan = session ? await planForOwner(session.login) : undefined;
 	const t = ko
 		? {
 				eyebrow: "가격",
@@ -85,7 +94,11 @@ export default function PricingBody({ lang }: { lang: Lang }) {
 			</header>
 
 			<section className="wide" style={{ marginTop: 56 }}>
-				<PricingPlans lang={lang} />
+				<PricingPlans
+					lang={lang}
+					currentPlan={currentPlan}
+					portalUrl={PORTAL_URL}
+				/>
 			</section>
 
 			<section className="wide why-pay">

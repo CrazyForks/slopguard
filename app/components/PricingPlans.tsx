@@ -18,6 +18,7 @@ const T = {
 		contact: "Contact sales",
 		getStarted: "Get started",
 		current: "Current",
+		changePlan: "Change plan",
 		billedYr: (p: number) => `billed $${p}/yr`,
 		saveAmt: (n: number) => `save $${n}/yr`,
 		popular: "most popular",
@@ -33,6 +34,7 @@ const T = {
 		contact: "문의하기",
 		getStarted: "시작하기",
 		current: "현재",
+		changePlan: "플랜 변경",
 		billedYr: (p: number) => `연 $${p} 청구`,
 		saveAmt: (n: number) => `연 $${n} 절약`,
 		popular: "가장 인기",
@@ -44,13 +46,20 @@ const CONTACT_URL = `${REPO_URL}/issues/new?labels=enterprise&title=Enterprise%2
 export default function PricingPlans({
 	lang,
 	currentPlan,
+	portalUrl,
 }: {
 	lang: Lang;
-	/** when rendered on the account page, marks the user's active tier */
+	/** the logged-in user's active tier; marks it "current" (not buyable) and
+	 *  routes other paid plans to the portal so a paying customer can't create a
+	 *  second subscription by checking out again */
 	currentPlan?: string;
+	portalUrl?: string;
 }) {
 	const [yearly, setYearly] = useState(false);
 	const t = T[lang];
+	// A logged-in customer already on a paid plan changes tiers in the portal,
+	// never via a fresh checkout (which would double-charge).
+	const paidCurrent = !!currentPlan && currentPlan !== "free";
 	// Annual billing ships only once the Polar annual checkout links exist and
 	// are verified (NEXT_PUBLIC_ANNUAL_BILLING="1"). Until then we never show a
 	// yearly toggle that could dead-end or mis-charge.
@@ -146,6 +155,13 @@ export default function PricingPlans({
 								<Link className="btn btn-ghost plan-cta" href={installHref}>
 									{t.getStarted}
 								</Link>
+							) : paidCurrent ? (
+								<a
+									className="btn btn-ghost plan-cta"
+									href={portalUrl ?? "/account"}
+								>
+									{t.changePlan}
+								</a>
 							) : (
 								<a
 									className="btn btn-primary plan-cta"
