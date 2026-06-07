@@ -4581,9 +4581,10 @@ footer.site.footer-app {
 /* ── Shared data table ────────────────────────────────────────────── */
 .console-table {
 	padding: 18px clamp(20px, 2.4vw, 28px) 10px;
-	/* fluid grids (first col minmax(0,1fr)) keep rows within the panel, so no
-	   horizontal scroll is needed; hidden also stops the auto-y phantom bar. */
-	overflow-x: hidden;
+	/* fluid grids (first col minmax(0,1fr)) keep rows within the panel. Clip both
+	   axes so sub-pixel rounding never spawns a stray scrollbar (overflow-x alone
+	   would force overflow-y to auto and show a vertical bar). */
+	overflow: hidden;
 }
 /* consistent thin scrollbar for the one surface that does scroll on mobile */
 .console-nav-links {
