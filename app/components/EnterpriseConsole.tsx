@@ -134,58 +134,41 @@ export default function EnterpriseConsole({ copy }: { copy: EnterpriseConsoleCop
 			{error && !isLoading && <ConsoleStatus danger>{error}</ConsoleStatus>}
 
 			{!isLoading && !error && (
-				<>
-					<section className="console-section console-grid">
-						<div className="plate console-panel">
+				<section className="console-section">
+					<div className="plate console-overview">
+						<div className="console-overview-main">
 							<ConsoleSectionHead title={copy.ssoTitle} sub={copy.ssoSubtitle} />
-							<div style={{ display: "grid", gap: 10, borderTop: "1px solid var(--border-muted)", paddingTop: 14 }}>
+							<div className="console-kv">
 								{[
 									{ k: copy.ssoLabels.provider, v: data?.sso.provider ?? "-", c: "var(--fg)" },
 									{ k: copy.ssoLabels.status, v: data?.sso.status ?? "-", c: "var(--green)" },
 									{ k: copy.ssoLabels.lastSync, v: data ? formatLastSync(data.sso.lastSync) : "-", c: "var(--fg)" },
 								].map((row) => (
-									<div key={row.k} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontFamily: "var(--mono)" }}>
-										<span style={{ color: "var(--muted)" }}>{row.k}</span>
-										<span style={{ color: row.c, fontWeight: 600 }}>{row.v}</span>
+									<div key={row.k} className="console-kv-row">
+										<span>{row.k}</span>
+										<b style={{ color: row.c }}>{row.v}</b>
 									</div>
 								))}
 							</div>
 						</div>
-
-						<div className="plate console-panel">
-							<ConsoleSectionHead title={copy.supportTitle} sub={copy.supportSubtitle} />
-							<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0, borderTop: "1px solid var(--border-muted)", paddingTop: 14 }}>
+						<aside className="console-overview-rail">
+							<div className="console-rail-block">
+								<header className="console-block-head"><h3>{copy.supportTitle}</h3></header>
+								<p style={{ color: "var(--muted)", fontSize: 12, margin: "0 0 12px", lineHeight: 1.5 }}>{copy.supportSubtitle}</p>
 								{[
 									{ label: copy.supportSla, value: "1h P1" },
 									{ label: copy.supportHours, value: "24 / 7" },
 									{ label: copy.supportAccountMgr, value: "assigned" },
-								].map((row, i) => (
-									<div key={row.label} style={{ padding: "0 12px", borderRight: i < 2 ? "1px solid var(--border-muted)" : "none" }}>
-										<div style={{ color: "var(--muted)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", fontFamily: "var(--mono)" }}>{row.label}</div>
-										<div style={{ fontSize: 16, fontWeight: 800, fontFamily: "var(--mono)", color: "var(--fg)", marginTop: 4 }}>{row.value}</div>
+								].map((row) => (
+									<div key={row.label} className="console-rail-row">
+										<span>{row.label}</span>
+										<b style={{ color: "var(--fg)" }}>{row.value}</b>
 									</div>
 								))}
 							</div>
-						</div>
-					</section>
-
-					<section className="console-section" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-						<Link href={copy.auditViewAllHref} className="plate console-panel" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", textDecoration: "none", color: "var(--fg)" }}>
-							<div>
-								<div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>{copy.auditTitle}</div>
-								<div style={{ fontSize: 12, color: "var(--muted)" }}>{copy.auditSubtitle}</div>
-							</div>
-							<span style={{ color: "var(--green)", fontFamily: "var(--mono)", fontSize: 12 }}>{copy.auditViewAll} →</span>
-						</Link>
-						<Link href={copy.integrationsViewAllHref} className="plate console-panel" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", textDecoration: "none", color: "var(--fg)" }}>
-							<div>
-								<div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>{copy.integrationsTitle}</div>
-								<div style={{ fontSize: 12, color: "var(--muted)" }}>{copy.integrationsSubtitle}</div>
-							</div>
-							<span style={{ color: "var(--green)", fontFamily: "var(--mono)", fontSize: 12 }}>{copy.integrationsViewAll} →</span>
-						</Link>
-					</section>
-				</>
+						</aside>
+					</div>
+				</section>
 			)}
 		</ConsoleShell>
 	);

@@ -42,13 +42,13 @@ test("maps active Polar subscriptions to highest owner plan", async () => {
 					{
 						status: "active",
 						product: { id: "pro-product-id", name: "SlopGuard Pro" },
-						custom_field_data: { "github-login": "@Blue-B" },
+						custom_field_data: { "github-login": "@Acme" },
 					},
 					{
 						status: "trialing",
 						product: { id: "team-product-id", name: "Renamed paid tier" },
 						custom_field_data: {
-							github_login: "https://github.com/Blue-B/slopguard",
+							github_login: "https://github.com/Acme/slopguard",
 						},
 					},
 					{
@@ -63,7 +63,7 @@ test("maps active Polar subscriptions to highest owner plan", async () => {
 		)) as typeof fetch;
 
 	const map = await getEntitlementMap();
-	assert.equal(map.get("blue-b"), "team");
+	assert.equal(map.get("acme"), "team");
 	assert.equal(map.has("ignored-org"), false);
-	assert.equal(await planForOwner("Blue-B"), "team");
+	assert.equal(await planForOwner("Acme"), "team");
 });

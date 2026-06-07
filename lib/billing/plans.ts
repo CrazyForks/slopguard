@@ -93,7 +93,10 @@ export const PLANS: Record<PlanId, Plan> = {
 		orgDashboard: false,
 		alerts: false,
 		sso: false,
-		maxRepos: 0,
+		// Pro has no org dashboard, but cross-repo campaign detection still needs a
+		// real scan window across the owner's repos — otherwise it collapses to a
+		// single repo and the advertised "cross-repo" feature is a no-op.
+		maxRepos: 10,
 		polarEnvKey: "POLAR_LINK_PRO",
 		polarEnvKeyYearly: "POLAR_LINK_PRO_ANNUAL",
 	},

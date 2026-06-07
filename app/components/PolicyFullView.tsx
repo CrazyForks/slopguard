@@ -107,57 +107,36 @@ export default function PolicyFullView({ copy }: { copy: PolicyFullViewCopy }) {
 			)}
 
 			{live && (
-				<section className="console-section console-grid">
-					<div className="plate console-panel">
-						<ConsoleSectionHead
-							title={copy.policyFileTitle}
-							sub={copy.policyFileBody}
-							href={copy.docsHref}
-							cta={l.docs}
-						/>
-						<div
-							style={{
-								display: "grid",
-								gridTemplateColumns: "auto minmax(0,1fr)",
-								gap: 18,
-								alignItems: "center",
-								padding: "22px 0 6px",
-								borderTop: "1px solid var(--border-muted)",
-							}}
-						>
-							<b
-								style={{
-									fontFamily: "var(--mono)",
-									fontSize: "clamp(56px, 8vw, 92px)",
-									lineHeight: 1,
-									letterSpacing: "-0.05em",
-									color: toneColor.ok,
-								}}
-							>
-								{pct}%
-							</b>
-							<span style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.5 }}>
-								{covered}/{total} {l.coverage}
-							</span>
+				<section className="console-section">
+					<div className="plate console-overview">
+						<div className="console-overview-main">
+							<ConsoleSectionHead title={copy.policyFileTitle} sub={copy.policyFileBody} />
+							<div className="console-policy-hero">
+								<b style={{ color: toneColor.ok }}>{pct}%</b>
+								<span>{covered}/{total} {l.coverage}</span>
+							</div>
+							{covered < total && (
+								<div className="console-empty-line" style={{ color: toneColor.warn }}>
+									{total - covered} · {l.gap}
+								</div>
+							)}
+							<Link href={copy.docsHref} className="text-link" style={{ marginTop: 18 }}>
+								{l.docs} <span aria-hidden="true">→</span>
+							</Link>
 						</div>
-						{covered < total && (
-							<div className="console-empty-line" style={{ color: toneColor.warn }}>
-								{total - covered} · {l.gap}
-							</div>
-						)}
+						<aside className="console-overview-rail">
+							{[
+								{ label: l.installed, value: total, tone: "neutral" as const },
+								{ label: l.quarantined, value: quarantined, tone: "danger" as const },
+								{ label: l.cleared, value: cleared, tone: "ok" as const },
+							].map((m) => (
+								<div className="console-rail-block console-rail-metric" key={m.label}>
+									<span>{m.label}</span>
+									<b style={{ color: toneColor[m.tone] }}>{m.value}</b>
+								</div>
+							))}
+						</aside>
 					</div>
-					<aside className="console-side-stack">
-						{[
-							{ label: l.installed, value: total, tone: "neutral" as const },
-							{ label: l.quarantined, value: quarantined, tone: "danger" as const },
-							{ label: l.cleared, value: cleared, tone: "ok" as const },
-						].map((m) => (
-							<div className="plate console-metric" key={m.label}>
-								<span>{m.label}</span>
-								<b style={{ color: toneColor[m.tone] }}>{m.value}</b>
-							</div>
-						))}
-					</aside>
 				</section>
 			)}
 		</ConsoleShell>
