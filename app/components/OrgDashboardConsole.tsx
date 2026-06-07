@@ -118,8 +118,6 @@ const statusTone: Record<OrgQueueStatus, "low" | "medium" | "high"> = {
 	cleared: "low",
 	watching: "medium",
 };
-const QGRID = "minmax(160px,1fr) 130px 54px 104px 54px";
-
 export default function OrgDashboardConsole({ copy }: { copy: OrgDashboardConsoleCopy }) {
 	const [data, setData] = useState<DashboardResponse | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -176,17 +174,6 @@ export default function OrgDashboardConsole({ copy }: { copy: OrgDashboardConsol
 				imageAlt="Organization command overview"
 				plateLabel="organization command"
 				connected={copy.connected}
-				actions={
-					<>
-						<Link href={copy.heroCtaHref} className="btn btn-primary btn-lg">
-							{copy.heroCta}
-						</Link>
-						<Link href={copy.queueViewAllHref} className="text-link">
-							{copy.queueViewAll}
-							<span aria-hidden="true">→</span>
-						</Link>
-					</>
-				}
 				metrics={[
 					{ label: ml.open, value: live ? live.open : "-", tone: live && live.open > 0 ? "warn" : "ok" },
 					{ label: ml.repos, value: live ? covered : "-", tone: "ok" },
@@ -208,82 +195,74 @@ export default function OrgDashboardConsole({ copy }: { copy: OrgDashboardConsol
 			)}
 
 			{!isLoading && !notInstalled && (
-				<section className="console-section console-grid">
-					<div className="plate console-table">
-						<ConsoleSectionHead
-							title={copy.queueTitle}
-							sub={copy.queueSubtitle}
-							href={copy.queueViewAllHref}
-							cta={copy.queueViewAll}
-						/>
-						<div className="console-th" style={{ gridTemplateColumns: QGRID }}>
-							<span>{copy.queueColumns.item}</span>
-							<span>{copy.queueColumns.repo}</span>
-							<span>{copy.queueColumns.score}</span>
-							<span>{copy.queueColumns.status}</span>
-							<span style={{ textAlign: "right" }}>{copy.queueColumns.age}</span>
-						</div>
-						{queue.length === 0 ? (
-							<div className="console-empty-line">{copy.emptyQueue}</div>
-						) : (
-							queue.map((row) => (
-								<div className="console-tr" key={row.key} style={{ gridTemplateColumns: QGRID }}>
-									<Link href={row.href} target="_blank" rel="noreferrer">
-										{row.item}
-									</Link>
-									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-										{row.repo}
-									</span>
-									<b style={{ fontFamily: "var(--mono)", color: row.score >= 70 ? "var(--danger)" : row.score >= 50 ? "var(--warn)" : "var(--green)" }}>
-										{row.score}
-									</b>
-									<span className="console-pill" style={{ color: riskColor[statusTone[row.status]], background: riskBg[statusTone[row.status]] }}>
-										{copy.statusLabels[row.status]}
-									</span>
-									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)", textAlign: "right" }}>{row.age}</span>
+				<section className="console-section">
+					<div className="plate console-overview">
+						<div className="console-overview-main">
+							<ConsoleSectionHead title={copy.queueTitle} sub={copy.queueSubtitle} />
+							<div className="console-mini-table">
+								<div className="console-mini-th">
+									<span>{copy.queueColumns.item}</span>
+									<span>{copy.queueColumns.status}</span>
+									<span style={{ textAlign: "right" }}>{copy.queueColumns.age}</span>
 								</div>
-							))
-						)}
-					</div>
-
-					<aside className="console-side-stack">
-						<div className="plate console-panel">
-							<ConsoleSectionHead title={copy.reposTitle} sub={copy.reposSubtitle} href={copy.reposViewAllHref} cta={copy.reposViewAll} />
-							{reposRows.length === 0 ? (
-								<div className="console-empty-line">{copy.emptyRepos}</div>
-							) : (
-								reposRows.map((row) => (
-									<div key={row.repo} style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, padding: "11px 0", borderTop: "1px solid var(--border-muted)", fontFamily: "var(--mono)", fontSize: 12 }}>
-										<span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{row.repo}</span>
-										<b style={{ color: "var(--danger)" }}>{row.quarantined}</b>
-										<em style={{ color: "var(--green)", fontStyle: "normal" }}>{row.cleared}</em>
-									</div>
-								))
-							)}
-						</div>
-
-						<div className="plate console-panel">
-							<ConsoleSectionHead title={copy.campaignTitle} sub={copy.campaignSubtitle} href={copy.campaignHref} cta={copy.campaignCta} />
-							{campaigns.length === 0 ? (
-								<div className="console-empty-line">{copy.campaignsEmpty}</div>
-							) : (
-								campaigns.map((c) => (
-									<div key={c.name} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, alignItems: "center", padding: "11px 0", borderTop: "1px solid var(--border-muted)", fontFamily: "var(--mono)", fontSize: 12 }}>
-										<span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.fingerprint}</span>
-										<b className="console-pill" style={{ color: riskColor[c.risk], background: riskBg[c.risk] }}>{c.risk}</b>
-									</div>
-								))
-							)}
-						</div>
-
-						<div className="plate console-panel">
-							<ConsoleSectionHead title={copy.policyTitle} sub={copy.policyBody} href={copy.policyViewAllHref} cta={copy.policyViewAll} />
-							<div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 16, alignItems: "center", paddingTop: 12, borderTop: "1px solid var(--border-muted)" }}>
-								<b style={{ fontFamily: "var(--mono)", fontSize: 42, lineHeight: 1, letterSpacing: "-0.05em", color: toneColor.ok }}>{pct}%</b>
-								<span style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.45 }}>{copy.policyReadout}</span>
+								{queue.length === 0 ? (
+									<div className="console-empty-line">{copy.emptyQueue}</div>
+								) : (
+									queue.map((row) => (
+										<div className="console-mini-tr" key={row.key}>
+											<Link href={row.href} target="_blank" rel="noreferrer">
+												<b>{row.item}</b>
+												<small>{row.repo}</small>
+											</Link>
+											<span className="console-pill" style={{ color: riskColor[statusTone[row.status]], background: riskBg[statusTone[row.status]] }}>
+												{copy.statusLabels[row.status]}
+											</span>
+											<em>{row.age}</em>
+										</div>
+									))
+								)}
 							</div>
 						</div>
-					</aside>
+
+						<aside className="console-overview-rail">
+							<div className="console-rail-block">
+								<header className="console-block-head"><h3>{copy.reposTitle}</h3></header>
+								{reposRows.length === 0 ? (
+									<div className="console-empty-line">{copy.emptyRepos}</div>
+								) : (
+									reposRows.map((row) => (
+										<div className="console-rail-row" key={row.repo}>
+											<span>{row.repo}</span>
+											<b style={{ color: "var(--danger)" }}>{row.quarantined}</b>
+											<em style={{ color: "var(--green)" }}>{row.cleared}</em>
+										</div>
+									))
+								)}
+							</div>
+
+							<div className="console-rail-block">
+								<header className="console-block-head"><h3>{copy.campaignTitle}</h3><span className="tier-chip">PRO</span></header>
+								{campaigns.length === 0 ? (
+									<div className="console-empty-line">{copy.campaignsEmpty}</div>
+								) : (
+									campaigns.map((c) => (
+										<div className="console-rail-row campaign" key={c.name}>
+											<span>{c.fingerprint}</span>
+											<b className="console-pill" style={{ color: riskColor[c.risk], background: riskBg[c.risk] }}>{c.risk}</b>
+										</div>
+									))
+								)}
+							</div>
+
+							<div className="console-rail-block">
+								<header className="console-block-head"><h3>{copy.policyTitle}</h3></header>
+								<div className="console-policy-readout">
+									<b style={{ color: toneColor.ok }}>{pct}%</b>
+									<span>{copy.policyReadout}</span>
+								</div>
+							</div>
+						</aside>
+					</div>
 				</section>
 			)}
 		</ConsoleShell>

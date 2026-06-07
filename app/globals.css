@@ -4665,3 +4665,158 @@ footer.site.footer-app {
 		white-space: normal;
 	}
 }
+
+/* ── Org overview: single panel, borderless 2-col, no card clutter ──── */
+.console-overview {
+	display: grid;
+	grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.9fr);
+	gap: 0;
+	padding: 0;
+	overflow: hidden;
+}
+.console-overview-main {
+	min-width: 0;
+	padding: 22px clamp(20px, 2.4vw, 30px);
+}
+.console-overview-rail {
+	min-width: 0;
+	border-left: 1px solid var(--border-muted);
+	background: rgba(255, 255, 255, 0.012);
+	display: flex;
+	flex-direction: column;
+}
+.console-rail-block {
+	padding: 18px clamp(18px, 2vw, 24px);
+}
+.console-rail-block + .console-rail-block {
+	border-top: 1px solid var(--border-muted);
+}
+.console-block-head {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin-bottom: 6px;
+}
+.console-block-head h3 {
+	margin: 0;
+	font-size: 13px;
+	letter-spacing: 0.02em;
+	color: var(--fg);
+}
+.tier-chip {
+	font-family: var(--mono);
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	color: var(--green);
+	border: 1px solid rgba(63, 185, 80, 0.32);
+	border-radius: 999px;
+	padding: 2px 7px;
+	line-height: 1;
+}
+/* mini queue table — fluid, never scrolls */
+.console-mini-th,
+.console-mini-tr {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 92px 52px;
+	gap: 12px;
+	align-items: center;
+}
+.console-mini-th {
+	padding: 12px 0;
+	border-bottom: 1px solid var(--border);
+	font-family: var(--mono);
+	font-size: 10px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+.console-mini-tr {
+	padding: 12px 0;
+	border-bottom: 1px solid var(--border-muted);
+}
+.console-mini-tr:last-child {
+	border-bottom: none;
+}
+.console-mini-tr > a {
+	min-width: 0;
+	display: block;
+	text-decoration: none;
+}
+.console-mini-tr > a b {
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--fg);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.console-mini-tr > a:hover b {
+	color: var(--green);
+}
+.console-mini-tr > a small {
+	display: block;
+	font-family: var(--mono);
+	font-size: 11px;
+	color: var(--muted);
+	margin-top: 2px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.console-mini-tr > em {
+	font-family: var(--mono);
+	font-style: normal;
+	font-size: 12px;
+	color: var(--muted);
+	text-align: right;
+}
+.console-rail-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto auto;
+	gap: 12px;
+	align-items: center;
+	padding: 9px 0;
+	border-top: 1px solid var(--border-muted);
+	font-family: var(--mono);
+	font-size: 12px;
+}
+.console-rail-block .console-block-head + .console-rail-row {
+	border-top: none;
+}
+.console-rail-row > span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--muted);
+}
+.console-rail-row.campaign {
+	grid-template-columns: minmax(0, 1fr) auto;
+}
+.console-policy-readout {
+	display: flex;
+	align-items: baseline;
+	gap: 12px;
+	padding-top: 8px;
+}
+.console-policy-readout b {
+	font-family: var(--mono);
+	font-size: 40px;
+	line-height: 1;
+	letter-spacing: -0.05em;
+}
+.console-policy-readout span {
+	color: var(--muted);
+	font-size: 12px;
+	line-height: 1.4;
+}
+@media (max-width: 880px) {
+	.console-overview {
+		grid-template-columns: 1fr;
+	}
+	.console-overview-rail {
+		border-left: none;
+		border-top: 1px solid var(--border-muted);
+	}
+}
