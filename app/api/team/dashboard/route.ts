@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
+import { SESSION_COOKIE, decodeSession, effectiveOwner } from "@/lib/auth/session";
 import { hasOrgDashboard } from "@/lib/billing/entitlement";
 import { getOwnerSlopStats } from "@/lib/github/storage";
 
@@ -25,7 +25,8 @@ export async function GET() {
 		return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 	}
 
-	const ok = await hasOrgDashboard(session.login);
+	const owner = effectiveOwner(session);
+	const ok = await hasOrgDashboard(owner);
 	if (!ok) {
 		return NextResponse.json(
 			{ error: "forbidden", reason: "org dashboard requires the Team plan" },
@@ -33,7 +34,7 @@ export async function GET() {
 		);
 	}
 
-	const owner = session.login;
+
 	try {
 		const stats = await getOwnerSlopStats(owner);
 

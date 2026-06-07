@@ -39,6 +39,7 @@ const copy: SsoFullViewCopy = {
 	enforcedHint: "켜면 이 워크스페이스 멤버는 GitHub 로그인을 비활성화합니다.",
 	activateCta: "SSO 활성화",
 	deactivateCta: "비활성화",
+	testLoginCta: "SSO 로그인 테스트",
 	saveCta: "저장",
 	savingCta: "저장 중…",
 	savedCta: "저장됨",

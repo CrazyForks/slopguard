@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
+import { SESSION_COOKIE, decodeSession, effectiveOwner } from "@/lib/auth/session";
 import { planForOwner } from "@/lib/billing/entitlement";
 import { PLAN_RANK, type PlanId } from "@/lib/billing/plans";
 import type { Lang } from "@/lib/i18n";
@@ -54,7 +54,7 @@ async function resolveGate(lang: Lang, required: PlanId) {
 	const store = await cookies();
 	const session = decodeSession(store.get(SESSION_COOKIE)?.value);
 	const plan: PlanId | null = session
-		? await planForOwner(session.login)
+		? await planForOwner(effectiveOwner(session))
 		: null;
 	const ko = lang === "ko";
 	const t = T[ko ? "ko" : "en"];

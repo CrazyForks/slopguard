@@ -46,6 +46,7 @@ export type SsoFullViewCopy = {
 	enforcedHint: string;
 	activateCta: string;
 	deactivateCta: string;
+	testLoginCta: string;
 	saveCta: string;
 	savingCta: string;
 	savedCta: string;
@@ -199,6 +200,9 @@ export default function SsoFullView({ copy }: { copy: SsoFullViewCopy }) {
 							<button type="button" className="btn btn-primary btn-sm" disabled={busy} onClick={() => save({ activate: true })}>{copy.activateCta}</button>
 							<button type="button" className="btn btn-ghost btn-sm" disabled={busy} onClick={() => save()}>{busy ? copy.savingCta : copy.saveCta}</button>
 							<button type="button" className="btn btn-ghost btn-sm" disabled={busy || status !== "active"} onClick={() => save({ activate: false })}>{copy.deactivateCta}</button>
+							{status === "active" && (
+								<a className="btn btn-ghost btn-sm" href="/api/enterprise/sso/login">{copy.testLoginCta}</a>
+							)}
 							{flash && <span style={{ fontSize: 11, color: "var(--green)", fontFamily: "var(--mono)", alignSelf: "center" }}>{flash}</span>}
 						</div>
 					</div>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
+import { SESSION_COOKIE, decodeSession, effectiveOwner } from "@/lib/auth/session";
 import { hasSso } from "@/lib/billing/entitlement";
 import { getState } from "@/lib/billing/console-store";
 
@@ -22,7 +22,8 @@ export async function GET() {
 		return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 	}
 
-	const ok = await hasSso(session.login);
+	const owner = effectiveOwner(session);
+	const ok = await hasSso(owner);
 	if (!ok) {
 		return NextResponse.json(
 			{ error: "forbidden", reason: "Enterprise plan required" },
@@ -30,7 +31,7 @@ export async function GET() {
 		);
 	}
 
-	const state = getState(session.login);
+	const state = getState(owner);
 
 	return NextResponse.json({
 		owner: state.owner,

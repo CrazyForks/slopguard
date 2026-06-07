@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
 import { getState, mutateState, pushAudit } from "@/lib/billing/console-store";
 import { hasSso } from "@/lib/billing/entitlement";
+import { spAcsUrl, spEntityId } from "@/lib/auth/saml";
 import type { SsoConfig, SsoProvider } from "@/lib/billing/console-store";
 
 const VALID_PROVIDERS: SsoProvider[] = [
@@ -36,7 +37,9 @@ export async function GET() {
 	const auth = await ownerOrError();
 	if ("error" in auth) return auth.error;
 	const s = getState(auth.owner);
-	return NextResponse.json({ owner: s.owner, sso: s.ssoConfig });
+	// Always surface the real SP endpoints so the IdP admin copies correct values.
+	const sso = { ...s.ssoConfig, entityId: spEntityId(), acsUrl: spAcsUrl() };
+	return NextResponse.json({ owner: s.owner, sso });
 }
 
 export async function POST(req: Request) {

@@ -17,6 +17,7 @@
     "check-plan": "node --import tsx scripts/check-entitlement.ts"
   },
   "dependencies": {
+    "@authenio/samlify-node-xmllint": "^2.0.0",
     "@langchain/anthropic": "^0.3.11",
     "@langchain/core": "^0.3.40",
     "@langchain/google-genai": "^0.1.12",
@@ -31,6 +32,8 @@
     "octokit": "^4.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "samlify": "^2.13.1",
+    "ws": "^8.21.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {

@@ -40,6 +40,7 @@ const copy: SsoFullViewCopy = {
 		"When enabled, GitHub login is disabled for members of this workspace.",
 	activateCta: "Activate SSO",
 	deactivateCta: "Deactivate",
+	testLoginCta: "Test SSO login",
 	saveCta: "Save changes",
 	savingCta: "Saving…",
 	savedCta: "Saved",

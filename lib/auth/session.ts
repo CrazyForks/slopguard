@@ -14,6 +14,23 @@ export interface SessionUser {
 	email: string | null;
 	profileUrl: string;
 	ts: number;
+	/**
+	 * Present only for sessions minted via Enterprise SAML SSO. `login` is the
+	 * asserted IdP identity (NOT the org owner); `sso.owner` is the tenant whose
+	 * plan + console data this member may READ. Write/admin endpoints stay keyed
+	 * to `login`, so an SSO member can use the console but cannot mutate billing,
+	 * alerts, integrations, or SSO config (those require the owner).
+	 */
+	sso?: { owner: string };
+}
+
+/**
+ * The account whose entitlement + data a session is scoped to. For normal
+ * (GitHub) logins this is the login itself; for SSO members it is the tenant
+ * owner so they inherit the org's plan for read access.
+ */
+export function effectiveOwner(session: SessionUser): string {
+	return session.sso?.owner ?? session.login;
 }
 
 function secret(): string {

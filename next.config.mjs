@@ -13,6 +13,10 @@ const nextConfig = {
 		"@octokit/app",
 		"@octokit/webhooks",
 		"octokit",
+		// SAML SP: native/wasm xmllint validator must not be webpack-bundled.
+		"samlify",
+		"@authenio/samlify-node-xmllint",
+		"node-xmllint",
 	],
 	// Resolve ESM-style ".js" import specifiers to their TypeScript sources
 	// (lib/** uses NodeNext-style ".js" extensions; webpack needs this mapping).

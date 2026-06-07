@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
+import { SESSION_COOKIE, decodeSession, effectiveOwner } from "@/lib/auth/session";
 import { hasSso } from "@/lib/billing/entitlement";
 import { getState, mutateState } from "@/lib/billing/console-store";
 
@@ -19,15 +19,16 @@ export async function GET(req: Request) {
 	const session = decodeSession(store.get(SESSION_COOKIE)?.value);
 	if (!session) return unauthorized();
 
-	const ok = await hasSso(session.login);
+	const owner = effectiveOwner(session);
+	const ok = await hasSso(owner);
 	if (!ok) return forbidden("audit export requires the Enterprise plan");
 
 	const url = new URL(req.url);
 	const format = url.searchParams.get("format") === "csv" ? "csv" : "json";
 
-	const state = getState(session.login);
+	const state = getState(owner);
 	const when = new Date().toISOString().slice(0, 16).replace("T", " ");
-	mutateState(session.login, (s) => {
+	mutateState(owner, (s) => {
 		s.audit.unshift({
 			id: `au_${Math.random().toString(36).slice(2, 10)}`,
 			owner: s.owner,

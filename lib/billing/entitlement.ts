@@ -1,5 +1,6 @@
-import { PLANS, type Plan, type PlanId } from "./plans.js";
+import { PLAN_RANK, PLANS, type Plan, type PlanId } from "./plans.js";
 import { getEntitlementMap, isPolarConfigured } from "./polar.js";
+import { marketplacePlanForOwner } from "./marketplace.js";
 
 // Entitlement = which plan a repo owner (GitHub login) is on.
 //
@@ -44,9 +45,20 @@ export async function planForOwner(owner: string): Promise<PlanId> {
 	if (fromCode) return fromCode;
 	const fromEnv = planFromEnv(login);
 	if (fromEnv) return fromEnv;
-	if (!isPolarConfigured()) return "free";
-	const map = await getEntitlementMap();
-	return map.get(login) ?? "free";
+	// Billing sources coexist (Polar + GitHub Marketplace). A customer buys
+	// through ONE channel; if somehow both, the HIGHEST plan wins — never the
+	// sum, so there is no double-charge entitlement. Both key by GitHub login.
+	let best: PlanId = "free";
+	const fromMarketplace = marketplacePlanForOwner(login);
+	if (fromMarketplace && PLAN_RANK[fromMarketplace] > PLAN_RANK[best]) {
+		best = fromMarketplace;
+	}
+	if (isPolarConfigured()) {
+		const map = await getEntitlementMap();
+		const fromPolar = map.get(login);
+		if (fromPolar && PLAN_RANK[fromPolar] > PLAN_RANK[best]) best = fromPolar;
+	}
+	return best;
 }
 
 /** Resolve the full plan object for an owner. */

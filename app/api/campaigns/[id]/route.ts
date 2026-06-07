@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
+import { SESSION_COOKIE, decodeSession, effectiveOwner } from "@/lib/auth/session";
 import { hasCampaignDetection } from "@/lib/billing/entitlement";
 import { recordAndDetect } from "@/lib/agent/campaign";
 import { getOwnerSlopStats } from "@/lib/github/storage";
@@ -112,8 +112,9 @@ export async function GET(
 	const store = await cookies();
 	const session = decodeSession(store.get(SESSION_COOKIE)?.value);
 	if (!session) return unauthorized();
+	const owner = effectiveOwner(session);
 
-	const ok = await hasCampaignDetection(session.login);
+	const ok = await hasCampaignDetection(owner);
 	if (!ok) return forbidden("campaign detection requires the Pro plan");
 
 	const { id } = await params;
@@ -122,10 +123,10 @@ export async function GET(
 		// Touch the live detector so the call has a real effect.
 		(() => {
 			const live = recordAndDetect(
-				session.login,
+				owner,
 				id,
 				"blue-b/slopguard",
-				session.login,
+				owner,
 			);
 			if (!live) return null;
 			return {
@@ -146,8 +147,8 @@ export async function GET(
 		({
 			id,
 			fingerprint: id.replaceAll("_", " "),
-			repos: [`${session.login}/slopguard`],
-			authors: [`@${session.login}`],
+			repos: [`${owner}/slopguard`],
+			authors: [`@${owner}`],
 			hits: 1,
 			firstSeen: new Date().toISOString().slice(0, 10),
 			commits: [],
@@ -160,8 +161,8 @@ export async function GET(
 		cleared: number;
 	}> = [];
 	try {
-		const plan = await planObjectForOwner(session.login);
-		const stats = await getOwnerSlopStats(session.login, plan.maxRepos);
+		const plan = await planObjectForOwner(owner);
+		const stats = await getOwnerSlopStats(owner, plan.maxRepos);
 		repoImpact = stats.repos
 			.filter((r) => resolvedCluster.repos.includes(r.repo))
 			.map((r) => ({

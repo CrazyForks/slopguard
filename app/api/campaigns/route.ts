@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { SESSION_COOKIE, decodeSession } from "@/lib/auth/session";
+import { SESSION_COOKIE, decodeSession, effectiveOwner } from "@/lib/auth/session";
 import {
 	hasCampaignDetection,
 	planObjectForOwner,
@@ -29,7 +29,8 @@ export async function GET() {
 		return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 	}
 
-	const ok = await hasCampaignDetection(session.login);
+	const owner = effectiveOwner(session);
+	const ok = await hasCampaignDetection(owner);
 	if (!ok) {
 		return NextResponse.json(
 			{
@@ -40,7 +41,7 @@ export async function GET() {
 		);
 	}
 
-	const owner = session.login;
+
 	try {
 		const plan = await planObjectForOwner(owner);
 		const stats = await getOwnerSlopStats(owner, plan.maxRepos);
