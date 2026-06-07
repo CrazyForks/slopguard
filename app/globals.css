@@ -4581,32 +4581,27 @@ footer.site.footer-app {
 /* ── Shared data table ────────────────────────────────────────────── */
 .console-table {
 	padding: 18px clamp(20px, 2.4vw, 28px) 10px;
-	overflow-x: auto;
+	/* fluid grids (first col minmax(0,1fr)) keep rows within the panel, so no
+	   horizontal scroll is needed; hidden also stops the auto-y phantom bar. */
+	overflow-x: hidden;
+}
+/* consistent thin scrollbar for the one surface that does scroll on mobile */
+.console-nav-links {
 	scrollbar-width: thin;
 	scrollbar-color: rgba(63, 185, 80, 0.35) transparent;
 }
-/* consistent thin scrollbar for the few scrollable console surfaces */
-.console-table::-webkit-scrollbar,
 .console-nav-links::-webkit-scrollbar {
 	height: 6px;
-	width: 6px;
 }
-.console-table::-webkit-scrollbar-track,
 .console-nav-links::-webkit-scrollbar-track {
 	background: transparent;
 }
-.console-table::-webkit-scrollbar-thumb,
 .console-nav-links::-webkit-scrollbar-thumb {
 	background: rgba(63, 185, 80, 0.3);
 	border-radius: 999px;
 }
-.console-table::-webkit-scrollbar-thumb:hover,
 .console-nav-links::-webkit-scrollbar-thumb:hover {
 	background: rgba(63, 185, 80, 0.5);
-}
-.console-nav-links {
-	scrollbar-width: thin;
-	scrollbar-color: rgba(63, 185, 80, 0.35) transparent;
 }
 .console-th,
 .console-tr {
