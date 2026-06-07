@@ -13,10 +13,8 @@ export const metadata: Metadata = {
 };
 
 const copy: PolicyFullViewCopy = {
-	workspace: "SlopGuard",
-	workspaceSub: "Team workspace",
-	user: "blue-b",
-	entitlement: "Team plan",
+	kicker: "SlopGuard Team",
+	workspace: "Organization console",
 	connected: "Connected to GitHub",
 	nav: [
 		{ label: "Overview", href: "/org" },
@@ -31,8 +29,6 @@ const copy: PolicyFullViewCopy = {
 		"SlopGuard is not installed on this account. Install it to see policy coverage here.",
 	installCta: "Install on GitHub",
 	installHref: "/setup",
-	backHref: "/org",
-	backLabel: "Overview",
 	heroEyebrow: "ORG / POLICY",
 	heroTitle: "The applied policy scope for team operations.",
 	heroBody:
@@ -41,6 +37,15 @@ const copy: PolicyFullViewCopy = {
 	policyFileBody:
 		"Add .github/SLOP_POLICY.yml to a repo to customize thresholds, label names, and auto-merge rules.",
 	docsHref: "/docs#policy",
+	labels: {
+		installed: "Installed repos",
+		applied: "Policy applied",
+		quarantined: "Quarantined",
+		cleared: "Cleared",
+		docs: "Open docs",
+		coverage: "repos currently covered by Team policy signals.",
+		gap: "Repos without quarantine activity are included automatically when their first protected activity appears.",
+	},
 };
 
 export default function OrgPolicyPage() {

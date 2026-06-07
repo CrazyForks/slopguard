@@ -12,10 +12,8 @@ export const metadata: Metadata = {
 };
 
 const copy: PolicyFullViewCopy = {
-	workspace: "SlopGuard",
-	workspaceSub: "Team 워크스페이스",
-	user: "blue-b",
-	entitlement: "Team 플랜",
+	kicker: "SlopGuard Team",
+	workspace: "조직 콘솔",
 	connected: "GitHub 연결됨",
 	nav: [
 		{ label: "개요", href: "/ko/org" },
@@ -30,8 +28,6 @@ const copy: PolicyFullViewCopy = {
 		"이 계정에 SlopGuard가 설치되어 있지 않습니다. 설치하면 정책 커버리지가 여기에 표시됩니다.",
 	installCta: "GitHub에 설치",
 	installHref: "/ko/setup",
-	backHref: "/ko/org",
-	backLabel: "개요",
 	heroEyebrow: "ORG / POLICY",
 	heroTitle: "팀 정책이 실제로 적용된 범위를 확인합니다.",
 	heroBody:
@@ -40,6 +36,15 @@ const copy: PolicyFullViewCopy = {
 	policyFileBody:
 		"레포에 .github/SLOP_POLICY.yml을 추가해 임계값/라벨 이름/자동 머지 규칙을 커스터마이즈할 수 있습니다.",
 	docsHref: "/ko/docs#policy",
+	labels: {
+		installed: "설치 레포",
+		applied: "정책 적용",
+		quarantined: "격리",
+		cleared: "정상화",
+		docs: "문서 열기",
+		coverage: "레포가 팀 정책 신호로 보호 중입니다.",
+		gap: "아직 격리 활동이 없는 레포는 첫 활동 발생 시 자동으로 보호 상태에 포함됩니다.",
+	},
 };
 
 export default function OrgPolicyPage() {

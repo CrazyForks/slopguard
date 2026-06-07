@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import MarketingNav from "@/app/components/MarketingNav";
 import AlertsConsole, {
 	type AlertsConsoleCopy,
@@ -5,37 +6,32 @@ import AlertsConsole, {
 import PlanGate from "@/app/components/PlanGate";
 import SiteFooter from "@/app/components/SiteFooter";
 
-export const metadata = {
-	title: "SlopGuard: Alerts & Notifications - Team",
+export const metadata: Metadata = {
+	title: "SlopGuard: Alerts - Team",
 	description:
-		"Team plan alert console: configure Slack, Discord, and webhook channels, route by repo + pattern, and watch live delivery.",
+		"Team plan alerts console: add Slack/Discord/webhook channels, route by repo/pattern, watch live delivery log.",
 };
 
 const copy: AlertsConsoleCopy = {
-	workspace: "SlopGuard",
-	workspaceSub: "Team workspace",
-	user: "blue-b",
-	entitlement: "Team plan",
+	kicker: "SlopGuard Team",
+	workspace: "Alert routing",
 	connected: "Connected to GitHub",
 	nav: [
 		{ label: "Overview", href: "/org" },
-		{ label: "Queue", href: "/org/queue", external: true },
-		{ label: "Repos", href: "/org/repos", external: true },
+		{ label: "Queue", href: "/org/queue" },
+		{ label: "Repos", href: "/org/repos" },
 		{ label: "Campaigns", href: "/campaigns", external: true },
 		{ label: "Alerts", href: "/alerts" },
-		{ label: "Policy", href: "/org/policy", external: true },
+		{ label: "Policy", href: "/org/policy" },
 	],
 	loading: "Loading…",
-	backToOrg: "Back to org",
-	orgHref: "/org",
-	campaignsHref: "/campaigns",
-	accountHref: "/account",
+	heroCta: "Open campaigns",
+	heroCtaHref: "/campaigns",
+	metricLabels: { channels: "Channels", rules: "Routing rules", delivered: "Delivered", latency: "Avg latency" },
 	heroEyebrow: "ALERTS / TEAM PLAN",
 	heroTitle: "One channel per audience, with rules that actually route.",
 	heroBody:
 		"Add Slack, Discord, or a custom webhook. Then bind a repo + pattern to a channel with a slop-score threshold. The log below shows live delivery.",
-	heroCta: "Open campaigns",
-	heroCtaHref: "/campaigns",
 	channelsTitle: "Channels",
 	channelsSubtitle:
 		"Targets are stored per-owner. Add a channel, then create a routing rule that points at it.",
@@ -54,12 +50,7 @@ const copy: AlertsConsoleCopy = {
 	rulesSubtitle: "Match by repo + pattern; only fire when score ≥ threshold.",
 	rulesEmpty:
 		"No routing rules yet. Add a channel first, then create a rule that points at it.",
-	rulesColumns: {
-		repo: "Repo",
-		pattern: "Pattern",
-		channel: "Channel",
-		threshold: "Threshold",
-	},
+	rulesColumns: { repo: "Repo", pattern: "Pattern", channel: "Channel", threshold: "Threshold" },
 	addRuleTitle: "Add a routing rule",
 	addRuleBody: "",
 	addRuleRepoLabel: "Repository",
@@ -72,14 +63,7 @@ const copy: AlertsConsoleCopy = {
 	logSubtitle: "Most recent deliveries, failures, and retries.",
 	logEmpty:
 		"No alerts sent yet. Trigger a test send from a channel to see entries here.",
-	logColumns: {
-		when: "When",
-		item: "Item",
-		score: "Score",
-		dest: "Dest",
-		status: "Status",
-		latency: "Latency",
-	},
+	logColumns: { when: "When", item: "Item", score: "Score", dest: "Dest", status: "Status", latency: "Latency" },
 };
 
 export default function AlertsPage() {

@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import ConsoleSidebar, { type SidebarItem } from "./ConsoleSidebar";
+import {
+	ConsoleHero,
+	ConsoleSectionHead,
+	ConsoleShell,
+	ConsoleStatus,
+} from "./ConsoleShell";
+import type { SidebarItem } from "./ConsoleSidebar";
 
 type AuditEntry = {
 	id: string;
@@ -18,11 +23,7 @@ type StateResponse = {
 	owner: string;
 	sso: { provider: string; status: string; lastSync: string };
 	audit: AuditEntry[];
-	integrations: Array<{
-		name: string;
-		status: "connected" | "pending" | "available";
-		scope: string;
-	}>;
+	integrations: Array<{ name: string; status: "connected" | "pending" | "available"; scope: string }>;
 };
 
 function sourceColor(s: AuditEntry["source"]): string {
@@ -30,29 +31,24 @@ function sourceColor(s: AuditEntry["source"]): string {
 }
 
 export type AuditFullViewCopy = {
+	kicker: string;
 	workspace: string;
-	workspaceSub: string;
-	user: string;
-	entitlement: string;
 	connected: string;
 	nav: SidebarItem[];
 	loading: string;
 	empty: string;
-	backHref: string;
-	backLabel: string;
 	heroEyebrow: string;
 	heroTitle: string;
 	heroBody: string;
-	columns: {
-		when: string;
-		actor: string;
-		action: string;
-		target: string;
-		source: string;
-	};
+	tableTitle: string;
+	tableSub: string;
+	columns: { when: string; actor: string; action: string; target: string; source: string };
 	exportJson: string;
 	exportCsv: string;
+	exportedNote: string;
 };
+
+const GRID = "150px 130px minmax(140px,1fr) minmax(120px,1fr) 90px";
 
 export default function AuditFullView({ copy }: { copy: AuditFullViewCopy }) {
 	const [data, setData] = useState<StateResponse | null>(null);
@@ -76,9 +72,7 @@ export default function AuditFullView({ copy }: { copy: AuditFullViewCopy }) {
 	async function downloadExport(format: "json" | "csv") {
 		setExportBusy(format);
 		try {
-			const res = await fetch(`/api/audit/export?format=${format}`, {
-				credentials: "include",
-			});
+			const res = await fetch(`/api/audit/export?format=${format}`, { credentials: "include" });
 			if (!res.ok) {
 				setError(`Export failed: HTTP ${res.status}`);
 				return;
@@ -87,15 +81,12 @@ export default function AuditFullView({ copy }: { copy: AuditFullViewCopy }) {
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement("a");
 			a.href = url;
-			a.download =
-				(format === "csv" ? "slopguard-audit" : "slopguard-audit") +
-				`-${Date.now()}.${format}`;
+			a.download = `slopguard-audit-${Date.now()}.${format}`;
 			document.body.appendChild(a);
 			a.click();
 			a.remove();
 			URL.revokeObjectURL(url);
 			setLastExport(format.toUpperCase());
-			// Refresh audit so the new "exported" entry shows up.
 			setTimeout(() => load(), 500);
 		} finally {
 			setExportBusy(null);
@@ -111,227 +102,59 @@ export default function AuditFullView({ copy }: { copy: AuditFullViewCopy }) {
 	const entries = data?.audit ?? [];
 
 	return (
-		<main
-			style={{
-				maxWidth: 1480,
-				margin: "0 auto",
-				padding: "18px 32px 96px",
-			}}
-		>
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "280px minmax(0, 1fr)",
-					gap: 24,
-				}}
-			>
-				<ConsoleSidebar
-					workspace={copy.workspace}
-					workspaceSub={copy.workspaceSub}
-					user={copy.user}
-					entitlement={copy.entitlement}
-					connected={copy.connected}
-					nav={copy.nav}
-				/>
+		<ConsoleShell kicker={copy.kicker} workspace={copy.workspace} nav={copy.nav}>
+			<ConsoleHero
+				eyebrow={copy.heroEyebrow}
+				title={copy.heroTitle}
+				body={copy.heroBody}
+				image="/console-governance.png"
+				imageAlt="Audit trail vault"
+				plateLabel="audit trail"
+				connected={copy.connected}
+				actions={
+					<>
+						<button type="button" className="btn btn-ghost btn-sm" disabled={exportBusy !== null} onClick={() => downloadExport("json")}>
+							{exportBusy === "json" ? "..." : copy.exportJson}
+						</button>
+						<button type="button" className="btn btn-primary btn-sm" disabled={exportBusy !== null} onClick={() => downloadExport("csv")}>
+							{exportBusy === "csv" ? "..." : copy.exportCsv}
+						</button>
+						{lastExport && (
+							<span style={{ color: "var(--green)", fontFamily: "var(--mono)", fontSize: 11 }}>
+								{lastExport} {copy.exportedNote}
+							</span>
+						)}
+					</>
+				}
+			/>
 
-				<section>
-					<header
-						style={{
-							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "flex-end",
-							gap: 24,
-							padding: "28px 30px",
-							border: "1px solid #1c2530",
-							borderRadius: 18,
-							marginBottom: 26,
-							backgroundImage:
-								"linear-gradient(90deg, rgba(10,14,21,0.97) 0%, rgba(10,14,21,0.78) 52%, rgba(10,14,21,0.46) 100%), url('/paid-command-mesh.png')",
-							backgroundSize: "cover",
-							backgroundPosition: "center right",
-						}}
-					>
-						<div>
-							<div
-								style={{
-									color: "#3fb950",
-									fontSize: 10,
-									letterSpacing: ".18em",
-									textTransform: "uppercase",
-									fontFamily: "var(--mono)",
-									marginBottom: 8,
-								}}
-							>
-								{copy.heroEyebrow}
+			{isLoading && <ConsoleStatus>{copy.loading}</ConsoleStatus>}
+			{error && !isLoading && <ConsoleStatus danger>{error}</ConsoleStatus>}
+			{!isLoading && entries.length === 0 && <ConsoleStatus>{copy.empty}</ConsoleStatus>}
+
+			{entries.length > 0 && (
+				<section className="console-section">
+					<ConsoleSectionHead title={copy.tableTitle} sub={copy.tableSub} />
+					<div className="plate console-table">
+						<div className="console-th" style={{ gridTemplateColumns: GRID }}>
+							<span>{copy.columns.when}</span>
+							<span>{copy.columns.actor}</span>
+							<span>{copy.columns.action}</span>
+							<span>{copy.columns.target}</span>
+							<span>{copy.columns.source}</span>
+						</div>
+						{entries.map((row) => (
+							<div className="console-tr" key={row.id} style={{ gridTemplateColumns: GRID }}>
+								<span style={{ fontFamily: "var(--mono)", color: "var(--muted)" }}>{row.when}</span>
+								<span style={{ color: "var(--fg)" }}>{row.actor}</span>
+								<span style={{ color: "var(--fg)" }}>{row.action}</span>
+								<span style={{ color: "var(--fg)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{row.target}</span>
+								<span style={{ fontFamily: "var(--mono)", color: sourceColor(row.source) }}>{row.source}</span>
 							</div>
-							<h1
-								style={{
-									margin: 0,
-									fontSize: 24,
-									letterSpacing: "-.03em",
-									fontWeight: 800,
-								}}
-							>
-								{copy.heroTitle}
-							</h1>
-							<p
-								style={{
-									color: "#8b949e",
-									margin: "8px 0 0",
-									maxWidth: 560,
-									fontSize: 13,
-									lineHeight: 1.5,
-								}}
-							>
-								{copy.heroBody}
-							</p>
-						</div>
-						<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-							{lastExport && (
-								<span
-									style={{
-										color: "#3fb950",
-										fontFamily: "var(--mono)",
-										fontSize: 11,
-									}}
-								>
-									{lastExport} downloaded
-								</span>
-							)}
-							<button
-								type="button"
-								className="btn btn-ghost btn-sm"
-								disabled={exportBusy !== null}
-								onClick={() => downloadExport("json")}
-							>
-								{exportBusy === "json" ? "..." : copy.exportJson}
-							</button>
-							<button
-								type="button"
-								className="btn btn-primary btn-sm"
-								disabled={exportBusy !== null}
-								onClick={() => downloadExport("csv")}
-							>
-								{exportBusy === "csv" ? "..." : copy.exportCsv}
-							</button>
-							<Link href={copy.backHref} className="btn btn-ghost btn-sm">
-								← {copy.backLabel}
-							</Link>
-						</div>
-					</header>
-
-					{isLoading && (
-						<div
-							style={{
-								padding: "48px 0",
-								textAlign: "center",
-								color: "#8b949e",
-								fontFamily: "var(--mono)",
-								fontSize: 12,
-							}}
-						>
-							{copy.loading}
-						</div>
-					)}
-
-					{error && !isLoading && (
-						<div
-							style={{
-								padding: "16px 0",
-								color: "#f85149",
-								fontFamily: "var(--mono)",
-								fontSize: 12,
-							}}
-						>
-							{error}
-						</div>
-					)}
-
-					{!isLoading && entries.length === 0 && (
-						<div
-							style={{
-								padding: "48px 0",
-								textAlign: "center",
-								color: "#8b949e",
-								fontFamily: "var(--mono)",
-								fontSize: 12,
-							}}
-						>
-							{copy.empty}
-						</div>
-					)}
-
-					{entries.length > 0 && (
-						<table
-							style={{
-								width: "100%",
-								borderCollapse: "collapse",
-								fontSize: 13,
-							}}
-						>
-							<thead>
-								<tr style={{ color: "#7d8590" }}>
-									{(
-										["when", "actor", "action", "target", "source"] as const
-									).map((k) => (
-										<th
-											key={k}
-											style={{
-												textAlign: "left",
-												padding: "12px 4px",
-												fontSize: 10,
-												letterSpacing: ".14em",
-												textTransform: "uppercase",
-												fontWeight: 600,
-												fontFamily: "var(--mono)",
-												borderBottom: "1px solid #1c2530",
-											}}
-										>
-											{copy.columns[k]}
-										</th>
-									))}
-								</tr>
-							</thead>
-							<tbody>
-								{entries.map((row) => (
-									<tr
-										key={row.id}
-										style={{ borderBottom: "1px solid #161e29" }}
-									>
-										<td
-											style={{
-												padding: "14px 4px",
-												fontFamily: "var(--mono)",
-												color: "#8b949e",
-											}}
-										>
-											{row.when}
-										</td>
-										<td style={{ padding: "14px 4px", color: "#c9d1d9" }}>
-											{row.actor}
-										</td>
-										<td style={{ padding: "14px 4px", color: "#c9d1d9" }}>
-											{row.action}
-										</td>
-										<td style={{ padding: "14px 4px", color: "#c9d1d9" }}>
-											{row.target}
-										</td>
-										<td
-											style={{
-												padding: "14px 4px",
-												color: sourceColor(row.source),
-												fontFamily: "var(--mono)",
-											}}
-										>
-											{row.source}
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					)}
+						))}
+					</div>
 				</section>
-			</div>
-		</main>
+			)}
+		</ConsoleShell>
 	);
 }

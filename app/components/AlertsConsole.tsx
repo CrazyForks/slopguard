@@ -2,9 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import ConsoleSidebar, { type SidebarItem } from "./ConsoleSidebar";
-import { toneColor } from "./console-styles";
+import { ConsoleHero, ConsoleShell } from "./ConsoleShell";
+import type { SidebarItem } from "./ConsoleSidebar";
 
 type Channel = {
 	id: string;
@@ -41,17 +40,12 @@ type StateResponse = {
 };
 
 export type AlertsConsoleCopy = {
+	kicker: string;
 	workspace: string;
-	workspaceSub: string;
-	user: string;
-	entitlement: string;
 	connected: string;
 	nav: SidebarItem[];
 	loading: string;
-	backToOrg: string;
-	orgHref: string;
-	campaignsHref: string;
-	accountHref: string;
+	metricLabels: { channels: string; rules: string; delivered: string; latency: string };
 	heroEyebrow: string;
 	heroTitle: string;
 	heroBody: string;
@@ -262,7 +256,6 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 		const channels = data?.channels ?? [];
 		const sent = data?.sent ?? [];
 		const rules = data?.rules ?? [];
-		const active = channels.filter((c) => c.status === "active").length;
 		const failed = channels.filter((c) => c.status === "failed").length;
 		const delivered = sent.filter((s) => s.status === "delivered").length;
 		const avgLatency =
@@ -277,162 +270,46 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 				: 0;
 		return [
 			{
-				label: "Channels",
+				label: copy.metricLabels.channels,
 				value: String(channels.length),
-				detail: `${active} active / ${failed} failed`,
 				tone: failed > 0 ? ("warn" as const) : ("ok" as const),
 			},
 			{
-				label: "Routing rules",
+				label: copy.metricLabels.rules,
 				value: String(rules.length),
-				detail: `${rules.filter((r) => r.threshold >= 80).length} high-priority`,
 				tone: "neutral" as const,
 			},
 			{
-				label: "Delivered",
+				label: copy.metricLabels.delivered,
 				value: String(delivered),
-				detail: `${sent.length} total sent`,
 				tone: delivered > 0 ? ("ok" as const) : ("neutral" as const),
 			},
 			{
-				label: "Avg. latency",
+				label: copy.metricLabels.latency,
 				value: avgLatency > 0 ? `${avgLatency.toFixed(2)}s` : "-",
-				detail: `${sent.length} sample${sent.length === 1 ? "" : "s"}`,
 				tone: avgLatency >= 2 ? ("warn" as const) : ("ok" as const),
 			},
 		];
-	}, [data]);
+	}, [data, copy.metricLabels]);
 
 	return (
-		<main
-			style={{
-				maxWidth: 1480,
-				margin: "0 auto",
-				padding: "18px 32px 96px",
-			}}
-		>
-			<div
-				style={{
-					display: "grid",
-					gridTemplateColumns: "280px minmax(0, 1fr)",
-					gap: 24,
-				}}
-			>
-				<ConsoleSidebar
-					workspace={copy.workspace}
-					workspaceSub={copy.workspaceSub}
-					user={copy.user}
-					entitlement={copy.entitlement}
-					connected={copy.connected}
-					nav={copy.nav}
-				/>
-
-				<section>
-					<header
-						style={{
-							display: "grid",
-							gridTemplateColumns: "1.2fr 1fr",
-							gap: 16,
-							padding: "0 0 24px",
-							borderBottom: "1px solid #1c2530",
-							marginBottom: 0,
-						}}
-					>
-						<div style={{ padding: "8px 0" }}>
-							<div
-								style={{
-									color: "#3fb950",
-									fontSize: 10,
-									letterSpacing: ".18em",
-									textTransform: "uppercase",
-									fontFamily: "var(--mono)",
-									marginBottom: 10,
-								}}
-							>
-								{copy.heroEyebrow}
-							</div>
-							<h1
-								style={{
-									margin: 0,
-									fontSize: 26,
-									letterSpacing: "-.035em",
-									fontWeight: 800,
-									lineHeight: 1.15,
-								}}
-							>
-								{copy.heroTitle}
-							</h1>
-							<p
-								style={{
-									color: "#8b949e",
-									margin: "10px 0 14px",
-									maxWidth: 540,
-									fontSize: 13,
-									lineHeight: 1.55,
-								}}
-							>
-								{copy.heroBody}
-							</p>
-							<div style={{ display: "flex", gap: 8 }}>
-								<Link
-									href={copy.heroCtaHref}
-									className="btn btn-primary btn-sm"
-								>
-									{copy.heroCta}
-								</Link>
-								<Link href={copy.orgHref} className="btn btn-ghost btn-sm">
-									{copy.backToOrg}
-								</Link>
-							</div>
-						</div>
-						<div
-							style={{
-								position: "relative",
-								borderRadius: 12,
-								overflow: "hidden",
-								minHeight: 160,
-								background: "#0a0e15",
-								border: "1px solid #1c2530",
-							}}
-						>
-							<Image
-								src="/paid-command-mesh.png"
-								alt="Alerts routing"
-								fill
-								style={{ objectFit: "cover", opacity: 0.7 }}
-								sizes="(max-width: 1280px) 100vw, 480px"
-							/>
-							<div
-								style={{
-									position: "absolute",
-									inset: 0,
-									background:
-										"linear-gradient(180deg, rgba(10,14,21,.4) 0%, rgba(10,14,21,.92) 100%)",
-								}}
-							/>
-							<div
-								style={{
-									position: "absolute",
-									bottom: 12,
-									left: 14,
-									right: 14,
-									fontFamily: "var(--mono)",
-									fontSize: 11,
-									color: "#8b949e",
-									letterSpacing: ".05em",
-								}}
-							>
-								<div style={{ color: "#f0f6fc", fontWeight: 700 }}>
-									Routing fan-out
-								</div>
-								<div style={{ marginTop: 4 }}>
-									{data
-										? `${data.channels.length} channels / ${data.rules.length} rules`
-										: copy.loading}
-								</div>
-							</div>
-						</div>
-					</header>
+		<ConsoleShell kicker={copy.kicker} workspace={copy.workspace} nav={copy.nav}>
+			<ConsoleHero
+				eyebrow={copy.heroEyebrow}
+				title={copy.heroTitle}
+				body={copy.heroBody}
+				image="/console-signal.png"
+				imageAlt="Alert routing fan-out"
+				plateLabel="routing fan-out"
+				connected={copy.connected}
+				actions={
+					<Link href={copy.heroCtaHref} className="btn btn-primary btn-lg">
+						{copy.heroCta}
+					</Link>
+				}
+				metrics={metrics}
+			/>
+			<div className="console-section">
 
 					{flash && (
 						<div
@@ -473,60 +350,6 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 						</div>
 					) : (
 						<>
-							{/* Metrics row - no card box, just border-b + mono numbers */}
-							<div
-								style={{
-									display: "grid",
-									gridTemplateColumns: "repeat(4, 1fr)",
-									gap: 0,
-									borderBottom: "1px solid #1c2530",
-								}}
-							>
-								{metrics.map((metric, i) => (
-									<div
-										key={metric.label}
-										style={{
-											padding: "20px 16px",
-											borderRight:
-												i < metrics.length - 1 ? "1px solid #1c2530" : "none",
-										}}
-									>
-										<div
-											style={{
-												color: "#8b949e",
-												fontSize: 10,
-												letterSpacing: ".14em",
-												textTransform: "uppercase",
-												fontFamily: "var(--mono)",
-											}}
-										>
-											{metric.label}
-										</div>
-										<div
-											style={{
-												fontSize: 28,
-												fontWeight: 800,
-												letterSpacing: "-.03em",
-												marginTop: 6,
-												color: toneColor[metric.tone ?? "neutral"],
-												fontFamily: "var(--mono)",
-											}}
-										>
-											{metric.value}
-										</div>
-										<div
-											style={{
-												color: "#8b949e",
-												fontSize: 11,
-												marginTop: 4,
-											}}
-										>
-											{metric.detail}
-										</div>
-									</div>
-								))}
-							</div>
-
 							{/* Channels section */}
 							<section style={{ padding: "20px 0 0" }}>
 								<header style={{ marginBottom: 12 }}>
@@ -1089,8 +912,7 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 							</section>
 						</>
 					)}
-				</section>
 			</div>
-		</main>
+		</ConsoleShell>
 	);
 }

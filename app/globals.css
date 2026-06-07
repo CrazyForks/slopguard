@@ -4232,3 +4232,315 @@ footer.site.footer-app {
 		white-space: normal;
 	}
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   UNIFIED PAID CONSOLE SYSTEM — one design language for every plan-gated
+   surface (Org / Campaigns / Alerts / Enterprise). Glass top nav, editorial
+   hero with generated plate, sparse section lines, no left rail.
+   ════════════════════════════════════════════════════════════════════ */
+.console-experience {
+	position: relative;
+	overflow: hidden;
+	padding: 18px 0 110px;
+	border-top: 1px solid var(--border-muted);
+}
+.console-wide {
+	position: relative;
+	z-index: 1;
+	max-width: 1200px;
+}
+.console-nav {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 18px;
+	padding: 12px 16px;
+	border: 1px solid var(--border-muted);
+	background:
+		linear-gradient(180deg, rgba(22, 27, 34, 0.78), rgba(13, 17, 23, 0.64)),
+		rgba(13, 17, 23, 0.74);
+	backdrop-filter: blur(14px);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+	border-radius: 14px;
+	margin-bottom: 40px;
+	position: sticky;
+	top: 12px;
+	z-index: 20;
+}
+.console-nav-brand strong {
+	display: block;
+	font-size: 18px;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
+}
+.console-nav-kicker {
+	display: block;
+	font-size: 10px;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--green);
+	margin-bottom: 4px;
+}
+.console-nav-links {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	padding: 3px;
+	border: 1px solid rgba(63, 185, 80, 0.18);
+	background: rgba(1, 4, 9, 0.34);
+	backdrop-filter: blur(10px);
+	border-radius: 12px;
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+.console-nav-links::-webkit-scrollbar {
+	display: none;
+}
+.console-nav-links a {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 8px 12px;
+	font-size: 12.5px;
+	font-weight: 650;
+	white-space: nowrap;
+	color: #adbac7;
+	border: 1px solid transparent;
+	border-radius: 8px;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+.console-nav-links a.active,
+.console-nav-links a:hover {
+	color: var(--fg);
+	background: linear-gradient(180deg, rgba(63, 185, 80, 0.16), rgba(63, 185, 80, 0.06));
+	border-color: rgba(63, 185, 80, 0.32);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.console-nav-links a span {
+	font-size: 10px;
+	color: var(--green);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────── */
+.console-hero {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(400px, 0.9fr);
+	gap: 44px;
+	align-items: center;
+	padding: 8px 0 36px;
+}
+.console-hero-copy h1 {
+	font-size: clamp(40px, 5.4vw, 70px);
+	line-height: 0.98;
+	letter-spacing: -0.045em;
+	margin: 0;
+	max-width: 760px;
+}
+.console-hero-copy p {
+	color: var(--muted);
+	font-size: clamp(16px, 1.3vw, 19px);
+	line-height: 1.55;
+	max-width: 38rem;
+	margin: 20px 0 0;
+}
+.console-hero-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	align-items: center;
+	margin-top: 28px;
+}
+.console-spec {
+	margin-top: 30px;
+}
+.console-spec li {
+	min-width: 120px;
+}
+.console-hero-plate {
+	box-shadow: 0 30px 80px -46px rgba(0, 0, 0, 0.85);
+}
+.console-hero-plate .plate-art {
+	min-height: 360px;
+}
+.console-hero-plate img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* ── Section primitives ───────────────────────────────────────────── */
+.console-section {
+	margin-top: 44px;
+}
+.console-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+	gap: 30px;
+	align-items: start;
+}
+.console-section-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	gap: 18px;
+	margin-bottom: 16px;
+}
+.console-section-head h2 {
+	font-size: clamp(20px, 2.2vw, 26px);
+	line-height: 1.05;
+	letter-spacing: -0.04em;
+	margin: 0;
+}
+.console-section-head p {
+	color: var(--muted);
+	font-size: 13px;
+	margin: 7px 0 0;
+	max-width: 46ch;
+}
+.console-section-head a {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-family: var(--mono);
+	font-size: 12px;
+	color: var(--green);
+	white-space: nowrap;
+}
+.console-section-head a span {
+	transition: transform 0.18s ease;
+}
+.console-section-head a:hover span {
+	transform: translateX(4px);
+}
+.console-panel {
+	padding: 22px;
+}
+.console-status,
+.console-empty {
+	padding: 26px;
+	margin: 22px 0;
+	font-family: var(--mono);
+	font-size: 12px;
+	color: var(--muted);
+}
+.console-status.danger {
+	color: var(--danger);
+	border-left: 2px solid var(--danger);
+}
+.console-empty {
+	text-align: center;
+	font-family: inherit;
+}
+.console-empty h2 {
+	margin: 0 0 8px;
+	font-size: 24px;
+	letter-spacing: -0.04em;
+}
+.console-empty p {
+	max-width: 560px;
+	margin: 0 auto 18px;
+	color: var(--muted);
+}
+.console-empty-line {
+	padding: 18px 0;
+	color: var(--muted);
+	font-size: 12px;
+	font-family: var(--mono);
+}
+
+/* ── Shared data table ────────────────────────────────────────────── */
+.console-table {
+	padding: 4px 20px 8px;
+	overflow-x: auto;
+}
+.console-th,
+.console-tr {
+	display: grid;
+	gap: 14px;
+	align-items: center;
+}
+.console-th {
+	padding: 14px 0;
+	border-bottom: 1px solid var(--border);
+	font-size: 10px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--muted);
+	font-family: var(--mono);
+}
+.console-tr {
+	padding: 15px 0;
+	border-bottom: 1px solid var(--border-muted);
+	font-size: 13px;
+}
+.console-tr:last-child {
+	border-bottom: none;
+}
+.console-tr a {
+	font-family: var(--mono);
+	color: var(--fg);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.console-tr a:hover {
+	color: var(--green);
+}
+.console-pill {
+	display: inline-flex;
+	font-family: var(--mono);
+	font-size: 11px;
+	padding: 2px 10px;
+	border-radius: 999px;
+	justify-self: start;
+}
+
+/* ── Metric cards (side stack) ────────────────────────────────────── */
+.console-metric {
+	padding: 18px;
+}
+.console-metric span {
+	display: block;
+	font-size: 10px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--muted);
+	font-family: var(--mono);
+}
+.console-metric b {
+	display: block;
+	font-family: var(--mono);
+	font-size: 34px;
+	line-height: 1;
+	letter-spacing: -0.05em;
+	margin-top: 10px;
+}
+.console-side-stack {
+	display: grid;
+	gap: 18px;
+}
+
+@media (max-width: 980px) {
+	.console-hero,
+	.console-grid {
+		grid-template-columns: 1fr;
+	}
+	.console-hero-plate {
+		order: -1;
+	}
+	.console-th {
+		display: none;
+	}
+	.console-tr {
+		grid-template-columns: 1fr !important;
+		gap: 6px;
+	}
+	.console-tr > * {
+		text-align: left !important;
+		white-space: normal;
+	}
+}

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import MarketingNav from "@/app/components/MarketingNav";
 import CampaignsConsole, {
 	type CampaignsConsoleCopy,
@@ -5,17 +6,15 @@ import CampaignsConsole, {
 import PlanGate from "@/app/components/PlanGate";
 import SiteFooter from "@/app/components/SiteFooter";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "SlopGuard: Campaign Detection - Pro",
 	description:
 		"Pro plan cross-repo fingerprint clustering: group repeated AI-style commit patterns across your installed repos.",
 };
 
 const copy: CampaignsConsoleCopy = {
-	workspace: "SlopGuard",
-	workspaceSub: "Pro workspace",
-	user: "blue-b",
-	entitlement: "Pro plan",
+	kicker: "SlopGuard Pro",
+	workspace: "Campaign radar",
 	connected: "Connected to GitHub",
 	nav: [
 		{ label: "Overview", href: "/org" },
@@ -25,6 +24,7 @@ const copy: CampaignsConsoleCopy = {
 		{ label: "Alerts", href: "/alerts" },
 		{ label: "Policy", href: "/org/policy" },
 	],
+	detailBase: "/campaigns",
 	loading: "Loading…",
 	emptyTitle: "No campaign data yet",
 	emptyBody:
@@ -32,21 +32,17 @@ const copy: CampaignsConsoleCopy = {
 	emptyCta: "Install on GitHub",
 	emptyCtaHref: "/setup",
 	investigate: "Investigate",
-	backToOrg: "Back to org",
-	orgHref: "/org",
-	accountHref: "/account",
 	heroEyebrow: "CAMPAIGNS / PRO PLAN",
 	heroTitle: "Catch the same prompt being used across repos.",
 	heroBody:
 		"SlopGuard groups PRs by commit-title prefix and surfaces the ones spreading across your installed repos. Each cluster links to its drill-down view.",
-	heroCta: "Open alerts",
-	heroCtaHref: "/alerts",
+	metricLabels: { clusters: "Active clusters", hits: "Total hits", authors: "Authors", repos: "Repos" },
 	clustersTitle: "Active clusters",
-	clustersSubtitle:
-		"Clustered by commit-title prefix across your installed repos",
+	clustersSubtitle: "Clustered by commit-title prefix across your installed repos",
 	clustersEmpty: "No clusters yet - once a prefix repeats, it shows up here.",
-	scoreBoostTitle: "Score boost tiers",
-	scoreBoostBody: "How plan tier affects confidence on cross-repo matches",
+	leadSummary: "{hits} repeated hits across {repos} repos with {authors} authors involved.",
+	firstSeen: "first seen",
+	streamCols: { fingerprint: "fingerprint", scope: "scope (hits/repos)", risk: "risk" },
 };
 
 export default function CampaignsPage() {

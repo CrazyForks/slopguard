@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import {
+	ConsoleHero,
+	ConsoleSectionHead,
+	ConsoleShell,
+	ConsoleStatus,
+} from "./ConsoleShell";
 import type { SidebarItem } from "./ConsoleSidebar";
-import { toneColor } from "./console-styles";
 
 type Detail = {
 	id: string;
@@ -15,25 +18,15 @@ type Detail = {
 	firstSeen: string;
 	repos: string[];
 	authors: string[];
-	commits: Array<{
-		repo: string;
-		sha: string;
-		title: string;
-		author: string;
-		when: string;
-	}>;
+	commits: Array<{ repo: string; sha: string; title: string; author: string; when: string }>;
 	repoImpact: Array<{ repo: string; quarantined: number; cleared: number }>;
 };
 
 export type CampaignDetailCopy = {
+	kicker: string;
 	workspace: string;
-	workspaceSub: string;
-	user: string;
-	entitlement: string;
 	connected: string;
 	nav: SidebarItem[];
-	backHref: string;
-	backLabel: string;
 	loading: string;
 	error: string;
 	heading: string;
@@ -41,29 +34,22 @@ export type CampaignDetailCopy = {
 	metrics: { repos: string; hits: string; authors: string; firstSeen: string };
 	commitsTitle: string;
 	impactTitle: string;
-	plateLabel: string;
 	commitMeta: string;
 	emptyCommits: string;
 	impactSubhead: string;
 	authorsLabel: string;
 };
 
-export default function CampaignDetailConsole({
-	id,
-	copy,
-}: {
-	id: string;
-	copy: CampaignDetailCopy;
-}) {
+const CGRID = "minmax(180px,1fr) 130px 80px 110px";
+
+export default function CampaignDetailConsole({ id, copy }: { id: string; copy: CampaignDetailCopy }) {
 	const [data, setData] = useState<Detail | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		(async () => {
 			try {
-				const res = await fetch(`/api/campaigns/${encodeURIComponent(id)}`, {
-					cache: "no-store",
-				});
+				const res = await fetch(`/api/campaigns/${encodeURIComponent(id)}`, { cache: "no-store" });
 				if (!res.ok) {
 					setError(`HTTP ${res.status}`);
 					return;
@@ -76,146 +62,75 @@ export default function CampaignDetailConsole({
 		})();
 	}, [copy.error, id]);
 
-	const metrics = [
-		{ label: copy.metrics.repos, value: data?.repoCount ?? "-", tone: "ok" },
-		{
-			label: copy.metrics.hits,
-			value: data?.totalCount ?? "-",
-			tone: "danger",
-		},
-		{
-			label: copy.metrics.authors,
-			value: data?.authorCount ?? "-",
-			tone: "neutral",
-		},
-		{
-			label: copy.metrics.firstSeen,
-			value: data?.firstSeen ?? "-",
-			tone: "neutral",
-		},
-	] as const;
-
 	return (
-		<main className="campaign-detail-experience">
-			<div className="grid-bg" aria-hidden="true" />
-			<div className="wide campaign-detail-wide">
-				<nav className="campaign-topnav" aria-label="Campaign detail sections">
-					<Link href={copy.backHref}>← {copy.backLabel}</Link>
-					<div className="campaign-nav-center">
-						{copy.nav.map((item) => (
-							<Link
-								key={item.label}
-								href={item.href}
-								className={item.href.includes("/campaigns") ? "active" : ""}
-							>
-								{item.label}
-							</Link>
-						))}
-					</div>
-					<span className="campaign-detail-user mono">{copy.user}</span>
-				</nav>
+		<ConsoleShell kicker={copy.kicker} workspace={copy.workspace} nav={copy.nav}>
+			<ConsoleHero
+				eyebrow={copy.heading}
+				title={data?.fingerprint ?? id.replaceAll("_", " ")}
+				body={copy.subhead}
+				image="/console-radar.png"
+				imageAlt="Campaign investigation"
+				plateLabel="campaign investigation"
+				connected={copy.connected}
+				metrics={[
+					{ label: copy.metrics.repos, value: data?.repoCount ?? "-", tone: "ok" },
+					{ label: copy.metrics.hits, value: data?.totalCount ?? "-", tone: "danger" },
+					{ label: copy.metrics.authors, value: data?.authorCount ?? "-", tone: "neutral" },
+					{ label: copy.metrics.firstSeen, value: data?.firstSeen ?? "-", tone: "neutral" },
+				]}
+			/>
 
-				<header className="campaign-detail-hero">
-					<div className="campaign-detail-copy">
-						<div className="eyebrow mono">{copy.heading}</div>
-						<h1>{data?.fingerprint ?? id.replaceAll("_", " ")}</h1>
-						<p>{copy.subhead}</p>
-						<ul className="hero-spec campaign-spec">
-							{metrics.map((m) => (
-								<li key={m.label}>
-									<span>{m.label}</span>
-									<b style={{ color: toneColor[m.tone] }}>{m.value}</b>
-								</li>
+			{!data && !error && <ConsoleStatus>{copy.loading}</ConsoleStatus>}
+			{error && (
+				<ConsoleStatus danger>
+					{copy.error}: {error}
+				</ConsoleStatus>
+			)}
+
+			{data && (
+				<section className="console-section console-grid">
+					<div className="plate console-table">
+						<ConsoleSectionHead
+							title={copy.commitsTitle}
+							sub={copy.commitMeta.replace("{count}", String(data.commits.length))}
+						/>
+						{data.commits.length === 0 ? (
+							<div className="console-empty-line">{copy.emptyCommits}</div>
+						) : (
+							data.commits.map((commit) => (
+								<div className="console-tr" key={`${commit.repo}-${commit.sha}`} style={{ gridTemplateColumns: CGRID }}>
+									<div style={{ minWidth: 0 }}>
+										<b style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{commit.title}</b>
+										<small style={{ color: "var(--muted)", fontFamily: "var(--mono)" }}>{commit.repo}</small>
+									</div>
+									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{commit.author}</span>
+									<span className="console-pill" style={{ color: "var(--green)", background: "rgba(63,185,80,0.1)" }}>{commit.sha.slice(0, 7)}</span>
+									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)" }}>{commit.when}</span>
+								</div>
+							))
+						)}
+					</div>
+
+					<aside className="console-side-stack">
+						<div className="plate console-panel">
+							<ConsoleSectionHead title={copy.impactTitle} sub={copy.impactSubhead} />
+							{data.repoImpact.map((repo) => (
+								<div key={repo.repo} style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, padding: "12px 0", borderTop: "1px solid var(--border-muted)", fontFamily: "var(--mono)", fontSize: 12 }}>
+									<span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{repo.repo}</span>
+									<b style={{ color: "var(--danger)" }}>{repo.quarantined}</b>
+									<em style={{ color: "var(--green)", fontStyle: "normal" }}>{repo.cleared}</em>
+								</div>
 							))}
-						</ul>
-					</div>
-					<figure className="plate campaign-detail-plate">
-						<figcaption className="plate-bar">
-							<span>{copy.plateLabel}</span>
-							<span className="plate-coord">{copy.connected}</span>
-						</figcaption>
-						<div className="plate-art">
-							<Image
-								src="/org-wave-command.png"
-								alt="Campaign detail evidence wave"
-								width={1568}
-								height={882}
-								priority
-							/>
-							<span className="plate-scan" aria-hidden="true" />
-						</div>
-					</figure>
-				</header>
-
-				{!data && !error && (
-					<div className="campaign-status mono">{copy.loading}</div>
-				)}
-				{error && (
-					<div className="campaign-status danger mono">
-						{copy.error}: {error}
-					</div>
-				)}
-
-				{data && (
-					<section className="campaign-detail-grid section">
-						<div className="campaign-evidence-stream">
-							<header className="campaign-section-title">
-								<h2>{copy.commitsTitle}</h2>
-								<p>
-									{copy.commitMeta.replace(
-										"{count}",
-										String(data.commits.length),
-									)}
-								</p>
-							</header>
-							<div className="campaign-stream detail-stream">
-								{data.commits.length === 0 ? (
-									<div className="campaign-empty-line mono">
-										{copy.emptyCommits}
-									</div>
-								) : (
-									data.commits.map((commit) => (
-										<div
-											className="campaign-row detail-row"
-											key={`${commit.repo}-${commit.sha}`}
-										>
-											<div>
-												<b>{commit.title}</b>
-												<small>{commit.repo}</small>
-											</div>
-											<span>{commit.author}</span>
-											<em>{commit.sha.slice(0, 7)}</em>
-											<span>{commit.when}</span>
-										</div>
-									))
-								)}
-							</div>
-						</div>
-
-						<aside className="campaign-impact-panel plate">
-							<header className="campaign-section-title">
-								<h2>{copy.impactTitle}</h2>
-								<p>{copy.impactSubhead}</p>
-							</header>
-							<div className="campaign-impact-list">
-								{data.repoImpact.map((repo) => (
-									<div className="campaign-impact-row" key={repo.repo}>
-										<span>{repo.repo}</span>
-										<b>{repo.quarantined}</b>
-										<em>{repo.cleared}</em>
-									</div>
-								))}
-							</div>
-							<div className="campaign-author-block mono">
+							<div style={{ marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--border)", fontFamily: "var(--mono)", fontSize: 11, color: "var(--muted)" }}>
 								<span>{copy.authorsLabel}</span>
-								<strong>
+								<strong style={{ display: "block", marginTop: 6, color: "var(--fg)", fontWeight: 600, wordBreak: "break-word" }}>
 									{data.authors.length ? data.authors.join(", ") : "-"}
 								</strong>
 							</div>
-						</aside>
-					</section>
-				)}
-			</div>
-		</main>
+						</div>
+					</aside>
+				</section>
+			)}
+		</ConsoleShell>
 	);
 }

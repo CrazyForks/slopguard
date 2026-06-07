@@ -13,10 +13,8 @@ export const metadata: Metadata = {
 };
 
 const copy: ReposFullViewCopy = {
-	workspace: "SlopGuard",
-	workspaceSub: "Team workspace",
-	user: "blue-b",
-	entitlement: "Team plan",
+	kicker: "SlopGuard Team",
+	workspace: "Organization console",
 	connected: "Connected to GitHub",
 	nav: [
 		{ label: "Overview", href: "/org" },
@@ -31,17 +29,18 @@ const copy: ReposFullViewCopy = {
 		"SlopGuard is not installed on this account. Install it to enumerate your protected repos here.",
 	installCta: "Install on GitHub",
 	installHref: "/setup",
-	backHref: "/org",
-	backLabel: "Overview",
 	heroEyebrow: "ORG / REPOS",
 	heroTitle: "The repository scope for team operations, in one place.",
 	heroBody:
 		"Overview is the summary, Queue is what needs action, and Repos is the protection scope. Quarantine and cleared counts come from your GitHub installation.",
-	columns: {
-		repo: "Repository",
+	labels: {
+		installed: "Installed repos",
+		coverage: "Coverage",
 		quarantined: "Quarantined",
 		cleared: "Cleared",
+		coverageNote: "This is the team operations scope: which repos are protected and where quarantine/cleared activity happened.",
 	},
+	columns: { repo: "Repository", quarantined: "Quarantined", cleared: "Cleared" },
 };
 
 export default function OrgReposPage() {

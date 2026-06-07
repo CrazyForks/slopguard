@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { toneColor, riskBg, riskColor } from "./console-styles";
+import {
+	ConsoleHero,
+	ConsoleSectionHead,
+	ConsoleShell,
+	ConsoleStatus,
+} from "./ConsoleShell";
+import { riskBg, riskColor, toneColor } from "./console-styles";
 import type { SidebarItem } from "./ConsoleSidebar";
 
 type DashboardResponse =
@@ -41,10 +45,8 @@ type DashboardResponse =
 	| { installed: false; owner: string; reason: string };
 
 export type OrgDashboardConsoleCopy = {
+	kicker: string;
 	workspace: string;
-	workspaceSub: string;
-	user: string;
-	entitlement: string;
 	connected: string;
 	nav: SidebarItem[];
 	loading: string;
@@ -61,43 +63,40 @@ export type OrgDashboardConsoleCopy = {
 	queueSubtitle: string;
 	queueViewAll: string;
 	queueViewAllHref: string;
-	queueColumns: {
-		item: string;
-		repo: string;
-		score: string;
-		status: string;
-		age: string;
-	};
+	queueColumns: { item: string; repo: string; score: string; status: string; age: string };
 	reposTitle: string;
 	reposSubtitle: string;
 	reposViewAll: string;
 	reposViewAllHref: string;
-	reposColumns: { repo: string; quarantined: string; cleared: string };
 	campaignTitle: string;
 	campaignSubtitle: string;
 	campaignsEmpty: string;
+	campaignHref: string;
+	campaignCta: string;
 	policyTitle: string;
 	policyBody: string;
 	policyViewAll: string;
 	policyViewAllHref: string;
+	metricLabels: { open: string; repos: string; score: string; policy: string };
+	statusLabels: Record<"quarantined" | "cleared" | "watching", string>;
+	emptyQueue: string;
+	emptyRepos: string;
+	policyReadout: string;
 };
 
 type OrgQueueStatus = "quarantined" | "cleared" | "watching";
 
 function deriveStatus(labels: string[]): OrgQueueStatus {
-	if (labels.some((l) => l.toLowerCase().includes("quarantine")))
-		return "quarantined";
+	if (labels.some((l) => l.toLowerCase().includes("quarantine"))) return "quarantined";
 	if (labels.some((l) => l.toLowerCase().includes("cleared"))) return "cleared";
 	return "watching";
 }
-
 function deriveScore(labels: string[]): number {
 	const l = labels.map((x) => x.toLowerCase()).join(" ");
 	if (l.includes("quarantine")) return 78;
 	if (l.includes("cleared")) return 24;
 	return 46;
 }
-
 function formatAge(iso: string): string {
 	const ms = Date.now() - new Date(iso).getTime();
 	const m = Math.floor(ms / 60000);
@@ -107,7 +106,6 @@ function formatAge(iso: string): string {
 	if (h < 24) return `${h}h`;
 	return `${Math.floor(h / 24)}d`;
 }
-
 function extractRepo(url: string): string {
 	const m =
 		url.match(/repos\/([^/]+)\/([^/]+)\/(?:issues|pulls)\/\d+/) ??
@@ -115,14 +113,16 @@ function extractRepo(url: string): string {
 	return m ? `${m[1]}/${m[2]}` : "-";
 }
 
-export default function OrgDashboardConsole({
-	copy,
-}: {
-	copy: OrgDashboardConsoleCopy;
-}) {
+const statusTone: Record<OrgQueueStatus, "low" | "medium" | "high"> = {
+	quarantined: "high",
+	cleared: "low",
+	watching: "medium",
+};
+const QGRID = "minmax(160px,1fr) 130px 54px 104px 54px";
+
+export default function OrgDashboardConsole({ copy }: { copy: OrgDashboardConsoleCopy }) {
 	const [data, setData] = useState<DashboardResponse | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const pathname = usePathname() ?? "";
 
 	useEffect(() => {
 		(async () => {
@@ -140,37 +140,8 @@ export default function OrgDashboardConsole({
 	}, []);
 
 	const isLoading = data === null && error === null;
-	const notInstalled =
-		data !== null && "installed" in data && data.installed === false;
+	const notInstalled = data !== null && "installed" in data && data.installed === false;
 	const live = data && data.installed ? data : null;
-	const isKo = copy.nav.some((item) => item.href.startsWith("/ko/"));
-	const labels = isKo
-		? {
-				status: { quarantined: "격리됨", cleared: "정상화", watching: "관찰 중" } satisfies Record<OrgQueueStatus, string>,
-				emptyQueue: "최근 30일 안에 처리할 항목이 없습니다.",
-				emptyRepos: "아직 활동이 있는 레포가 없습니다.",
-				campaignCta: "캠페인 열기",
-				orgCommand: "조직 운영 콘솔",
-				metricOpen: "열린 검토",
-				metricRepos: "보호 레포",
-				metricScore: "평균 점수",
-				metricPolicy: "정책",
-				policyReadout: (coveredCount: number, totalCount: number) =>
-					`설치 레포 ${totalCount}개 중 ${coveredCount}개에서 정책 신호가 동작 중`,
-			}
-		: {
-				status: { quarantined: "Quarantined", cleared: "Cleared", watching: "Watching" } satisfies Record<OrgQueueStatus, string>,
-				emptyQueue: "No items in the last 30 days.",
-				emptyRepos: "No repos with activity yet.",
-				campaignCta: "Open campaigns",
-				orgCommand: "organization command",
-				metricOpen: "Open reviews",
-				metricRepos: "Protected repos",
-				metricScore: "Avg score",
-				metricPolicy: "Policy",
-				policyReadout: (coveredCount: number, totalCount: number) =>
-					`Enforcing on ${coveredCount} of ${totalCount} installed repos`,
-			};
 
 	const queue = useMemo(() => {
 		if (!live) return [];
@@ -181,9 +152,7 @@ export default function OrgDashboardConsole({
 			score: deriveScore(it.labels),
 			status: deriveStatus(it.labels),
 			age: formatAge(it.updatedAt),
-			href: it.url
-				.replace("api.github.com", "github.com")
-				.replace(/\/repos\//, "/"),
+			href: it.url.replace("api.github.com", "github.com").replace(/\/repos\//, "/"),
 		}));
 	}, [live]);
 
@@ -192,283 +161,131 @@ export default function OrgDashboardConsole({
 	const total = live?.repoCount ?? 0;
 	const covered = live?.repos.length ?? 0;
 	const pct = total > 0 ? Math.round((covered / total) * 100) : 0;
-
 	const avgScore = live?.recent.length
-		? Math.round(
-				live.recent.reduce((s, it) => s + deriveScore(it.labels), 0) /
-					live.recent.length,
-			)
+		? Math.round(live.recent.reduce((s, it) => s + deriveScore(it.labels), 0) / live.recent.length)
 		: 0;
-
-	const metrics = [
-		{
-			label: labels.metricOpen,
-			value: live ? String(live.open) : "-",
-			tone: live && live.open > 0 ? "warn" : "ok",
-		},
-		{
-			label: labels.metricRepos,
-			value: live ? String(covered) : "-",
-			tone: "ok",
-		},
-		{
-			label: labels.metricScore,
-			value: live ? String(avgScore) : "-",
-			tone: avgScore >= 60 ? "warn" : "ok",
-		},
-		{ label: labels.metricPolicy, value: live ? `${pct}%` : "-", tone: "neutral" },
-	] as const;
-
-	const campaignHref =
-		copy.nav.find((item) => item.href.includes("/campaigns"))?.href ??
-		"/campaigns";
-	const activeBase = copy.nav.reduce<string | null>((best, item) => {
-		const base = item.href.split("#")[0];
-		const match = pathname === base || pathname.startsWith(`${base}/`);
-		if (!match) return best;
-		return !best || base.length > best.length ? base : best;
-	}, null);
+	const ml = copy.metricLabels;
 
 	return (
-		<main className="org-experience">
-			<div className="grid-bg" aria-hidden="true" />
-			<div className="wide org-wide">
-				<nav className="org-console-nav" aria-label="Team console sections">
-					<div>
-						<span className="org-nav-kicker mono">SlopGuard Team</span>
-						<strong>{copy.workspace}</strong>
-					</div>
-					<div className="org-nav-links">
-						{copy.nav.map((item) => {
-							const base = item.href.split("#")[0];
-							const active = activeBase === base;
-							return (
-								<Link
-									key={item.label}
-									href={item.href}
-									className={active ? "active" : ""}
-								>
-									{item.label}
-									{item.external ? <span>↗</span> : null}
-								</Link>
-							);
-						})}
-					</div>
-				</nav>
-
-				<header className="org-hero-redesign">
-					<div className="org-hero-copy">
-						<div className="eyebrow mono">{copy.heroEyebrow}</div>
-						<h1>{copy.heroTitle}</h1>
-						<p>{copy.heroBody}</p>
-						<div className="hero-actions">
-							<Link href={copy.heroCtaHref} className="btn btn-primary btn-lg">
-								{copy.heroCta}
-							</Link>
-							<Link href={copy.queueViewAllHref} className="text-link">
-								{copy.queueViewAll}
-								<span>→</span>
-							</Link>
-						</div>
-						<ul className="hero-spec org-spec">
-							{metrics.map((m) => (
-								<li key={m.label}>
-									<span>{m.label}</span>
-									<b style={{ color: toneColor[m.tone] }}>{m.value}</b>
-								</li>
-							))}
-						</ul>
-					</div>
-					<figure className="plate org-hero-plate">
-						<figcaption className="plate-bar">
-							<span>{labels.orgCommand}</span>
-							<span className="plate-coord">{copy.connected}</span>
-						</figcaption>
-						<div className="plate-art">
-							<Image
-								src="/org-wave-command.png"
-								alt="Organization repository protection wave"
-								width={1568}
-								height={882}
-								priority
-							/>
-							<span className="plate-scan" aria-hidden="true" />
-						</div>
-					</figure>
-				</header>
-
-				{isLoading && <StatusPlate>{copy.loading}</StatusPlate>}
-				{error && <StatusPlate danger>{error}</StatusPlate>}
-				{notInstalled && (
-					<section className="plate org-empty">
-						<h2>{copy.emptyTitle}</h2>
-						<p>{copy.emptyBody}</p>
-						<Link href={copy.emptyCtaHref} className="btn btn-primary btn-sm">
-							{copy.emptyCta}
-						</Link>
-					</section>
-				)}
-
-				{!isLoading && !notInstalled && (
+		<ConsoleShell kicker={copy.kicker} workspace={copy.workspace} nav={copy.nav}>
+			<ConsoleHero
+				eyebrow={copy.heroEyebrow}
+				title={copy.heroTitle}
+				body={copy.heroBody}
+				image="/console-command.png"
+				imageAlt="Organization command overview"
+				plateLabel="organization command"
+				connected={copy.connected}
+				actions={
 					<>
-						<section className="org-live-grid section">
-							<div className="org-main-feed">
-								<SectionHeader
-									title={copy.queueTitle}
-									sub={copy.queueSubtitle}
-									href={copy.queueViewAllHref}
-									cta={copy.queueViewAll}
-								/>
-								<div className="plate org-review-plate">
-									<div className="org-table-head mono">
-										<span>{copy.queueColumns.item}</span>
-										<span>{copy.queueColumns.repo}</span>
-										<span>{copy.queueColumns.score}</span>
-										<span>{copy.queueColumns.status}</span>
-										<span>{copy.queueColumns.age}</span>
-									</div>
-									{queue.length === 0 ? (
-										<EmptyLine>{labels.emptyQueue}</EmptyLine>
-									) : (
-										queue.map((row) => (
-											<div className="org-table-row" key={row.key}>
-												<Link href={row.href} target="_blank" rel="noreferrer">
-													{row.item}
-												</Link>
-												<span>{row.repo}</span>
-												<b>{row.score}</b>
-												<span>{labels.status[row.status]}</span>
-												<span>{row.age}</span>
-											</div>
-										))
-									)}
-								</div>
-							</div>
-
-							<aside className="org-side-stack">
-								<MiniPanel
-									title={copy.reposTitle}
-									sub={copy.reposSubtitle}
-									href={copy.reposViewAllHref}
-									cta={copy.reposViewAll}
-								>
-									{reposRows.length === 0 ? (
-										<EmptyLine>{labels.emptyRepos}</EmptyLine>
-									) : (
-										reposRows.map((row) => (
-											<div className="org-mini-row" key={row.repo}>
-												<span>{row.repo}</span>
-												<b>{row.quarantined}</b>
-												<em>{row.cleared}</em>
-											</div>
-										))
-									)}
-								</MiniPanel>
-								<MiniPanel
-									title={copy.campaignTitle}
-									sub={copy.campaignSubtitle}
-									href={campaignHref}
-									cta={labels.campaignCta}
-								>
-									{campaigns.length === 0 ? (
-										<EmptyLine>{copy.campaignsEmpty}</EmptyLine>
-									) : (
-										campaigns.map((c) => (
-											<div className="org-campaign-row" key={c.name}>
-												<span>{c.fingerprint}</span>
-												<b
-													style={{
-														color: riskColor[c.risk],
-														background: riskBg[c.risk],
-													}}
-												>
-													{c.risk}
-												</b>
-											</div>
-										))
-									)}
-								</MiniPanel>
-								<MiniPanel
-									title={copy.policyTitle}
-									sub={copy.policyBody}
-									href={copy.policyViewAllHref}
-									cta={copy.policyViewAll}
-								>
-									<div className="org-policy-readout">
-										<b>{pct}%</b>
-										<span>{labels.policyReadout(covered, total)}</span>
-									</div>
-								</MiniPanel>
-							</aside>
-						</section>
-
+						<Link href={copy.heroCtaHref} className="btn btn-primary btn-lg">
+							{copy.heroCta}
+						</Link>
+						<Link href={copy.queueViewAllHref} className="text-link">
+							{copy.queueViewAll}
+							<span aria-hidden="true">→</span>
+						</Link>
 					</>
-				)}
-			</div>
-		</main>
-	);
-}
+				}
+				metrics={[
+					{ label: ml.open, value: live ? live.open : "-", tone: live && live.open > 0 ? "warn" : "ok" },
+					{ label: ml.repos, value: live ? covered : "-", tone: "ok" },
+					{ label: ml.score, value: live ? avgScore : "-", tone: avgScore >= 60 ? "warn" : "ok" },
+					{ label: ml.policy, value: live ? `${pct}%` : "-", tone: "neutral" },
+				]}
+			/>
 
-function StatusPlate({
-	children,
-	danger = false,
-}: {
-	children: React.ReactNode;
-	danger?: boolean;
-}) {
-	return (
-		<div className={danger ? "plate org-status danger" : "plate org-status"}>
-			{children}
-		</div>
-	);
-}
+			{isLoading && <ConsoleStatus>{copy.loading}</ConsoleStatus>}
+			{error && <ConsoleStatus danger>{error}</ConsoleStatus>}
+			{notInstalled && (
+				<div className="plate console-empty">
+					<h2>{copy.emptyTitle}</h2>
+					<p>{copy.emptyBody}</p>
+					<Link href={copy.emptyCtaHref} className="btn btn-primary btn-sm">
+						{copy.emptyCta}
+					</Link>
+				</div>
+			)}
 
-function SectionHeader({
-	title,
-	sub,
-	href,
-	cta,
-}: {
-	title: string;
-	sub: string;
-	href: string;
-	cta: string;
-}) {
-	return (
-		<header className="org-section-head">
-			<div>
-				<h2>{title}</h2>
-				<p>{sub}</p>
-			</div>
-			<Link href={href}>
-				{cta}
-				<span>→</span>
-			</Link>
-		</header>
-	);
-}
+			{!isLoading && !notInstalled && (
+				<section className="console-section console-grid">
+					<div className="plate console-table">
+						<ConsoleSectionHead
+							title={copy.queueTitle}
+							sub={copy.queueSubtitle}
+							href={copy.queueViewAllHref}
+							cta={copy.queueViewAll}
+						/>
+						<div className="console-th" style={{ gridTemplateColumns: QGRID }}>
+							<span>{copy.queueColumns.item}</span>
+							<span>{copy.queueColumns.repo}</span>
+							<span>{copy.queueColumns.score}</span>
+							<span>{copy.queueColumns.status}</span>
+							<span style={{ textAlign: "right" }}>{copy.queueColumns.age}</span>
+						</div>
+						{queue.length === 0 ? (
+							<div className="console-empty-line">{copy.emptyQueue}</div>
+						) : (
+							queue.map((row) => (
+								<div className="console-tr" key={row.key} style={{ gridTemplateColumns: QGRID }}>
+									<Link href={row.href} target="_blank" rel="noreferrer">
+										{row.item}
+									</Link>
+									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+										{row.repo}
+									</span>
+									<b style={{ fontFamily: "var(--mono)", color: row.score >= 70 ? "var(--danger)" : row.score >= 50 ? "var(--warn)" : "var(--green)" }}>
+										{row.score}
+									</b>
+									<span className="console-pill" style={{ color: riskColor[statusTone[row.status]], background: riskBg[statusTone[row.status]] }}>
+										{copy.statusLabels[row.status]}
+									</span>
+									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)", textAlign: "right" }}>{row.age}</span>
+								</div>
+							))
+						)}
+					</div>
 
-function MiniPanel({
-	title,
-	sub,
-	href,
-	cta,
-	children,
-}: {
-	title: string;
-	sub: string;
-	href: string;
-	cta: string;
-	children: React.ReactNode;
-}) {
-	return (
-		<section className="plate org-mini-panel">
-			<SectionHeader title={title} sub={sub} href={href} cta={cta} />
-			<div>{children}</div>
-		</section>
-	);
-}
+					<aside className="console-side-stack">
+						<div className="plate console-panel">
+							<ConsoleSectionHead title={copy.reposTitle} sub={copy.reposSubtitle} href={copy.reposViewAllHref} cta={copy.reposViewAll} />
+							{reposRows.length === 0 ? (
+								<div className="console-empty-line">{copy.emptyRepos}</div>
+							) : (
+								reposRows.map((row) => (
+									<div key={row.repo} style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, padding: "11px 0", borderTop: "1px solid var(--border-muted)", fontFamily: "var(--mono)", fontSize: 12 }}>
+										<span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{row.repo}</span>
+										<b style={{ color: "var(--danger)" }}>{row.quarantined}</b>
+										<em style={{ color: "var(--green)", fontStyle: "normal" }}>{row.cleared}</em>
+									</div>
+								))
+							)}
+						</div>
 
-function EmptyLine({ children }: { children: React.ReactNode }) {
-	return <div className="org-empty-line mono">{children}</div>;
+						<div className="plate console-panel">
+							<ConsoleSectionHead title={copy.campaignTitle} sub={copy.campaignSubtitle} href={copy.campaignHref} cta={copy.campaignCta} />
+							{campaigns.length === 0 ? (
+								<div className="console-empty-line">{copy.campaignsEmpty}</div>
+							) : (
+								campaigns.map((c) => (
+									<div key={c.name} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, alignItems: "center", padding: "11px 0", borderTop: "1px solid var(--border-muted)", fontFamily: "var(--mono)", fontSize: 12 }}>
+										<span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.fingerprint}</span>
+										<b className="console-pill" style={{ color: riskColor[c.risk], background: riskBg[c.risk] }}>{c.risk}</b>
+									</div>
+								))
+							)}
+						</div>
+
+						<div className="plate console-panel">
+							<ConsoleSectionHead title={copy.policyTitle} sub={copy.policyBody} href={copy.policyViewAllHref} cta={copy.policyViewAll} />
+							<div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 16, alignItems: "center", paddingTop: 12, borderTop: "1px solid var(--border-muted)" }}>
+								<b style={{ fontFamily: "var(--mono)", fontSize: 42, lineHeight: 1, letterSpacing: "-0.05em", color: toneColor.ok }}>{pct}%</b>
+								<span style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.45 }}>{copy.policyReadout}</span>
+							</div>
+						</div>
+					</aside>
+				</section>
+			)}
+		</ConsoleShell>
+	);
 }

@@ -13,10 +13,8 @@ export const metadata: Metadata = {
 };
 
 const copy: CampaignDetailCopy = {
-	workspace: "SlopGuard",
-	workspaceSub: "Pro 워크스페이스",
-	user: "blue-b",
-	entitlement: "Pro 플랜",
+	kicker: "SlopGuard Pro",
+	workspace: "캠페인 조사",
 	connected: "GitHub 연결됨",
 	nav: [
 		{ label: "개요", href: "/ko/org" },
@@ -26,22 +24,14 @@ const copy: CampaignDetailCopy = {
 		{ label: "알림", href: "/ko/alerts" },
 		{ label: "정책", href: "/ko/org/policy" },
 	],
-	backHref: "/ko/campaigns",
-	backLabel: "캠페인",
 	loading: "캠페인 증거 불러오는 중…",
 	error: "캠페인을 불러오지 못했습니다",
 	heading: "CAMPAIGN EVIDENCE",
 	subhead:
 		"/org가 팀 운영 현황이라면, 여기는 여러 레포에 반복된 하나의 패턴을 추적하는 캠페인 조사 화면입니다.",
-	metrics: {
-		repos: "레포",
-		hits: "히트",
-		authors: "작성자",
-		firstSeen: "첫 감지",
-	},
+	metrics: { repos: "레포", hits: "히트", authors: "작성자", firstSeen: "첫 감지" },
 	commitsTitle: "커밋 증거",
 	impactTitle: "레포 영향",
-	plateLabel: "campaign investigation",
 	commitMeta: "이 fingerprint에 연결된 커밋 {count}개",
 	emptyCommits: "아직 연결된 커밋 증거가 없습니다.",
 	impactSubhead: "캠페인 API에서 집계한 레포별 격리/정상화 영향입니다.",
@@ -56,11 +46,7 @@ export default async function CampaignDetailPage({
 	const { id } = await params;
 	return (
 		<>
-			<MarketingNav
-				lang="ko"
-				enHref={`/campaigns/${id}`}
-				koHref={`/ko/campaigns/${id}`}
-			/>
+			<MarketingNav lang="ko" enHref={`/campaigns/${id}`} koHref={`/ko/campaigns/${id}`} />
 			<PlanGate lang="ko" required="pro">
 				<CampaignDetailConsole id={id} copy={copy} />
 			</PlanGate>

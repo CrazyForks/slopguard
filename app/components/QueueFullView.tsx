@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import {
+	ConsoleHero,
+	ConsoleSectionHead,
+	ConsoleShell,
+	ConsoleStatus,
+} from "./ConsoleShell";
 import type { SidebarItem } from "./ConsoleSidebar";
+import { riskBg, riskColor } from "./console-styles";
 
 type RecentItem = {
 	number: number;
@@ -24,8 +30,7 @@ type DashboardResponse =
 type QueueStatus = "quarantined" | "cleared" | "watching";
 
 function deriveStatus(labels: string[]): QueueStatus {
-	if (labels.some((l) => l.toLowerCase().includes("quarantine")))
-		return "quarantined";
+	if (labels.some((l) => l.toLowerCase().includes("quarantine"))) return "quarantined";
 	if (labels.some((l) => l.toLowerCase().includes("cleared"))) return "cleared";
 	return "watching";
 }
@@ -51,11 +56,15 @@ function extractRepo(url: string): string {
 	return m ? `${m[1]}/${m[2]}` : "-";
 }
 
+const statusTone: Record<QueueStatus, "low" | "medium" | "high"> = {
+	quarantined: "high",
+	cleared: "low",
+	watching: "medium",
+};
+
 export type QueueFullViewCopy = {
+	kicker: string;
 	workspace: string;
-	workspaceSub: string;
-	user: string;
-	entitlement: string;
 	connected: string;
 	nav: SidebarItem[];
 	loading: string;
@@ -63,13 +72,13 @@ export type QueueFullViewCopy = {
 	queueEmpty: string;
 	installCta: string;
 	installHref: string;
-	backHref: string;
-	backLabel: string;
 	heroEyebrow: string;
 	heroTitle: string;
 	heroBody: string;
 	openLabel: string;
 	statusLabels: Record<QueueStatus, string>;
+	tableTitle: string;
+	tableSub: string;
 	columns: {
 		item: string;
 		repo: string;
@@ -80,10 +89,11 @@ export type QueueFullViewCopy = {
 	};
 };
 
+const GRID = "minmax(200px,1fr) 150px 60px 110px 110px 54px";
+
 export default function QueueFullView({ copy }: { copy: QueueFullViewCopy }) {
 	const [data, setData] = useState<DashboardResponse | null>(null);
 	const [error, setError] = useState<string | null>(null);
-	const pathname = usePathname() ?? "";
 
 	useEffect(() => {
 		(async () => {
@@ -101,8 +111,7 @@ export default function QueueFullView({ copy }: { copy: QueueFullViewCopy }) {
 	}, []);
 
 	const isLoading = data === null && error === null;
-	const notInstalled =
-		data !== null && "installed" in data && data.installed === false;
+	const notInstalled = data !== null && "installed" in data && data.installed === false;
 	const live = data && data.installed ? data : null;
 	const rows =
 		live?.recent.map((it) => ({
@@ -113,95 +122,90 @@ export default function QueueFullView({ copy }: { copy: QueueFullViewCopy }) {
 			status: deriveStatus(it.labels),
 			owner: it.author,
 			age: formatAge(it.updatedAt),
-			href: it.url
-				.replace("api.github.com", "github.com")
-				.replace(/\/repos\//, "/"),
+			href: it.url.replace("api.github.com", "github.com").replace(/\/repos\//, "/"),
 		})) ?? [];
-	const activeBase = copy.nav.reduce<string | null>((best, item) => {
-		const base = item.href.split("#")[0];
-		const match = pathname === base || pathname.startsWith(`${base}/`);
-		if (!match) return best;
-		return !best || base.length > best.length ? base : best;
-	}, null);
 
 	return (
-		<main className="org-experience queue-experience">
-			<div className="grid-bg" aria-hidden="true" />
-			<div className="wide org-wide">
-				<nav className="org-console-nav" aria-label="Team console sections">
-					<div>
-						<span className="org-nav-kicker mono">SlopGuard Team</span>
-						<strong>{copy.workspace}</strong>
-					</div>
-					<div className="org-nav-links">
-						{copy.nav.map((item) => {
-							const base = item.href.split("#")[0];
-							const active = activeBase === base;
-							return (
-								<Link
-									key={item.label}
-									href={item.href}
-									className={active ? "active" : ""}
-								>
-									{item.label}
-									{item.external ? <span>↗</span> : null}
-								</Link>
-							);
-						})}
-					</div>
-				</nav>
-				<header className="org-page-hero queue-hero">
-					<div>
-						<div className="eyebrow mono">{copy.heroEyebrow}</div>
-						<h1>{copy.heroTitle}</h1>
-						<p>{copy.heroBody}</p>
-					</div>
-					<div className="queue-readout mono">
-						<span>{copy.openLabel}</span>
-						<b>{rows.length}</b>
-						<em>{copy.connected}</em>
-					</div>
-				</header>
+		<ConsoleShell kicker={copy.kicker} workspace={copy.workspace} nav={copy.nav}>
+			<ConsoleHero
+				eyebrow={copy.heroEyebrow}
+				title={copy.heroTitle}
+				body={copy.heroBody}
+				image="/console-radar.png"
+				imageAlt="Action queue radar"
+				plateLabel="action queue"
+				connected={copy.connected}
+				metrics={[
+					{ label: copy.openLabel, value: rows.length, tone: rows.length > 0 ? "warn" : "ok" },
+				]}
+			/>
 
-				{isLoading && <div className="org-status mono">{copy.loading}</div>}
-				{error && <div className="org-status danger mono">{error}</div>}
-				{notInstalled && (
-					<div className="org-empty plate">
-						<p>{copy.empty}</p>
-						<Link href={copy.installHref} className="btn btn-primary btn-sm">
-							{copy.installCta}
-						</Link>
-					</div>
-				)}
-				{live && (
-					<section className="queue-stream section">
-						<div className="queue-stream-head mono">
+			{isLoading && <ConsoleStatus>{copy.loading}</ConsoleStatus>}
+			{error && <ConsoleStatus danger>{error}</ConsoleStatus>}
+			{notInstalled && (
+				<div className="plate console-empty">
+					<p>{copy.empty}</p>
+					<Link href={copy.installHref} className="btn btn-primary btn-sm">
+						{copy.installCta}
+					</Link>
+				</div>
+			)}
+
+			{live && (
+				<section className="console-section">
+					<ConsoleSectionHead title={copy.tableTitle} sub={copy.tableSub} />
+					<div className="plate console-table">
+						<div className="console-th" style={{ gridTemplateColumns: GRID }}>
 							<span>{copy.columns.item}</span>
 							<span>{copy.columns.repo}</span>
 							<span>{copy.columns.score}</span>
 							<span>{copy.columns.status}</span>
 							<span>{copy.columns.owner}</span>
-							<span>{copy.columns.age}</span>
+							<span style={{ textAlign: "right" }}>{copy.columns.age}</span>
 						</div>
 						{rows.length === 0 ? (
-							<div className="campaign-empty-line mono">{copy.queueEmpty}</div>
+							<div className="console-empty-line">{copy.queueEmpty}</div>
 						) : (
 							rows.map((row) => (
-								<div className="queue-row" key={row.key}>
+								<div className="console-tr" key={row.key} style={{ gridTemplateColumns: GRID }}>
 									<Link href={row.href} target="_blank" rel="noreferrer">
 										{row.item}
 									</Link>
-									<span>{row.repo}</span>
-									<b>{row.score}</b>
-									<em>{copy.statusLabels[row.status]}</em>
-									<span>{row.owner}</span>
-									<span>{row.age}</span>
+									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+										{row.repo}
+									</span>
+									<b
+										style={{
+											fontFamily: "var(--mono)",
+											color:
+												row.score >= 70
+													? "var(--danger)"
+													: row.score >= 50
+														? "var(--warn)"
+														: "var(--green)",
+										}}
+									>
+										{row.score}
+									</b>
+									<span
+										className="console-pill"
+										style={{
+											color: riskColor[statusTone[row.status]],
+											background: riskBg[statusTone[row.status]],
+										}}
+									>
+										{copy.statusLabels[row.status]}
+									</span>
+									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)" }}>{row.owner}</span>
+									<span style={{ fontFamily: "var(--mono)", color: "var(--muted)", textAlign: "right" }}>
+										{row.age}
+									</span>
 								</div>
 							))
 						)}
-					</section>
-				)}
-			</div>
-		</main>
+					</div>
+				</section>
+			)}
+		</ConsoleShell>
 	);
 }

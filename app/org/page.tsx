@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import MarketingNav from "@/app/components/MarketingNav";
 import OrgDashboardConsole, {
 	type OrgDashboardConsoleCopy,
@@ -5,17 +6,15 @@ import OrgDashboardConsole, {
 import PlanGate from "@/app/components/PlanGate";
 import SiteFooter from "@/app/components/SiteFooter";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "SlopGuard: Org Dashboard - Team",
 	description:
 		"Team plan console for org-wide quarantine queues, campaign clusters, and policy coverage.",
 };
 
 const copy: OrgDashboardConsoleCopy = {
-	workspace: "SlopGuard",
-	workspaceSub: "Team workspace",
-	user: "blue-b",
-	entitlement: "Team plan",
+	kicker: "SlopGuard Team",
+	workspace: "Organization console",
 	connected: "Connected to GitHub",
 	nav: [
 		{ label: "Overview", href: "/org" },
@@ -41,30 +40,26 @@ const copy: OrgDashboardConsoleCopy = {
 	queueSubtitle: "Recent 5 across every protected repo",
 	queueViewAll: "View all",
 	queueViewAllHref: "/org/queue",
-	queueColumns: {
-		item: "Item",
-		repo: "Repo",
-		score: "Score",
-		status: "Status",
-		age: "Age",
-	},
+	queueColumns: { item: "Item", repo: "Repo", score: "Score", status: "Status", age: "Age" },
 	reposTitle: "Repos",
 	reposSubtitle: "Installed repos with quarantine or clear activity",
 	reposViewAll: "View all",
 	reposViewAllHref: "/org/repos",
-	reposColumns: {
-		repo: "Repository",
-		quarantined: "Quarantined",
-		cleared: "Cleared",
-	},
 	campaignTitle: "Campaign radar",
 	campaignSubtitle: "Top clusters by commit prefix",
 	campaignsEmpty:
 		"No campaign clusters yet - once 3+ items share a prefix they show up here.",
+	campaignHref: "/campaigns",
+	campaignCta: "Open campaigns",
 	policyTitle: "Policy coverage",
 	policyBody: "Share of installed repos that are actively protected",
 	policyViewAll: "Open policy",
 	policyViewAllHref: "/org/policy",
+	metricLabels: { open: "Open reviews", repos: "Protected repos", score: "Avg score", policy: "Policy" },
+	statusLabels: { quarantined: "Quarantined", cleared: "Cleared", watching: "Watching" },
+	emptyQueue: "No items in the last 30 days.",
+	emptyRepos: "No repos with activity yet.",
+	policyReadout: "Share of installed repos with active policy signals",
 };
 
 export default function OrgDashboard() {
