@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import {
 	ConsoleHero,
 	ConsoleSectionHead,
@@ -124,11 +123,6 @@ export default function EnterpriseConsole({ copy }: { copy: EnterpriseConsoleCop
 				imageAlt="Enterprise governance"
 				plateLabel="compliance / audit / sso"
 				connected={copy.connected}
-				actions={
-					<Link href={copy.heroCtaHref} className="btn btn-primary btn-lg">
-						{copy.heroCta}
-					</Link>
-				}
 				metrics={metrics}
 			/>
 

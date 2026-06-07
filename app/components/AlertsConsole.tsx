@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { ConsoleHero, ConsoleShell } from "./ConsoleShell";
 import type { SidebarItem } from "./ConsoleSidebar";
 
@@ -302,11 +301,6 @@ export default function AlertsConsole({ copy }: { copy: AlertsConsoleCopy }) {
 				imageAlt="Alert routing fan-out"
 				plateLabel="routing fan-out"
 				connected={copy.connected}
-				actions={
-					<Link href={copy.heroCtaHref} className="btn btn-primary btn-lg">
-						{copy.heroCta}
-					</Link>
-				}
 				metrics={metrics}
 			/>
 			<div className="console-section">
