@@ -30,7 +30,9 @@ type StateResponse = {
 };
 
 function formatLastSync(iso: string): string {
-	const ms = Date.now() - new Date(iso).getTime();
+	const t = new Date(iso).getTime();
+	if (!t || t <= 0 || Number.isNaN(t)) return "—";
+	const ms = Date.now() - t;
 	const m = Math.floor(ms / 60000);
 	if (m < 1) return "now";
 	if (m < 60) return `${m}m ago`;

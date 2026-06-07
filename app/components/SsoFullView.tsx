@@ -64,8 +64,10 @@ export type SsoFullViewCopy = {
 };
 
 function relativeTime(iso?: string): string {
-	if (!iso) return "-";
-	const ms = Date.now() - new Date(iso).getTime();
+	if (!iso) return "—";
+	const t = new Date(iso).getTime();
+	if (!t || t <= 0 || Number.isNaN(t)) return "—";
+	const ms = Date.now() - t;
 	const m = Math.floor(ms / 60000);
 	if (m < 1) return "just now";
 	if (m < 60) return `${m}m ago`;
