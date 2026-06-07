@@ -89,7 +89,7 @@ export type QueueFullViewCopy = {
 	};
 };
 
-const GRID = "minmax(200px,1fr) 150px 60px 110px 110px 54px";
+const GRID = "minmax(0,1fr) 140px 56px 100px 92px 46px";
 
 export default function QueueFullView({ copy }: { copy: QueueFullViewCopy }) {
 	const [data, setData] = useState<DashboardResponse | null>(null);

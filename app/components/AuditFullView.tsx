@@ -48,7 +48,7 @@ export type AuditFullViewCopy = {
 	exportedNote: string;
 };
 
-const GRID = "150px 130px minmax(140px,1fr) minmax(120px,1fr) 90px";
+const GRID = "130px 120px minmax(0,1.2fr) minmax(0,1fr) 84px";
 
 export default function AuditFullView({ copy }: { copy: AuditFullViewCopy }) {
 	const [data, setData] = useState<StateResponse | null>(null);

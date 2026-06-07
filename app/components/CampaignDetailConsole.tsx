@@ -40,7 +40,7 @@ export type CampaignDetailCopy = {
 	authorsLabel: string;
 };
 
-const CGRID = "minmax(180px,1fr) 130px 80px 110px";
+const CGRID = "minmax(0,1fr) 120px 74px 100px";
 
 export default function CampaignDetailConsole({ id, copy }: { id: string; copy: CampaignDetailCopy }) {
 	const [data, setData] = useState<Detail | null>(null);

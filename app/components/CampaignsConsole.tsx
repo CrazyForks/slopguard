@@ -52,7 +52,7 @@ export type CampaignsConsoleCopy = {
 	streamCols: { fingerprint: string; scope: string; risk: string };
 };
 
-const GRID = "minmax(180px,1fr) 160px 80px 120px";
+const GRID = "minmax(0,1fr) 150px 70px 116px";
 
 export default function CampaignsConsole({ copy }: { copy: CampaignsConsoleCopy }) {
 	const [data, setData] = useState<ListResponse | null>(null);

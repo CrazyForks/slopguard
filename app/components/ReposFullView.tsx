@@ -104,7 +104,7 @@ export default function ReposFullView({ copy }: { copy: ReposFullViewCopy }) {
 				<section className="console-section console-grid">
 					<div className="plate console-table">
 						<ConsoleSectionHead title={copy.columns.repo} sub={l.coverageNote} />
-						<div className="console-th" style={{ gridTemplateColumns: "minmax(200px,1fr) 110px 110px" }}>
+						<div className="console-th" style={{ gridTemplateColumns: "minmax(0,1fr) 110px 110px" }}>
 							<span>{copy.columns.repo}</span>
 							<span style={{ textAlign: "right" }}>{copy.columns.quarantined}</span>
 							<span style={{ textAlign: "right" }}>{copy.columns.cleared}</span>
@@ -116,7 +116,7 @@ export default function ReposFullView({ copy }: { copy: ReposFullViewCopy }) {
 								<div
 									className="console-tr"
 									key={repo.repo}
-									style={{ gridTemplateColumns: "minmax(200px,1fr) 110px 110px" }}
+									style={{ gridTemplateColumns: "minmax(0,1fr) 110px 110px" }}
 								>
 									<span style={{ fontFamily: "var(--mono)" }}>{repo.repo}</span>
 									<b style={{ fontFamily: "var(--mono)", color: toneColor.danger, textAlign: "right" }}>
