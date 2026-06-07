@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const copy: CampaignsConsoleCopy = {
 	kicker: "SlopGuard Pro",
-	workspace: "캠페인 레이더",
+	workspace: "캠페인",
 	connected: "GitHub 연결됨",
 	nav: [],
 	detailBase: "/ko/campaigns",

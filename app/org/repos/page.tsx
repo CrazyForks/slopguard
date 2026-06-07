@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const copy: ReposFullViewCopy = {
 	kicker: "SlopGuard Team",
-	workspace: "Organization console",
+	workspace: "Org dashboard",
 	connected: "Connected to GitHub",
 	nav: [
 		{ label: "Overview", href: "/org" },

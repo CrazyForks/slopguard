@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const copy: IntegrationsFullViewCopy = {
 	kicker: "SlopGuard Enterprise",
-	workspace: "거버넌스 콘솔",
+	workspace: "엔터프라이즈",
 	connectedLabel: "GitHub 연결됨",
 	nav: [
 		{ label: "개요", href: "/ko/enterprise" },

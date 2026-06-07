@@ -20,7 +20,7 @@ const nav = [
 
 const copy: EnterpriseConsoleCopy = {
 	kicker: "SlopGuard Enterprise",
-	workspace: "거버넌스 콘솔",
+	workspace: "엔터프라이즈",
 	connected: "GitHub 연결됨",
 	nav,
 	loading: "불러오는 중…",

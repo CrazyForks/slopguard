@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const copy: AlertsConsoleCopy = {
 	kicker: "SlopGuard Team",
-	workspace: "알림 라우팅",
+	workspace: "알림",
 	connected: "GitHub 연결됨",
 	nav: [],
 	loading: "불러오는 중…",

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const copy: SsoFullViewCopy = {
 	kicker: "SlopGuard Enterprise",
-	workspace: "Governance console",
+	workspace: "Enterprise",
 	connected: "Connected to GitHub",
 	nav: [
 		{ label: "Overview", href: "/enterprise" },

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 const copy: AuditFullViewCopy = {
 	kicker: "SlopGuard Enterprise",
-	workspace: "거버넌스 콘솔",
+	workspace: "엔터프라이즈",
 	connected: "GitHub 연결됨",
 	nav: [
 		{ label: "개요", href: "/ko/enterprise" },
