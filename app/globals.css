@@ -4087,15 +4087,14 @@ footer.site.footer-app {
 }
 
 /* ── Masthead (compact, data-first command band) ──────────────────── */
+/* Editorial command band (account language): no boxed card, just a hairline
+   base, a left glow, and the per-console art masked to the right. */
 .console-masthead {
 	position: relative;
 	overflow: hidden;
-	border: 1px solid var(--border-muted);
-	border-radius: 16px;
-	background: #0b0f14;
-	padding: 22px clamp(20px, 3vw, 32px);
+	padding: 14px 0 26px;
 	margin-bottom: 30px;
-	box-shadow: 0 24px 60px -48px rgba(0, 0, 0, 0.85);
+	border-bottom: 1px solid var(--border-muted);
 }
 .console-masthead-bg {
 	position: absolute;
@@ -4117,9 +4116,13 @@ footer.site.footer-app {
 .console-masthead::after {
 	content: "";
 	position: absolute;
-	inset: 0;
+	top: -150px;
+	left: 10%;
+	width: 540px;
+	height: 340px;
+	transform: translateX(-50%);
 	z-index: 1;
-	background: linear-gradient(180deg, rgba(11, 15, 20, 0.34) 0%, rgba(11, 15, 20, 0.82) 100%);
+	background: radial-gradient(closest-side, rgba(63, 185, 80, 0.1), transparent 72%);
 	pointer-events: none;
 }
 .console-masthead-scan {

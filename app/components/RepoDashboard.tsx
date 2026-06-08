@@ -141,7 +141,7 @@ export default async function RepoDashboard({
 						style={{ padding: "16px 20px", borderLeft: "3px solid var(--danger)" }}
 					>
 						<p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55 }}>
-							{t.cantLoad} {error} — {t.installNote}{" "}
+							{t.cantLoad} {t.installNote}{" "}
 							<Link href={installHref}>{t.installApp}</Link>
 						</p>
 					</div>
