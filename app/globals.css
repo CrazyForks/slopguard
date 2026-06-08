@@ -5180,7 +5180,9 @@ footer.site.footer-app {
 	margin: 11px 0 0;
 	max-width: 30ch;
 }
-@media (max-width: 860px) {
+/* Collapse the rail before the activity table's own 980px breakpoint so the
+   4-col table never sits in a squeezed right column (860-980px band). */
+@media (max-width: 1000px) {
 	.acct-sec {
 		grid-template-columns: 1fr;
 		gap: 18px;
