@@ -8,7 +8,7 @@ import SiteFooter from "@/app/components/SiteFooter";
 
 export const metadata: Metadata = {
 	title: "SlopGuard: Enterprise - SSO, Audit, Compliance",
-	description: "Enterprise plan console: SAML SSO, audit log, integrations, support contract.",
+	description: "Enterprise plan console: SAML SSO, audit log, integrations.",
 };
 
 const nav = [
@@ -27,18 +27,15 @@ const copy: EnterpriseConsoleCopy = {
 	heroEyebrow: "ENTERPRISE / COMPLIANCE",
 	heroTitle: "Run SlopGuard with the controls your security team expects.",
 	heroBody:
-		"SAML SSO, full audit trail, custom integrations, and a 24/7 support contract. The audit log records every config change, channel send, and export.",
+		"SAML SSO, a full audit trail, and integration requests. The audit log records every config change, channel send, and export in real time.",
 	heroCta: "Open audit log",
 	heroCtaHref: "/enterprise/audit",
 	metricLabels: { audit: "Audit entries", integrations: "Integrations", ssoProvider: "SSO provider", ssoStatus: "SSO status" },
 	ssoTitle: "SAML SSO",
 	ssoSubtitle: "Identity is governed by your IdP, not by SlopGuard.",
 	ssoLabels: { provider: "Provider", status: "Status", lastSync: "Last sync" },
-	supportTitle: "Support",
-	supportSubtitle: "Dedicated channel for P1 incidents and security reviews.",
-	supportSla: "P1 SLA",
-	supportHours: "Hours",
-	supportAccountMgr: "Account mgr",
+	auditEmpty: "No audit entries yet.",
+	integrationsEmpty: "No connected or requested integrations.",
 	auditTitle: "Audit log",
 	auditSubtitle: "Every config change, channel send, and export",
 	auditViewAll: "Open full log",

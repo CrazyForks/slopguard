@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
 	ConsoleHero,
@@ -55,11 +56,8 @@ export type EnterpriseConsoleCopy = {
 	ssoTitle: string;
 	ssoSubtitle: string;
 	ssoLabels: { provider: string; status: string; lastSync: string };
-	supportTitle: string;
-	supportSubtitle: string;
-	supportSla: string;
-	supportHours: string;
-	supportAccountMgr: string;
+	auditEmpty: string;
+	integrationsEmpty: string;
 	auditTitle: string;
 	auditSubtitle: string;
 	auditViewAll: string;
@@ -150,18 +148,45 @@ export default function EnterpriseConsole({ copy }: { copy: EnterpriseConsoleCop
 						</div>
 						<aside className="console-overview-rail">
 							<div className="console-rail-block">
-								<header className="console-block-head"><h3>{copy.supportTitle}</h3></header>
-								<p style={{ color: "var(--muted)", fontSize: 12, margin: "0 0 12px", lineHeight: 1.5 }}>{copy.supportSubtitle}</p>
-								{[
-									{ label: copy.supportSla, value: "1h P1" },
-									{ label: copy.supportHours, value: "24 / 7" },
-									{ label: copy.supportAccountMgr, value: "assigned" },
-								].map((row) => (
-									<div key={row.label} className="console-rail-row">
-										<span>{row.label}</span>
-										<b style={{ color: "var(--fg)" }}>{row.value}</b>
-									</div>
-								))}
+								<header className="console-block-head">
+									<h3>{copy.auditTitle}</h3>
+									<Link href={copy.auditViewAllHref} className="console-block-link">
+										{copy.auditViewAll} <span aria-hidden="true">→</span>
+									</Link>
+								</header>
+								{!data || data.audit.length === 0 ? (
+									<div className="console-empty-line">{copy.auditEmpty}</div>
+								) : (
+									data.audit.slice(0, 4).map((a) => (
+										<div key={a.id} className="console-rail-row">
+											<span>{a.action}</span>
+											<em style={{ color: "var(--muted)", fontFamily: "var(--mono)", fontSize: 11 }}>
+												{a.when.slice(0, 10)}
+											</em>
+										</div>
+									))
+								)}
+							</div>
+
+							<div className="console-rail-block">
+								<header className="console-block-head">
+									<h3>{copy.integrationsTitle}</h3>
+									<Link href={copy.integrationsViewAllHref} className="console-block-link">
+										{copy.integrationsViewAll} <span aria-hidden="true">→</span>
+									</Link>
+								</header>
+								{!data || data.integrations.length === 0 ? (
+									<div className="console-empty-line">{copy.integrationsEmpty}</div>
+								) : (
+									data.integrations.map((it) => (
+										<div key={it.name} className="console-rail-row">
+											<span>{it.name}</span>
+											<b style={{ color: it.status === "connected" ? "var(--green)" : "var(--muted)" }}>
+												{it.status}
+											</b>
+										</div>
+									))
+								)}
 							</div>
 						</aside>
 					</div>
