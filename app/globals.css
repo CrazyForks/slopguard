@@ -4011,37 +4011,18 @@ footer.site.footer-app {
 	z-index: 1;
 	max-width: 1200px;
 }
+/* Flush sticky section-tab strip (no card chrome; identity lives in ConsoleHero) */
 .console-nav {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-start;
 	align-items: center;
 	gap: 18px;
-	padding: 12px 16px;
-	border: 1px solid var(--border-muted);
-	background:
-		linear-gradient(180deg, rgba(22, 27, 34, 0.78), rgba(13, 17, 23, 0.64)),
-		rgba(13, 17, 23, 0.74);
-	backdrop-filter: blur(14px);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-	border-radius: 14px;
-	margin-bottom: 40px;
+	padding: 10px 0;
+	margin-bottom: 8px;
 	position: sticky;
-	top: 12px;
+	top: 0;
 	z-index: 20;
-}
-.console-nav-brand strong {
-	display: block;
-	font-size: 18px;
-	letter-spacing: -0.03em;
-	line-height: 1.1;
-}
-.console-nav-kicker {
-	display: block;
-	font-size: 10px;
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
-	color: var(--green);
-	margin-bottom: 4px;
+	background: linear-gradient(180deg, var(--bg) 70%, transparent);
 }
 .console-nav-links {
 	display: flex;

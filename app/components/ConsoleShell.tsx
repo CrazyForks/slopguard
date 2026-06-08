@@ -13,13 +13,12 @@ import { toneColor } from "./console-styles";
  * reads as the same product.
  */
 export function ConsoleShell({
-	kicker,
-	workspace,
 	nav,
 	children,
 }: {
-	kicker: string;
-	workspace: string;
+	/** Accepted for call-site compatibility; identity is shown by ConsoleHero. */
+	kicker?: string;
+	workspace?: string;
 	nav: SidebarItem[];
 	children: React.ReactNode;
 }) {
@@ -36,12 +35,8 @@ export function ConsoleShell({
 		<main className="console-experience">
 			<div className="grid-bg" aria-hidden="true" />
 			<div className="wide console-wide">
-				<nav className="console-nav" aria-label="Console sections">
-					<div className="console-nav-brand">
-						<span className="console-nav-kicker mono">{kicker}</span>
-						<strong>{workspace}</strong>
-					</div>
-					{nav.length > 0 ? (
+				{nav.length > 0 ? (
+					<nav className="console-nav" aria-label="Console sections">
 						<div className="console-nav-links">
 							{nav.map((item) => {
 								const base = item.href.split("#")[0];
@@ -57,8 +52,8 @@ export function ConsoleShell({
 								);
 							})}
 						</div>
-					) : null}
-				</nav>
+					</nav>
+				) : null}
 				{children}
 			</div>
 		</main>
