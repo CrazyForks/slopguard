@@ -5133,6 +5133,64 @@ footer.site.footer-app {
 	}
 }
 
+/* Account body - two-column "settings console" layout: label rail + content */
+.acct-body {
+	margin-top: 2px;
+}
+.acct-sec {
+	display: grid;
+	grid-template-columns: 212px minmax(0, 1fr);
+	gap: 56px;
+	align-items: start;
+	padding: 40px 0;
+	border-top: 1px solid var(--border-muted);
+}
+.acct-body > .acct-sec:first-child {
+	border-top: 0;
+}
+.acct-sec-tag {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-family: var(--mono);
+	margin-bottom: 13px;
+}
+.acct-sec-tag .n {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--green);
+}
+.acct-sec-tag .k {
+	font-size: 10.5px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+.acct-sec-title {
+	font-size: 19px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	line-height: 1.25;
+	margin: 0;
+}
+.acct-sec-sub {
+	color: var(--muted);
+	font-size: 12.5px;
+	line-height: 1.55;
+	margin: 11px 0 0;
+	max-width: 30ch;
+}
+@media (max-width: 860px) {
+	.acct-sec {
+		grid-template-columns: 1fr;
+		gap: 18px;
+		padding: 30px 0;
+	}
+	.acct-sec-sub {
+		max-width: none;
+	}
+}
+
 /* Plan band - editorial row, not a filled card */
 .acct-band {
 	display: flex;
@@ -5140,9 +5198,6 @@ footer.site.footer-app {
 	align-items: flex-end;
 	gap: 24px;
 	flex-wrap: wrap;
-	padding: 22px 2px 24px;
-	border-top: 1px solid var(--border-muted);
-	border-bottom: 1px solid var(--border-muted);
 }
 .acct-band .eyebrow {
 	margin: 0 0 9px;

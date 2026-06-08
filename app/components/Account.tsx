@@ -15,7 +15,6 @@ import {
 import MarketingNav from "./MarketingNav";
 import SiteFooter from "@/app/components/SiteFooter";
 import PublicRepoLookup from "./PublicRepoLookup";
-import SectionHead from "./SectionHead";
 import { toneColor } from "./console-styles";
 
 const T = {
@@ -267,8 +266,16 @@ export default async function Account({
 				</section>
 			)}
 
-			<section className="wide section">
-				<SectionHead no="01" kicker={t.yourPlan} title={t.planBig} />
+			<div className="wide acct-body">
+			<section className="acct-sec">
+				<div className="acct-sec-rail">
+					<div className="acct-sec-tag">
+						<span className="n">01</span>
+						<span className="k">{t.yourPlan}</span>
+					</div>
+					<h2 className="acct-sec-title">{t.planBig}</h2>
+				</div>
+				<div className="acct-sec-main">
 				<div className="acct-band">
 					<div>
 						<div className="acct-band-plan">
@@ -293,10 +300,17 @@ export default async function Account({
 						</Link>
 					</div>
 				</div>
+				</div>
 			</section>
-
-			<section className="wide section">
-				<SectionHead no="02" kicker={t.reposTitle} title={t.reposBig} />
+			<section className="acct-sec">
+				<div className="acct-sec-rail">
+					<div className="acct-sec-tag">
+						<span className="n">02</span>
+						<span className="k">{t.reposTitle}</span>
+					</div>
+					<h2 className="acct-sec-title">{t.reposBig}</h2>
+				</div>
+				<div className="acct-sec-main">
 				{repos.length > 0 ? (
 					<div className="acct-list">
 						{repos.map((r) => (
@@ -317,16 +331,19 @@ export default async function Account({
 				<a className="btn btn-ghost btn-sm" href={INSTALL_URL} style={{ marginTop: 16 }}>
 					{t.manageRepos}
 				</a>
+				</div>
 			</section>
-
 			{canOrg && orgStats && (
-				<section className="wide section">
-					<SectionHead
-						no="03"
-						kicker={t.activityTitle}
-						title={t.activityBig}
-						sub={t.activitySub}
-					/>
+				<section className="acct-sec">
+					<div className="acct-sec-rail">
+						<div className="acct-sec-tag">
+							<span className="n">03</span>
+							<span className="k">{t.activityTitle}</span>
+						</div>
+						<h2 className="acct-sec-title">{t.activityBig}</h2>
+						<p className="acct-sec-sub">{t.activitySub}</p>
+					</div>
+					<div className="acct-sec-main">
 					<div className="plate console-table">
 						<div className="console-th" style={{ gridTemplateColumns: ACT_GRID }}>
 								<span>{t.colItem}</span>
@@ -358,15 +375,25 @@ export default async function Account({
 							))
 						)}
 					</div>
+					</div>
 				</section>
 			)}
-
-			<section className="wide section">
-				<SectionHead no={canOrg && orgStats ? "04" : "03"} kicker={t.lookupTitle} title={t.lookupBig} sub={t.lookupSub} />
+			<section className="acct-sec">
+				<div className="acct-sec-rail">
+					<div className="acct-sec-tag">
+						<span className="n">{canOrg && orgStats ? "04" : "03"}</span>
+						<span className="k">{t.lookupTitle}</span>
+					</div>
+					<h2 className="acct-sec-title">{t.lookupBig}</h2>
+					<p className="acct-sec-sub">{t.lookupSub}</p>
+				</div>
+				<div className="acct-sec-main">
 				<div className="plate plate-pad">
 					<PublicRepoLookup lang={lang} />
 				</div>
+				</div>
 			</section>
+			</div>
 
 			<SiteFooter lang={lang} />
 		</>
