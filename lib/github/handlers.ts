@@ -147,7 +147,6 @@ async function review(
 	if (plan.networkIntel && policy.share_intel !== false) {
 		const sig = await getNetworkSignal(
 			result.provenance.promptFingerprint,
-			input.author,
 		).catch(() => null);
 		if (sig && sig.delta !== 0) {
 			const adjusted = Math.max(0, Math.min(100, result.score + sig.delta));
@@ -231,7 +230,6 @@ async function review(
 			repo,
 			input.number,
 			result.provenance.promptFingerprint,
-			input.author,
 		).catch(() => {});
 	}
 	// Long-term trend (hosting-only): count this quarantine in the owner's daily

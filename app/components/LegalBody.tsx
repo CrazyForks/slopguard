@@ -39,6 +39,7 @@ const PRIVACY_EN: Copy = {
 			h: "3. Third-party processing (sub-processors)",
 			body: [
 				"LLM providers: to score a contribution, the text of the PR or issue may be sent to a large language model provider (for example Anthropic, OpenAI, or xAI, per your configured order) for analysis. Only the content needed to score is sent.",
+				"Network intelligence: on a quarantine we add a one-way SHA-256 hash of the prompt fingerprint and a hashed owner identifier to a shared store, so the hosted service can warn when the same slop pattern spreads across installations. No repository name, PR/issue content, or PR number is stored. Opt out with `share_intel: false` in your policy file.",
 				"GitHub: the platform the app runs on; we act on the permissions you grant at install (read PRs/issues, write labels and comments).",
 				"Polar: payments, invoicing, and tax as Merchant of Record.",
 				"Upstash: stores console and entitlement state. Cloudtype: hosts the application.",
@@ -103,6 +104,7 @@ const PRIVACY_KO: Copy = {
 			h: "3. 제3자 처리(수탁사)",
 			body: [
 				"LLM 제공자: 기여물을 점수화하기 위해 PR이나 이슈의 텍스트가 분석을 위해 대규모 언어 모델 제공자(예: Anthropic, OpenAI, xAI, 설정한 순서에 따라)로 전송될 수 있습니다. 점수화에 필요한 내용만 전송됩니다.",
+				"네트워크 인텔리전스: 격리 시 프롬프트 지문의 단방향 SHA-256 해시와 해시된 소유자 식별자를 공유 저장소에 추가해, 같은 슬롭 패턴이 여러 설치에 퍼질 때 경고합니다. 레포 이름, PR/이슈 내용, PR 번호는 저장하지 않습니다. 정책 파일에 share_intel: false로 옥아웃할 수 있습니다.",
 				"GitHub: 앱이 동작하는 플랫폼이며, 설치 시 부여한 권한(PR/이슈 읽기, 라벨·코멘트 쓰기) 범위에서만 동작합니다.",
 				"Polar: 판매대행사로서 결제, 인보이스, 세금 처리.",
 				"Upstash: 콘솔과 권한 상태 저장. Cloudtype: 애플리케이션 호스팅.",

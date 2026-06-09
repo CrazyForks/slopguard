@@ -6,8 +6,8 @@
 // a paid, hosted-only feature and not part of the source-available core).
 //
 // What it does:
-//   1. Global slop intelligence: a prompt fingerprint or author seen as slop
-//      across MANY owners' repos is more likely slop on yours too. We boost the
+//   1. Global slop intelligence: a prompt fingerprint seen as slop across MANY
+//      owners' repos is more likely slop on yours too. We boost the
 //      score the first time such a fingerprint hits your repo (collective herd
 //      immunity).
 //   2. Collective feedback: when maintainers run /slop approve|reject, that
@@ -15,9 +15,9 @@
 //      keeps getting cleared as a false positive is suppressed network-wide.
 //
 // Privacy: we store a one-way SHA-256 hash of the (already non-reversible)
-// prompt fingerprint, the public GitHub author handle, and counters only. No PR
-// or issue content is ever stored. Owners can opt out with `share_intel: false`
-// in .github/SLOP_POLICY.yml.
+// prompt fingerprint, a hashed owner identifier, and counters only. No PR or
+// issue content, repository name, or PR number is ever stored. Owners can opt
+// out with `share_intel: false` in .github/SLOP_POLICY.yml.
 
 import { createHash } from "node:crypto";
 import { Redis } from "@upstash/redis";
@@ -66,6 +66,15 @@ function ownerHash(owner: string): string {
 		.digest("hex")
 		.slice(0, 16);
 }
+// Hash the item identity too, so NO plaintext repo name or PR number (which may
+// be private) is ever written to the shared cross-customer store.
+function itemKey(owner: string, repo: string, n: number): string {
+	const h = createHash("sha256")
+		.update(`${owner.toLowerCase()}/${repo.toLowerCase()}#${n}`)
+		.digest("hex")
+		.slice(0, 24);
+	return `ni:item:${h}`;
+}
 
 export type NetworkSignal = {
 	/** distinct owners (repos' orgs) where this fingerprint was seen as slop */
@@ -88,13 +97,12 @@ const EMPTY: NetworkSignal = {
 };
 
 /**
- * Read the network's view of this fingerprint/author BEFORE recording the
+ * Read the network's view of this fingerprint BEFORE recording the
  * current sighting, so the counts reflect OTHER installations, not this one.
  * Best-effort: any error returns a no-op signal so scoring never breaks.
  */
 export async function getNetworkSignal(
 	fingerprint: string,
-	author: string,
 ): Promise<NetworkSignal> {
 	const r = redis();
 	if (!r || !fingerprint) return EMPTY;
@@ -122,14 +130,16 @@ export async function getNetworkSignal(
 			};
 		}
 
-		// Boost: same fingerprint flagged across several distinct owners.
+		// Boost: same fingerprint flagged by several distinct owners in the network.
+		// (networkRepos is a distinct-OWNER count; it may include this owner from a
+		// prior sighting, so the wording says "owners", not "other repositories".)
 		if (networkRepos >= NETWORK_REPO_THRESHOLD) {
 			return {
 				networkRepos,
 				confirmed,
 				cleared,
 				delta: NETWORK_BOOST,
-				reason: `Network: this prompt fingerprint was flagged across ${networkRepos} other repositories in the SlopGuard network`,
+				reason: `Network: this prompt fingerprint has been flagged by ${networkRepos} owners in the SlopGuard network`,
 			};
 		}
 		return { networkRepos, confirmed, cleared, delta: 0, reason: null };
@@ -139,7 +149,7 @@ export async function getNetworkSignal(
 }
 
 /**
- * Record that `owner` saw `fingerprint` from `author` as slop. Adds the owner to
+ * Record that `owner` saw `fingerprint` as slop. Adds the owner to
  * the fingerprint's distinct-owner HyperLogLog and stores a short item->fp map
  * so a later /slop command can attribute the maintainer's outcome. Best-effort.
  */
@@ -148,25 +158,22 @@ export async function recordSighting(
 	repo: string,
 	itemNumber: number,
 	fingerprint: string,
-	author: string,
 ): Promise<void> {
 	const r = redis();
 	if (!r || !fingerprint) return;
 	try {
 		const fp = fpHash(fingerprint);
 		const oh = ownerHash(owner);
-		const now = Date.now();
 		await guard(
 			Promise.all([
 				r.pfadd(`ni:fpo:${fp}`, oh),
 				r.hincrby(`ni:fp:${fp}`, "sightings", 1),
-				r.hset(`ni:fp:${fp}`, { ts: now, author: author || "" }),
+				r.hset(`ni:fp:${fp}`, { ts: Date.now() }),
 				r.expire(`ni:fp:${fp}`, TTL_S),
 				r.expire(`ni:fpo:${fp}`, TTL_S),
-				// item -> fingerprint, so /slop approve|reject can find it later
-				r.set(`ni:item:${owner.toLowerCase()}/${repo.toLowerCase()}#${itemNumber}`, fp, {
-					ex: ITEM_TTL_S,
-				}),
+				// hashed item -> fingerprint, so /slop approve|reject can attribute the
+				// outcome later without storing any plaintext repo name or PR number.
+				r.set(itemKey(owner, repo, itemNumber), fp, { ex: ITEM_TTL_S }),
 			]),
 		);
 	} catch {
@@ -188,8 +195,9 @@ export async function recordOutcome(
 	const r = redis();
 	if (!r) return;
 	try {
-		const itemKey = `ni:item:${owner.toLowerCase()}/${repo.toLowerCase()}#${itemNumber}`;
-		const fp = await guard(r.get<string>(itemKey));
+		// 45d item TTL < 90d fp TTL: a /slop run long after quarantine finds no
+		// mapping and no-ops here (the trend counter still records). Acceptable.
+		const fp = await guard(r.get<string>(itemKey(owner, repo, itemNumber)));
 		if (!fp) return;
 		await guard(
 			Promise.all([
@@ -200,12 +208,6 @@ export async function recordOutcome(
 	} catch {
 		/* best-effort */
 	}
-}
-
-/** True when the hosted network store is configured (always false on a bare
- *  self-host without Upstash, which is the point). */
-export function isNetworkEnabled(): boolean {
-	return Boolean(REDIS_URL && REDIS_TOKEN);
 }
 
 // Long-term trends (hosting-only). The source-available core reads slop history
