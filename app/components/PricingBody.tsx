@@ -46,8 +46,20 @@ export default async function PricingBody({ lang }: { lang: Lang }) {
 					"조직 현황과 Slack 알림",
 				],
 				polar: "결제는 Polar(Merchant of Record)로 안전하게 처리됩니다.",
-				whyTitle: "소스가 공개도인데 왜 결제하나요?",
-				why: "셀프호스팅은 서버 운영, LLM API 비용, 유지보수를 직접 떠안는 겁니다. 그리고 결정적으로, 셀프호스팅은 자기 레포만 볼 수 있어 네트워크 슬롭 인텔리전스(전체 고객 레포를 가로지른 슬롭 신호와 집단 피드백)를 원천적으로 가질 수 없습니다. 유료 플랜은 그걸 더하고, 전용 LLM 할당량, 레포 교차 패턴 탐지, 장기 추세가 있는 조직 현황, Slack/Discord/웹훅 알림까지 제공합니다. Sentry, PostHog, Plausible과 같은 모델입니다. 소스는 자기 용도로 무료이고, 호스팅과 네트워크 인텔리전스, 편의가 제품입니다.",
+				whyTitle: "셀프호스팅 되는데 왜 결제하나요?",
+				selfTitle: "직접 셀프호스팅 (무료)",
+				selfItems: [
+					"소스 공개, 자기 용도로 영원히 무료",
+					"서버 운영, LLM API 비용, 유지보수를 직접 부담",
+					"자기 레포만 봅니다. 네트워크 효과 없음",
+				],
+				hostedTitle: "호스팅 결제",
+				hostedItems: [
+					"서버, LLM 비용, 운영 전부 제로 (관리형)",
+					"네트워크 슬롭 인텔리전스: 전체 고객 레포를 가로지른 슬롭 신호와 집단 피드백. 셀프호스팅은 자기 레포만 봐서 원천적으로 불가능합니다",
+					"비공개 레포, 레포 교차 패턴 탐지, 장기 추세 조직 대시보드, Slack/Discord/웹훅 알림, SSO",
+				],
+				whyPunch: "소스는 무료입니다. 호스팅과 네트워크 인텔리전스, 편의가 제품이에요. Sentry, PostHog, Plausible과 같은 모델입니다.",
 				qPre: "궁금한 점이 있으면 ",
 				qLink: "GitHub 이슈",
 				qPost: "로 남겨주세요.",
@@ -63,8 +75,20 @@ export default async function PricingBody({ lang }: { lang: Lang }) {
 					"Org overview and Slack alerts",
 				],
 				polar: "Checkout is handled securely by Polar (Merchant of Record).",
-				whyTitle: "Why pay if the source is available?",
-				why: "Self-hosting means running the server, paying the LLM API bill, and maintaining it yourself. And decisively, a self-hosted instance only ever sees its own repos, so it structurally cannot have the network slop intelligence (cross-customer slop signals and collective feedback) the hosted service builds from every installation. Paid tiers add that, plus a dedicated LLM quota, cross-repo pattern detection, an org dashboard with long-term trends, and Slack/Discord/webhook alerts. Same model as Sentry, PostHog, and Plausible. The source is free to self-host for your own use; the hosting, the network intelligence, and the convenience are the product.",
+				whyTitle: "Self-hostable. So why pay?",
+				selfTitle: "Self-host (free)",
+				selfItems: [
+					"Source-available, free forever for your own use",
+					"You run the server, pay the LLM API bill, and maintain it",
+					"Only sees your own repos. No network effect",
+				],
+				hostedTitle: "Hosted (paid)",
+				hostedItems: [
+					"Zero server, LLM bill, or maintenance (managed)",
+					"Network slop intelligence: slop signals and collective feedback across every customer's repos. A self-hosted instance only sees its own, so it structurally cannot have this",
+					"Private repos, cross-repo pattern detection, org dashboard with long-term trends, Slack/Discord/webhook alerts, SSO",
+				],
+				whyPunch: "The source is free. The hosting, the network intelligence, and the convenience are the product. Same model as Sentry, PostHog, and Plausible.",
 				qPre: "Questions? Open an issue on ",
 				qLink: "GitHub",
 				qPost: ".",
@@ -120,8 +144,26 @@ export default async function PricingBody({ lang }: { lang: Lang }) {
 			</section>
 
 			<section className="wide why-pay">
-				<h3>{t.whyTitle}</h3>
-				<p>{t.why}</p>
+				<h2>{t.whyTitle}</h2>
+				<div className="why-grid">
+					<div className="why-col why-self">
+						<h3>{t.selfTitle}</h3>
+						<ul>
+							{t.selfItems.map((s) => (
+								<li key={s}>{s}</li>
+							))}
+						</ul>
+					</div>
+					<div className="why-col why-hosted">
+						<h3>{t.hostedTitle}</h3>
+						<ul>
+							{t.hostedItems.map((s) => (
+								<li key={s}>{s}</li>
+							))}
+						</ul>
+					</div>
+				</div>
+				<p className="why-punch">{t.whyPunch}</p>
 				<p className="why-q">
 					{t.qPre}
 					<a href={`${REPO_URL}/issues`}>{t.qLink}</a>
