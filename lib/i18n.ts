@@ -97,7 +97,7 @@ export const messages: Record<Lang, Messages> = {
 					name: "Free",
 					tagline: "For individuals and public repos. Forever free.",
 					features: [
-						"Heuristic + shared-LLM detection (fair-use quota, falls back to heuristics)",
+						"Fast heuristic detection (100% precision on our eval set)",
 						"Provenance tagging + quarantine label",
 						"Human-in-the-loop /slop commands",
 						".github/SLOP_POLICY.yml policy-as-code",
@@ -111,7 +111,7 @@ export const messages: Record<Lang, Messages> = {
 					features: [
 						"Everything in Free",
 						"Private repositories",
-						"Dedicated LLM quota (no shared rate limit)",
+						"AI judge: LLM-deepened detection we pay for",
 						"Cross-repo bot-pattern detection",
 						"Network slop intelligence (cross-customer, hosted-only)",
 						"Higher rate limits",
@@ -239,7 +239,7 @@ export const messages: Record<Lang, Messages> = {
 					name: "Free",
 					tagline: "개인과 공개 레포용. 영원히 무료.",
 					features: [
-						"휴리스틱 + 공유 LLM 탐지 (공정사용 한도, 초과 시 휴리스틱)",
+						"빠른 휴리스틱 탐지 (자체 평가셋 정밀도 100%)",
 						"출처 태깅 + 격리 라벨",
 						"사람이 결정하는 /slop 명령",
 						".github/SLOP_POLICY.yml 정책 코드화",
@@ -253,7 +253,7 @@ export const messages: Record<Lang, Messages> = {
 					features: [
 						"Free의 모든 기능",
 						"비공개 레포",
-						"전용 LLM 쿼터 (공유 한도 없음)",
+						"AI 판정: 우리가 비용을 내는 LLM 심층 탐지",
 						"여러 레포에 걸친 봇 패턴 탐지",
 						"네트워크 슬롭 인텔리전스 (교차 고객, 호스팅 전용)",
 						"높은 처리 한도",

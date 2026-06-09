@@ -89,16 +89,15 @@ async function review(
 		return;
 	}
 
-	// Free tier shares a throttled LLM budget; paid tiers (managedLlm) get a
-	// dedicated quota. When a free owner is over budget we drop to
-	// heuristics-only so the shared LLM bill stays bounded. This is the real,
-	// enforced Free<->Pro difference, not a marketing line.
+	// The real, enforced Free<->Paid difference: the hosted Free tier runs
+	// heuristics-only (zero LLM cost to us), and paid tiers (managedLlm) add the
+	// LLM judge that we pay for. This keeps our LLM bill tied to revenue and gives
+	// paying customers genuinely deeper detection on the subtlest cases. (A
+	// self-hoster can still wire their own LLM key in the source-available core;
+	// this gate only governs OUR hosted LLM spend.)
 	let agentPolicy = toAgentPolicy(policy);
 	if (!plan.managedLlm) {
-		const freePerMin = Number(process.env.FREE_LLM_PER_MIN ?? 3);
-		if (!rateLimit(`llm-free:${owner}`, freePerMin, 60_000)) {
-			agentPolicy = { ...agentPolicy, llmEnabled: false };
-		}
+		agentPolicy = { ...agentPolicy, llmEnabled: false };
 	}
 
 	// Reuse a cached verdict for identical content (repeated synchronize events

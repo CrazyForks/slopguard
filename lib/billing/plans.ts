@@ -64,11 +64,11 @@ export const PLANS: Record<PlanId, Plan> = {
 		tagline: "For individuals and public repos. Free forever.",
 		features: [
 			"Public repositories",
-			"Heuristic + shared-LLM slop detection (fair-use quota, falls back to heuristics)",
+			"Fast heuristic slop detection (precision 100% on our eval set)",
 			"Provenance tagging + quarantine label",
 			"Human-in-the-loop /slop commands",
 			".github/SLOP_POLICY.yml policy-as-code",
-			"Self-host the whole thing (MIT licensed)",
+			"Self-host the whole thing (source-available)",
 		],
 		privateRepos: false,
 		managedLlm: false,
@@ -87,8 +87,8 @@ export const PLANS: Record<PlanId, Plan> = {
 		tagline: "For maintainers with private repos and serious bot traffic.",
 		features: [
 			"Everything in Free",
+			"AI judge: LLM-deepened detection we pay for, catches the subtle cases heuristics miss",
 			"Private repositories",
-			"Dedicated LLM quota (no shared throttle)",
 			"Cross-repo bot-pattern detection",
 			"Network slop intelligence (cross-customer, hosted-only)",
 			"Higher rate limits",
