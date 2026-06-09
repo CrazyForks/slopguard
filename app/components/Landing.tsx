@@ -124,10 +124,10 @@ export const EX = {
 				github: "GitHub repo",
 				selfhost: "Self-host",
 				policy: "SLOP_POLICY.yml",
-				license: "MIT License",
+				license: "License",
 				account: "Account",
 			},
-			rights: "Open source under the MIT License.",
+			rights: "Source-available, Commons Clause. Self-host for your own use.",
 		},
 	},
 	ko: {
@@ -243,10 +243,10 @@ export const EX = {
 				github: "GitHub 레포",
 				selfhost: "셀프호스팅",
 				policy: "SLOP_POLICY.yml",
-				license: "MIT 라이선스",
+				license: "라이선스",
 				account: "마이페이지",
 			},
-			rights: "MIT 라이선스 기반 오픈소스.",
+			rights: "소스 공개(Commons Clause). 자가 용도 셋호스팅 가능.",
 		},
 	},
 } as const;
@@ -359,8 +359,8 @@ export default function Landing({ lang }: { lang: Lang }) {
 								{lang === "ko" ? "최종 결정" : "makes the call"}
 							</li>
 							<li>
-								<b>MIT</b>
-								{lang === "ko" ? "오픈소스" : "open source"}
+								<b>{lang === "ko" ? "소스공개" : "source-available"}</b>
+								{lang === "ko" ? "자가 셋호스팅" : "self-host for yourself"}
 							</li>
 						</ul>
 					</div>

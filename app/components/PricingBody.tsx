@@ -38,7 +38,7 @@ export default async function PricingBody({ lang }: { lang: Lang }) {
 		? {
 				eyebrow: "가격",
 				h1: "운영까지 맡기면,\n팀이 더 편해집니다",
-				sub: "비공개 레포, 조직 기능, 서버와 LLM 운영까지 유료 플랜이 맡습니다. 물론 오픈소스(MIT)라 직접 올려 써도 됩니다.",
+				sub: "비공개 레포, 조직 기능, 서버와 LLM 운영까지 유료 플랜이 맡습니다. 소스가 공개돼 있어 직접 올려 써도 됩니다(자가 용도, Commons Clause).",
 				addsTitle: "유료 플랜이 대신해주는 것",
 				adds: [
 					"매니지드 LLM, 서버와 API 비용 제로",
@@ -46,7 +46,7 @@ export default async function PricingBody({ lang }: { lang: Lang }) {
 					"조직 현황과 Slack 알림",
 				],
 				polar: "결제는 Polar(Merchant of Record)로 안전하게 처리됩니다.",
-				whyTitle: "오픈소스인데 왜 결제하나요?",
+				whyTitle: "소스가 공개도인데 왜 결제하나요?",
 				why: "셀프호스팅은 서버 운영, LLM API 비용, 유지보수를 직접 떠안는 겁니다. 유료 플랜은 그걸 전부 없애고, 단일 인스턴스로는 못 하는 것들을 더합니다. 전용 LLM 할당량, 레포 교차 봇 패턴 탐지, 활동 로그가 있는 조직 현황, Slack/Discord/웹훅 알림. Sentry, PostHog, Plausible과 같은 모델입니다. 코드는 무료이고, 호스팅과 인텔리전스, 편의가 제품입니다.",
 				qPre: "궁금한 점이 있으면 ",
 				qLink: "GitHub 이슈",
@@ -55,7 +55,7 @@ export default async function PricingBody({ lang }: { lang: Lang }) {
 		: {
 				eyebrow: "pricing",
 				h1: "Stronger when\nwe run it for you.",
-				sub: "Paid plans cover private repos, org features, and the server and LLM bill. It is open source (MIT), so self-hosting is always an option too.",
+				sub: "Paid plans cover private repos, org features, and the server and LLM bill. The source is available (Commons Clause), so self-hosting for your own use is always an option too.",
 				addsTitle: "What a paid plan handles for you",
 				adds: [
 					"Managed LLM (no server or API bill)",
@@ -63,7 +63,7 @@ export default async function PricingBody({ lang }: { lang: Lang }) {
 					"Org overview and Slack alerts",
 				],
 				polar: "Checkout is handled securely by Polar (Merchant of Record).",
-				whyTitle: "Why pay if it is open source?",
+				whyTitle: "Why pay if the source is available?",
 				why: "Self-hosting means running the server, paying the LLM API bill, and maintaining it yourself. Paid tiers remove all of that and add things a single self-hosted instance cannot do on its own: a dedicated LLM quota, cross-repo bot-campaign detection, an org-wide dashboard with an activity log, and Slack/Discord/webhook alerts. Same model as Sentry, PostHog, and Plausible. The code is free; the hosting, intelligence, and convenience are the product.",
 				qPre: "Questions? Open an issue on ",
 				qLink: "GitHub",

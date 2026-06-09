@@ -62,7 +62,7 @@ export const messages: Record<Lang, Messages> = {
 			sub: "SlopGuard scores every incoming PR and issue for low-effort, machine-generated slop, tags its provenance, and quarantines it, then leaves the final call to a human.",
 			ctaInstall: "Install the GitHub App",
 			ctaPricing: "See pricing",
-			fine: "# open source, MIT, never auto-closes, free for public repos",
+			fine: "# source-available, never auto-closes, free for public repos",
 			emblemAlt:
 				"SlopGuard shield: a code-bracket emblem scanning pull requests",
 		},
@@ -70,7 +70,7 @@ export const messages: Record<Lang, Messages> = {
 			{ n: "100%", l: "precision (golden set)" },
 			{ n: "92%", l: "recall, heuristics-only" },
 			{ n: "0", l: "auto-closed PRs, ever" },
-			{ n: "MIT", l: "self-host for free" },
+			{ n: "Source", l: "self-host for your own use" },
 		],
 		verdict: {
 			title: "What a maintainer sees",
@@ -87,7 +87,7 @@ export const messages: Record<Lang, Messages> = {
 		},
 		pricing: {
 			title: "Pricing",
-			sub: "Free to self-host forever (MIT). Paid tiers cover the managed LLM bill, private repos, and org controls. Checkout via Polar as Merchant of Record.",
+			sub: "Source-available, free to self-host for your own use (Commons Clause). Paid tiers cover the managed LLM bill, private repos, and org controls. Checkout via Polar as Merchant of Record.",
 			per: "/ month",
 			getStarted: "Get started",
 			choose: (n) => `Choose ${n}`,
@@ -102,7 +102,7 @@ export const messages: Record<Lang, Messages> = {
 						"Human-in-the-loop /slop commands",
 						".github/SLOP_POLICY.yml policy-as-code",
 						"Public repositories",
-						"Self-host the whole thing (MIT)",
+						"Self-host the whole thing for your own use (source-available)",
 					],
 				},
 				pro: {
@@ -184,7 +184,7 @@ export const messages: Record<Lang, Messages> = {
 				{
 					ico: "db: null",
 					t: "No database",
-					d: "State lives in GitHub labels and issues. Self-host the entire thing, it is MIT licensed.",
+					d: "State lives in GitHub labels and issues. Self-host the entire thing for your own use; the source is available under the Commons Clause.",
 				},
 			],
 		},
@@ -204,14 +204,14 @@ export const messages: Record<Lang, Messages> = {
 			sub: "SlopGuard는 들어오는 모든 PR과 이슈를 저품질 기계생성 슬롭인지 점수로 평가하고, 출처를 태깅한 뒤 격리합니다. 닫을지 말지는 사람이 최종 결정합니다.",
 			ctaInstall: "GitHub App 설치하기",
 			ctaPricing: "가격 보기",
-			fine: "# 오픈소스, MIT, 자동으로 닫지 않음, 공개 레포 무료",
+			fine: "# 소스 공개, 자동으로 닫지 않음, 공개 레포 무료",
 			emblemAlt: "SlopGuard 실드: PR을 스캔하는 코드 브래킷 엠블럼",
 		},
 		stats: [
 			{ n: "100%", l: "정밀도 (골든셋)" },
 			{ n: "92%", l: "재현율 (휴리스틱만)" },
 			{ n: "0", l: "자동으로 닫은 PR 수" },
-			{ n: "MIT", l: "무료 셀프호스팅" },
+			{ n: "소스공개", l: "자기 용도 셀프호스팅" },
 		],
 		verdict: {
 			title: "관리자가 보는 화면",
@@ -228,7 +228,7 @@ export const messages: Record<Lang, Messages> = {
 		},
 		pricing: {
 			title: "가격",
-			sub: "셀프호스팅은 영원히 무료입니다 (MIT). 유료 플랜은 관리형 LLM 비용, 비공개 레포, 조직 기능을 포함합니다. 결제는 Polar(Merchant of Record)가 처리합니다.",
+			sub: "소스 공개, 자기 용도 셀프호스팅은 무료입니다 (Commons Clause). 유료 플랜은 관리형 LLM 비용, 비공개 레포, 조직 기능을 포함합니다. 결제는 Polar(Merchant of Record)가 처리합니다.",
 			per: "/ 월",
 			getStarted: "시작하기",
 			choose: (n) => `${n} 선택`,
@@ -243,7 +243,7 @@ export const messages: Record<Lang, Messages> = {
 						"사람이 결정하는 /slop 명령",
 						".github/SLOP_POLICY.yml 정책 코드화",
 						"공개 레포",
-						"전체 셀프호스팅 (MIT)",
+						"전체 셀프호스팅 (소스공개)",
 					],
 				},
 				pro: {
@@ -325,7 +325,7 @@ export const messages: Record<Lang, Messages> = {
 				{
 					ico: "db: null",
 					t: "DB 없음",
-					d: "상태는 GitHub 라벨과 이슈에 저장됩니다. 전체를 셀프호스팅할 수 있고 MIT 라이선스입니다.",
+					d: "상태는 GitHub 라벨과 이슈에 저장됩니다. 전체를 자기 용도로 셀프호스팅할 수 있고, 소스는 Commons Clause로 공개되어 있습니다.",
 				},
 			],
 		},

@@ -3,7 +3,7 @@
 English | [한국어](./docs/README.ko.md)
 
 [![CI](https://github.com/Blue-B/slopguard/actions/workflows/ci.yml/badge.svg)](https://github.com/Blue-B/slopguard/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-3fb950.svg)](./LICENSE)
+[![License: Source Available](https://img.shields.io/badge/License-Source%20Available%20%28Commons%20Clause%29-3fb950.svg)](./LICENSE)
 [![human-in-the-loop](https://img.shields.io/badge/human--in--the--loop-required-58a6ff.svg)](#)
 [![never auto-close](https://img.shields.io/badge/auto--close-never-cf222e.svg)](#)
 [![precision](https://img.shields.io/badge/precision-100%25-3fb950.svg)](#detection-quality)
@@ -62,7 +62,7 @@ Comment any of these on a quarantined PR or issue (requires write access):
 
 ## Plans
 
-The whole thing is MIT-licensed, so you can self-host every feature for free. The paid tiers exist for maintainers who want the managed convenience (we pay the LLM bill, run the dashboard, and provide support).
+The source is available (MIT with the Commons Clause). You can read it and self-host every feature for your own use for free. You just cannot resell it or offer it as a competing hosted service. The paid tiers exist for maintainers who want the managed convenience (we pay the LLM bill, run the dashboard, and provide support).
 
 | | Free | Pro ($19/mo) | Team ($99/mo) |
 | --- | --- | --- | --- |
@@ -147,4 +147,4 @@ If SlopGuard saves you triage time, supporting it directly speeds up development
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+Source-available under the MIT License with the Commons Clause. You may read, modify, and self-host it for your own use; you may not sell it or run it as a hosted service for others. See [LICENSE](./LICENSE).

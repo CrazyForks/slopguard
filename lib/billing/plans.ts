@@ -1,6 +1,8 @@
-// SlopGuard plans. Open-source + hosted model: the code is free to self-host;
-// paid tiers cover the managed convenience and features that only make sense
-// hosted (cross-repo intelligence, org dashboard, alerting, support).
+// SlopGuard plans. Source-available + hosted model: the source is free to read
+// and self-host for your own use (MIT + Commons Clause; you may not resell or
+// host it as a service). Paid tiers cover the managed convenience and features
+// that only make sense hosted (cross-repo intelligence, org dashboard, alerting,
+// support).
 //
 // IMPORTANT: every flag below is actually ENFORCED in code. Nothing here is a
 // marketing-only promise:

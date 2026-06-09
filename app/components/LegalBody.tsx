@@ -144,7 +144,7 @@ const TERMS_EN: Copy = {
 	h1: "Terms of Service",
 	updated: `Last updated: ${UPDATED}`,
 	intro:
-		"These terms govern your use of the hosted SlopGuard service at slopguard.app. By installing the GitHub App or signing in, you agree to them. The detection code is separately available under the MIT License if you prefer to self-host.",
+		"These terms govern your use of the hosted SlopGuard service at slopguard.app. By installing the GitHub App or signing in, you agree to them. The source is available (MIT with the Commons Clause): you may read it and self-host it for your own use, but you may not sell it or run it as a hosted service for others.",
 	sections: [
 		{
 			h: "1. The service",
@@ -183,7 +183,7 @@ const TERMS_EN: Copy = {
 		{
 			h: "6. Open source",
 			body: [
-				`The SlopGuard detection code is open source under the MIT License at ${REPO_URL}. The hosted service, its infrastructure, and managed features are operated separately and are governed by these terms.`,
+				`The SlopGuard source is available at ${REPO_URL} under the MIT License with the Commons Clause. You may read, modify, and self-host it for your own use, but the Commons Clause prohibits selling it or offering it as a hosted service to third parties. The hosted service at slopguard.app, its infrastructure, branding, and managed features are operated by us and governed by these terms.`,
 			],
 		},
 		{
@@ -200,7 +200,7 @@ const TERMS_KO: Copy = {
 	h1: "이용약관",
 	updated: `최종 업데이트: ${UPDATED}`,
 	intro:
-		"본 약관은 slopguard.app의 호스팅 SlopGuard 서비스 이용에 적용됩니다. GitHub 앱을 설치하거나 로그인하면 약관에 동의하는 것입니다. 탐지 코드는 직접 호스팅을 원할 경우 MIT 라이선스로 별도 제공됩니다.",
+		"본 약관은 slopguard.app의 호스팅 SlopGuard 서비스 이용에 적용됩니다. GitHub 앱을 설치하거나 로그인하면 약관에 동의하는 것입니다. 소스는 공개되어 있으며(MIT + Commons Clause), 읽고 자가 용도로 셋호스팅할 수 있지만 판매하거나 타인에게 호스팅 서비스로 제공할 수는 없습니다.",
 	sections: [
 		{
 			h: "1. 서비스 내용",
@@ -237,9 +237,9 @@ const TERMS_KO: Copy = {
 			],
 		},
 		{
-			h: "6. 오픈소스",
+			h: "6. 소스 공개 라이선스",
 			body: [
-				`SlopGuard 탐지 코드는 ${REPO_URL} 에서 MIT 라이선스로 공개되어 있습니다. 호스팅 서비스, 인프라, 매니지드 기능은 별도로 운영되며 본 약관의 적용을 받습니다.`,
+				`SlopGuard 소스는 ${REPO_URL} 에서 MIT 라이선스 + Commons Clause로 공개되어 있습니다. 읽고 수정하고 자가 용도로 셋호스팅할 수 있지만, Commons Clause에 따라 판매하거나 제3자에게 호스팅 서비스로 제공하는 것은 금지됩니다. slopguard.app 호스팅 서비스, 인프라, 브랜드, 매니지드 기능은 당사가 운영하며 본 약관의 적용을 받습니다.`,
 			],
 		},
 		{

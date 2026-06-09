@@ -13,7 +13,7 @@ const F = {
 		issues: "Issues",
 		privacy: "Privacy",
 		terms: "Terms",
-		rights: "Open source under the MIT License.",
+		rights: "Source-available (Commons Clause). Self-host for your own use.",
 	},
 	ko: {
 		tag: "오픈소스 관리자를 위한 AI 슬롭 분류. 라벨과 코멘트만 달고, 진짜 기여자를 자동으로 닫지 않습니다.",
@@ -25,7 +25,7 @@ const F = {
 		issues: "이슈",
 		privacy: "개인정보처리방침",
 		terms: "이용약관",
-		rights: "MIT 라이선스 기반 오픈소스.",
+		rights: "소스 공개 (Commons Clause). 자가 용도 셋호스팅 가능.",
 	},
 } as const;
 
