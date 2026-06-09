@@ -11,6 +11,8 @@ const F = {
 		install: "Install",
 		policy: "Config example",
 		issues: "Issues",
+		privacy: "Privacy",
+		terms: "Terms",
 		rights: "Open source under the MIT License.",
 	},
 	ko: {
@@ -21,6 +23,8 @@ const F = {
 		install: "설치",
 		policy: "설정 파일 예시",
 		issues: "이슈",
+		privacy: "개인정보처리방침",
+		terms: "이용약관",
 		rights: "MIT 라이선스 기반 오픈소스.",
 	},
 } as const;
@@ -74,6 +78,10 @@ export default function SiteFooter({ lang = "en" }: { lang?: Lang }) {
 			</div>
 			<div className="footer-app-bottom">
 				<span>© {new Date().getFullYear()} SlopGuard</span>
+				<span className="footer-legal">
+					<Link href={`${p}/privacy`}>{f.privacy}</Link>
+					<Link href={`${p}/terms`}>{f.terms}</Link>
+				</span>
 				<span>{f.rights}</span>
 			</div>
 		</footer>

@@ -4938,3 +4938,64 @@ footer.site.footer-app {
 		width: 100%;
 	}
 }
+
+/* ── Legal pages (privacy / terms) ───────────────────────────────── */
+.legal-wrap {
+	position: relative;
+	overflow: hidden;
+	padding: 40px 0 96px;
+	border-top: 1px solid var(--border-muted);
+}
+.legal-doc {
+	position: relative;
+	z-index: 1;
+	max-width: 760px;
+}
+.legal-doc h1 {
+	font-size: clamp(28px, 4vw, 40px);
+	letter-spacing: -0.03em;
+	margin: 10px 0 6px;
+}
+.legal-updated {
+	color: var(--muted);
+	font-size: 12px;
+	margin: 0 0 22px;
+}
+.legal-intro {
+	color: var(--fg);
+	font-size: 15.5px;
+	line-height: 1.7;
+	margin: 0 0 8px;
+	padding-bottom: 22px;
+	border-bottom: 1px solid var(--border-muted);
+}
+.legal-section {
+	margin-top: 30px;
+}
+.legal-section h2 {
+	font-size: 17px;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	margin: 0 0 10px;
+}
+.legal-section p {
+	color: var(--muted);
+	font-size: 14px;
+	line-height: 1.7;
+	margin: 0 0 10px;
+	max-width: 70ch;
+}
+.legal-section p:last-child {
+	margin-bottom: 0;
+}
+.footer-legal {
+	display: inline-flex;
+	gap: 16px;
+}
+.footer-legal a {
+	color: var(--muted);
+	transition: color 0.15s ease;
+}
+.footer-legal a:hover {
+	color: var(--fg);
+}
