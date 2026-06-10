@@ -33,7 +33,7 @@ async function build(provider: string): Promise<ResolvedModel | null> {
 
 	if (provider === "gemini") {
 		const { ChatGoogleGenerativeAI } = await import("@langchain/google-genai");
-		const modelName = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
+		const modelName = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
 		return {
 			provider,
 			modelName,
