@@ -48,6 +48,8 @@ npm run eval
 
 Heuristics-only at the default threshold (50): **precision 100% · recall 92% · F1 96%**. Adding an LLM key lifts recall further on the subtlest cases (e.g. over-commented trivial diffs). The harness prints a confusion matrix and a threshold sweep so you can calibrate for your repo.
 
+How to read these numbers: the golden set is synthetic (written by hand, not scraped from real repos) and it grew alongside the heuristics, so this is a regression floor, not a field benchmark. It tells you which patterns the detector is guaranteed to catch and that they stay caught across releases. Real-world slop drifts; when a new pattern shows up in the wild, it gets added as a case first and then the detector is fixed until the suite is green again. If you want to know how it behaves on your traffic, run `npm run eval` after editing the set with your own examples.
+
 ![Threshold sweep — precision, recall, F1](./assets/detection-quality.svg)
 
 ## Maintainer commands
