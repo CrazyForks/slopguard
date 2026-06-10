@@ -12,6 +12,7 @@ import {
 	recordSighting,
 	recordTrendEvent,
 } from "../intel/network.js";
+import { recordInstallEvent } from "../ops/installs.js";
 import { dispatchConsoleAlerts } from "../alerts/dispatch.js";
 import { sendQuarantineAlerts } from "../notify.js";
 import { buildIssueInput, buildPullRequestInput } from "./build-input.js";
@@ -392,6 +393,25 @@ export function registerWebhookHandlers(app: App): void {
 			payload.comment.user?.login ?? payload.sender.login,
 			body,
 		);
+	});
+
+	// Install tracking: record who installed/uninstalled so the owner can see
+	// growth from /api/health without digging through App settings.
+	app.webhooks.on("installation.created", async ({ payload }) => {
+		const account =
+			(payload.installation.account as { login?: string } | null)?.login ??
+			"unknown";
+		const repos = payload.repositories?.length ?? 0;
+		console.log(`[slopguard] installed by ${account} (${repos} repos)`);
+		await recordInstallEvent("installed", account, repos).catch(() => {});
+	});
+	app.webhooks.on("installation.deleted", async ({ payload }) => {
+		const account =
+			(payload.installation.account as { login?: string } | null)?.login ??
+			"unknown";
+		const repos = payload.repositories?.length ?? 0;
+		console.log(`[slopguard] uninstalled by ${account}`);
+		await recordInstallEvent("uninstalled", account, repos).catch(() => {});
 	});
 
 	app.webhooks.onError((err) => {

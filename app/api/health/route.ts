@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { failedWebhookCount } from "@/lib/ops/deadletter";
+import { installsSummary } from "@/lib/ops/installs";
 import { Redis } from "@upstash/redis";
 
 export const runtime = "nodejs";
@@ -43,6 +44,7 @@ export async function GET() {
 	};
 	const redis = await redisHealth();
 	const failedWebhooks = await failedWebhookCount().catch(() => 0);
+	const installs = await installsSummary().catch(() => ({ current: 0, recent: [] }));
 	const anyLlm = Object.values(providers).some(Boolean);
 
 	// Overall status: "ok" when every critical dependency is healthy, "degraded"
@@ -64,6 +66,7 @@ export async function GET() {
 			billing,
 			redis,
 			failedWebhooks,
+			installs,
 			llmProviders: providers,
 			providerOrder: (
 				process.env.LLM_PROVIDER_ORDER ?? "gemini,anthropic,grok,openai"
