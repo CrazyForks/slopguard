@@ -9,7 +9,7 @@ English | [한국어](./docs/README.ko.md)
 [![precision](https://img.shields.io/badge/precision-100%25-3fb950.svg)](#detection-quality)
 [![recall](https://img.shields.io/badge/recall-92%25-3fb950.svg)](#detection-quality)
 
-**[Try it live: slopguard.app](https://slopguard.app)** | [Install the App](https://slopguard.app/setup) | [Pricing](https://slopguard.app/pricing)
+**Free to self-host.** Start with the [setup guide](./docs/SETUP.md).
 
 A GitHub App that triages AI "slop" — low-effort, machine-generated pull requests and issues that waste maintainer time. SlopGuard scores each contribution, tags its provenance, and applies a `slop-quarantine` label, then hands the final decision to a maintainer.
 
@@ -68,24 +68,6 @@ Comment any of these on a quarantined PR or issue (requires write access):
 | `/slop approve` | Remove quarantine, mark as cleared |
 | `/slop reject` | Close as slop (your explicit action) |
 | `/slop false-positive` | Open a tuning issue and clear the quarantine |
-
-## Plans
-
-The source is available (MIT with the Commons Clause). You can read it and self-host every feature for your own use for free. You just cannot resell it or offer it as a competing hosted service. The paid tiers exist for maintainers who want the managed convenience (we pay the LLM bill, run the dashboard, and provide support).
-
-| | Free | Pro ($19/mo) | Team ($99/mo) |
-| --- | --- | --- | --- |
-| Public repos | Yes | Yes | Yes |
-| Private repos | No | Yes | Yes |
-| LLM judging | Shared free quota | Dedicated quota | Dedicated quota |
-| Cross-repo campaign detection | No | Yes | Yes |
-| Org-wide dashboard | No | No | Yes |
-| SSO + audit log | No | No | Yes |
-| Support | Community | Email | Priority |
-
-Free is fully functional in heuristics-only mode with zero API keys. Checkout is handled by [Polar](https://polar.sh) as Merchant of Record (they collect VAT/sales tax for you). **[See live pricing and subscribe →](https://slopguard.app/pricing)**
-
-> Paid plans activate automatically: enter the GitHub org or username you'll install on in the checkout field, and Pro/Team unlocks within a minute. No invite, no manual step.
 
 ## Configuration
 

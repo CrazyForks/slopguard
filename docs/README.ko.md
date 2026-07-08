@@ -9,7 +9,7 @@
 [![precision](https://img.shields.io/badge/precision-100%25-3fb950.svg)](#탐지-품질)
 [![recall](https://img.shields.io/badge/recall-92%25-3fb950.svg)](#탐지-품질)
 
-**[라이브로 보기: slopguard.app](https://slopguard.app)** | [설치하기](https://slopguard.app/setup) | [가격](https://slopguard.app/pricing)
+**무료로 직접 호스팅할 수 있습니다.** [설정 가이드](./SETUP.md)에서 시작하세요.
 
 AI "slop" — 별 노력 없이 기계가 찍어낸 PR과 이슈를 골라내는 GitHub App입니다. 들어온 기여를 점수로 평가하고, 출처(provenance)를 태깅하고, `slop-quarantine` 라벨을 붙인 뒤 최종 판단은 메인테이너에게 넘깁니다.
 
@@ -59,24 +59,6 @@ npm run eval
 | `/slop approve` | 격리 해제, 통과 처리 |
 | `/slop reject` | slop으로 닫기 (메인테이너의 명시적 행동) |
 | `/slop false-positive` | 튜닝 이슈를 열고 격리 해제 |
-
-## 플랜
-
-전체 코드는 MIT라 모든 기능을 직접 호스팅하면 영원히 무료입니다. 유료 플랜은 관리형 편의(LLM 비용을 저희가 부담, 대시보드 운영, 지원)를 원하는 메인테이너를 위한 것입니다.
-
-| | Free | Pro ($19/월) | Team ($99/월) |
-| --- | --- | --- | --- |
-| 공개 레포 | 됨 | 됨 | 됨 |
-| 비공개 레포 | 안 됨 | 됨 | 됨 |
-| LLM 판정 | 공유 무료 쿼터 | 전용 쿼터 | 전용 쿼터 |
-| 크로스 레포 캠페인 탐지 | 안 됨 | 됨 | 됨 |
-| 조직 전체 대시보드 | 안 됨 | 안 됨 | 됨 |
-| SSO + 감사 로그 | 안 됨 | 안 됨 | 됨 |
-| 지원 | 커뮤니티 | 이메일 | 우선 |
-
-Free는 API 키 없이 휴리스틱-only 모드로 완전히 동작합니다. 결제는 [Polar](https://polar.sh)가 등록판매자(Merchant of Record)로 처리합니다(부가세를 대신 징수). **[라이브 가격 보기 및 구독하기 →](https://slopguard.app/pricing)**
-
-> 유료 플랜은 자동 활성화됩니다. 결제 시 설치할 GitHub 조직 또는 사용자명을 입력하면 1분 내에 Pro/Team이 켜집니다. 초대나 수동 단계가 없습니다.
 
 ## 설정
 
